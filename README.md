@@ -153,13 +153,15 @@ más carpetas de componentes (y el compose crecerá con ellas).
 ## 3. La ruta de versiones
 
 ```
-v1  api_facturas (C#/ASP.NET Core): CRUD de producto, solo PostgreSQL   ← USTED ESTÁ AQUÍ
-v2  más tablas (persona, factura maestro-detalle…)
-v3  segundo motor (PostgreSQL) — nace la fábrica de repositorios
-v4  tercer motor (MariaDB) + compose completo
-v5  API GENÉRICA de plataforma: /api/{tabla} multi-motor + JWT +
+v1  api_facturas (C#/ASP.NET Core): CRUD de producto, solo PostgreSQL   (cerrada: tag v1)
+v2  persona (el molde replicado) + factura maestro-detalle con SPs   ← USTED ESTÁ AQUÍ (cerrada: tag v2)
+v3  el RESTO de las entidades: toda la bdfacturas cubierta con
+    UN motor (usuario con BCrypt, tablas puente)
+v4  segundo motor (SQL Server) — nace la fábrica de repositorios
+v5  tercer motor (MariaDB) + compose completo
+v6  API GENÉRICA de plataforma: /api/{tabla} multi-motor + JWT +
     consultas parametrizadas + procedimientos almacenados
-v6  frontend FLASK (Jinja2): CRUD de las 12 entidades + login + facturación
+v7  frontend FLASK (Jinja2): CRUD de las 12 entidades + login + facturación
 ```
 
 La regla del juego: la **constitución** es permanente, cada versión tiene
