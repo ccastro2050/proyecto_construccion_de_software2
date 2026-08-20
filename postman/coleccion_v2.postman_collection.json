@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "API Facturas v1 (C# + PostgreSQL)",
-    "description": "Los endpoints de la v1 en orden didáctico: diagnóstico → lecturas → ciclo de escritura → la pareja PUT/PATCH → los errores. Cada petición explica en su descripción qué esperar. La variable {{base}} apunta al proyecto del curso (localhost:8042); para probar SU reconstrucción cámbiela a localhost:8142.",
+    "name": "API Facturas v2 — Construcción de Software (C# + PostgreSQL)",
+    "description": "Acumulativa: las 13 peticiones de la v1 (producto) + las 12 de la v2 (persona y factura maestro-detalle con SPs y triggers). Orden didáctico; cada petición explica en su descripción qué esperar. La variable {{base}} apunta al proyecto del curso (localhost:8042); para probar SU reconstrucción cámbiela a localhost:8142.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -145,6 +145,122 @@
         "method": "DELETE",
         "url": "{{base}}/api/producto/PR009",
         "description": "404: el producto ya no existe (filas eliminadas = 0 → NoEncontradoExcepcion → 404). Es la segunda mitad del criterio de aceptación 4."
+      }
+    },
+    {
+      "name": "14. (v2) Listar personas — GET /api/persona",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/api/persona",
+        "description": "El molde de la v1 replicado en otra entidad: 200 con {tabla, limite, total: 6, datos} — las 6 personas de ejemplo."
+      }
+    },
+    {
+      "name": "15. (v2) Obtener una — GET /api/persona/P001",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/api/persona/P001",
+        "description": "200 con Ana Torres. Con P999: 404 con el sobre {estado, mensaje, detalle}."
+      }
+    },
+    {
+      "name": "16. (v2) Crear persona — POST /api/persona (→ 200)",
+      "request": {
+        "method": "POST",
+        "url": "{{base}}/api/persona",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"codigo\": \"P007\",\n  \"nombre\": \"Prueba Postman\",\n  \"email\": \"p7@correo.com\",\n  \"telefono\": \"3007777777\"\n}"
+        },
+        "description": "200. La petición PersonaCrear exige los 4 campos (todos texto, con longitudes máximas). Sin nombre → 422 con errores[]."
+      }
+    },
+    {
+      "name": "17. (v2) LA PAREJA en persona (a): PUT solo telefono (→ 422)",
+      "request": {
+        "method": "PUT",
+        "url": "{{base}}/api/persona/P007",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"telefono\": \"3009999999\"\n}"
+        },
+        "description": "422: a PUT le faltan nombre y email — la misma lección de la v1, ahora en la entidad nueva. Compare con la 18."
+      }
+    },
+    {
+      "name": "18. (v2) LA PAREJA en persona (b): PATCH mismo body (→ 200)",
+      "request": {
+        "method": "PATCH",
+        "url": "{{base}}/api/persona/P007",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"telefono\": \"3009999999\"\n}"
+        },
+        "description": "200 con filasAfectadas: 1. El mismo body que dio 422 en PUT."
+      }
+    },
+    {
+      "name": "19. (v2) Eliminar persona — DELETE /api/persona/P007",
+      "request": {
+        "method": "DELETE",
+        "url": "{{base}}/api/persona/P007",
+        "description": "200. Deja la tabla como al inicio. Repetido: 404."
+      }
+    },
+    {
+      "name": "20. (v2) Integridad referencial — DELETE /api/persona/P001 (→ 500 FK)",
+      "request": {
+        "method": "DELETE",
+        "url": "{{base}}/api/persona/P001",
+        "description": "500 con el error de LLAVE FORÁNEA del motor en detalle: P001 es cliente — la BD protege sus relaciones y el error viaja completo hasta el cliente. No borra nada."
+      }
+    },
+    {
+      "name": "21. (v2) Listar facturas — GET /api/factura (SP)",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/api/factura",
+        "description": "200 con las 6 facturas: nombres de cliente/vendedor YA RESUELTOS y el detalle (productos) anidado — los JOINs los hizo el procedimiento almacenado, no la API."
+      }
+    },
+    {
+      "name": "22. (v2) Consultar factura — GET /api/factura/1 (SP)",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/api/factura/1",
+        "description": "200 con la factura 1 completa (misma forma que cada elemento del listado). Con 999: 404 — es el RAISE EXCEPTION del SP (P0001) traducido por el repositorio."
+      }
+    },
+    {
+      "name": "23. (v2) Crear factura maestro-detalle — POST /api/factura (→ 200)",
+      "request": {
+        "method": "POST",
+        "url": "{{base}}/api/factura",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fkidcliente\": 1,\n  \"fkidvendedor\": 1,\n  \"productos\": [\n    { \"codigo\": \"PR001\", \"cantidad\": 2 },\n    { \"codigo\": \"PR003\", \"cantidad\": 3 }\n  ]\n}"
+        },
+        "description": "200 con la factura creada: fecha, subtotales POR RENGLÓN y total CALCULADOS por el trigger (nadie los envió). Verifíquelo: GET /api/producto/PR001 antes y después — el stock bajó. Con productos: [] → 422; con cantidad 9999 → 500 con «Stock insuficiente…» del trigger. Anote el numero para las peticiones 24 y 25."
+      }
+    },
+    {
+      "name": "24. (v2) Anular factura — POST /api/factura/7/anular (→ 200)",
+      "request": {
+        "method": "POST",
+        "url": "{{base}}/api/factura/7/anular",
+        "description": "Borrado LÓGICO (por eso es POST y no DELETE): 200 con el JSON del SP — estado pasa a 'anulada' y el STOCK SE RESTAURA (verifíquelo con GET /api/producto/PR001). Ajuste el 7 al numero que le dio la petición 23."
+      }
+    },
+    {
+      "name": "25. (v2) Anular de nuevo — el mismo POST repetido (→ 409)",
+      "request": {
+        "method": "POST",
+        "url": "{{base}}/api/factura/7/anular",
+        "description": "409 Conflict — la lección nueva de la v2: la petición está bien formada y la factura existe, pero su ESTADO actual no permite la operación (ya está anulada). Ni 400 ni 404: conflicto de estado. Con 999: 404."
       }
     }
   ]

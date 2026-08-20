@@ -39,6 +39,15 @@ builder.Services.AddScoped<IRepositorioProducto>(
     _ => new RepositorioProductoPostgres(cadenaConexion));
 builder.Services.AddScoped<IServicioProducto, ServicioProducto>();
 
+// v2 — el ensamblador CRECE (y es lo único de la v1 que crece):
+// las rebanadas nuevas se registran igual que la primera.
+builder.Services.AddScoped<IRepositorioPersona>(
+    _ => new RepositorioPersonaPostgres(cadenaConexion));
+builder.Services.AddScoped<IServicioPersona, ServicioPersona>();
+builder.Services.AddScoped<IRepositorioFactura>(
+    _ => new RepositorioFacturaPostgres(cadenaConexion));
+builder.Services.AddScoped<IServicioFactura, ServicioFactura>();
+
 // ------------------------------------------------------------
 // 2. Los controladores y la validación de la petición (el 422)
 // ------------------------------------------------------------
@@ -97,8 +106,8 @@ app.UseSwaggerUI();
 app.MapGet("/", () => Results.Json(new
 {
     mensaje = "API Facturas funcionando",
-    version = "v1",
-    contratos = "docs/spec_kit/versiones/v1_producto_postgres/6_contracts.md"
+    version = "v2",
+    contratos = "docs/spec_kit/versiones/v2_persona_factura/6_contracts.md"
 }));
 
 // MapControllers enciende las rutas declaradas con atributos en los

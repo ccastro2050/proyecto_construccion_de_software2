@@ -46,7 +46,28 @@ catch (ArgumentException) { /* esperado */ }
 try { await servicio.ListarAsync(0); Verificar(false, "debió lanzar ArgumentException"); }
 catch (ArgumentException) { /* esperado */ }
 
-Console.WriteLine("CRITERIO 6 OK: el servicio funciona con el repositorio falso, sin PostgreSQL");
+// ------------------------------------------------------------
+// v2 — la prueba CRECE: el mismo guion, ahora sobre PERSONA con
+// SU repositorio falso. Si el molde se replicó bien, esto pasa
+// sin sorpresas (esa es la evidencia del criterio 6 de la v2).
+// ------------------------------------------------------------
+
+var servicioPersona = new ServicioPersona(new RepositorioPersonaFalsoEnMemoria());
+
+await servicioPersona.CrearAsync(new Persona { Codigo = "T1", Nombre = "Test", Email = "t@t.co", Telefono = "300" });
+Verificar((await servicioPersona.ListarAsync(10))[0].Codigo == "T1", "persona: crear + listar");
+Verificar((await servicioPersona.ObtenerAsync("T1")).Nombre == "Test", "persona: obtener por código");
+Verificar(await servicioPersona.ActualizarAsync("T1", new() { ["telefono"] = "301" }) == 1, "persona: actualizar");
+Verificar((await servicioPersona.ObtenerAsync("T1")).Telefono == "301", "persona: el teléfono quedó en 301");
+Verificar(await servicioPersona.EliminarAsync("T1") == 1, "persona: eliminar");
+
+try { await servicioPersona.ObtenerAsync("NOEXISTE"); Verificar(false, "persona: debió lanzar NoEncontradoExcepcion"); }
+catch (NoEncontradoExcepcion) { /* esperado */ }
+
+try { await servicioPersona.ActualizarAsync("T1", new()); Verificar(false, "persona: debió lanzar ArgumentException"); }
+catch (ArgumentException) { /* esperado */ }
+
+Console.WriteLine("CRITERIO 6 OK: producto y persona funcionan con repositorios falsos, sin PostgreSQL");
 
 // Mini-verificador (función local): si la condición es falsa, reporta
 // y sale con error (terminar con 0 = pasó; con 1 = falló).
@@ -111,6 +132,51 @@ class RepositorioFalsoEnMemoria : IRepositorioProducto
     public Task<int> EliminarAsync(string codigo)
     {
         // Remove devuelve true si la llave existía; se traduce a 1/0 filas:
+        return Task.FromResult(_datos.Remove(codigo) ? 1 : 0);
+    }
+}
+
+// ------------------------------------------------------------
+// v2 — el repositorio falso de PERSONA: el gemelo del de arriba,
+// calcado igual que se calcó toda la rebanada. Cumple
+// IRepositorioPersona con un diccionario en memoria.
+// ------------------------------------------------------------
+class RepositorioPersonaFalsoEnMemoria : IRepositorioPersona
+{
+    private readonly Dictionary<string, Persona> _datos = new();
+
+    public Task<List<Persona>> ObtenerTodasAsync(int limite)
+    {
+        var lista = _datos.Values.OrderBy(p => p.Codigo).Take(limite).ToList();
+        return Task.FromResult(lista);
+    }
+
+    public Task<Persona?> ObtenerPorCodigoAsync(string codigo)
+    {
+        _datos.TryGetValue(codigo, out var persona);
+        return Task.FromResult(persona);
+    }
+
+    public Task CrearAsync(Persona persona)
+    {
+        _datos[persona.Codigo] = persona;
+        return Task.CompletedTask;
+    }
+
+    public Task<int> ActualizarAsync(string codigo, Dictionary<string, object> datos)
+    {
+        if (!_datos.TryGetValue(codigo, out var persona))
+        {
+            return Task.FromResult(0);
+        }
+        if (datos.TryGetValue("nombre", out var nombre)) { persona.Nombre = (string)nombre; }
+        if (datos.TryGetValue("email", out var email)) { persona.Email = (string)email; }
+        if (datos.TryGetValue("telefono", out var telefono)) { persona.Telefono = (string)telefono; }
+        return Task.FromResult(1);
+    }
+
+    public Task<int> EliminarAsync(string codigo)
+    {
         return Task.FromResult(_datos.Remove(codigo) ? 1 : 0);
     }
 }
