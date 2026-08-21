@@ -66,7 +66,7 @@ frontend Flask (Jinja2) (v6) **sin reescribir lo construido**.
   el body contra ellas → **422 con lista de errores** antes de tocar el
   controlador.
 - Capas con interfaces: `IRepositorioProducto` implementada por
-  `RepositorioProductoPostgres` (ADO.NET); el servicio depende de la
+  `RepositorioProductoPostgres` (Dapper: SQL a mano); el servicio depende de la
   interfaz.
 - Configuración por `appsettings.json`, sobrescribible por variables de
   entorno (`ConnectionStrings__Postgres`) — la vía natural en Docker.
@@ -82,7 +82,8 @@ frontend Flask (Jinja2) (v6) **sin reescribir lo construido**.
 - Endpoints para otras entidades (v2) — las otras 11 tablas EXISTEN en la
   BD, pero el código de la v1 solo puede nombrar `producto`.
 - Otros motores y la fábrica de repositorios (v3, v4).
-- ORM (Entity Framework) y autenticación — no son de la v1.
+- ORM de entidades (Entity Framework) y autenticación — no son de la
+  v1 (Dapper NO es ORM de entidades: es el micro-ejecutor del Art. 2).
 
 ## 3. Requisitos funcionales
 
@@ -129,8 +130,9 @@ inexistente → 404.
 - **RNF1 — Capas estrictas:** el controlador no toca SQL; el servicio no
   conoce HTTP ni el motor; el repositorio no conoce HTTP. Contratos con
   `interface` de C#.
-- **RNF2 — Sin ORM:** ADO.NET con el SQL visible; único paquete:
-  `Npgsql` (Artículo 2).
+- **RNF2 — SQL a la vista:** el SQL se escribe a mano y Dapper solo lo
+  ejecuta y mapea (sin Entity Framework); paquetes: `Npgsql`, `Dapper`
+  y `Swashbuckle` (Artículo 2).
 - **RNF3 — SQL SIEMPRE parametrizado** (`@parametro`); nada de concatenar
   valores.
 - **RNF4 — Asíncrona:** todo el acceso a datos con `async/await`.

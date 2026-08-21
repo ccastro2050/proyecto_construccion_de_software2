@@ -11,7 +11,7 @@
 | Pieza | Elección | Por qué |
 |---|---|---|
 | Lenguaje / framework | **C# sobre ASP.NET Core (.NET 10)** | El stack del curso; controladores con atributos, DI integrada, async nativo |
-| Acceso a datos | **ADO.NET** (`Npgsql`) con SQL parametrizado | SQL visible — sin ORM que lo esconda (constitución, Art. 2) |
+| Acceso a datos | **Dapper** sobre `Npgsql`, con SQL parametrizado a mano | SQL visible — Dapper mapea fila→objeto pero NO genera SQL (Art. 2, D1) |
 | Validación | **Una petición por verbo** con anotaciones (`[Required]`, `[Range]`…) | El framework valida el body contra la petición y responde 422 — la petición ES la frontera |
 | Motor (v1) | **PostgreSQL 2022** (contenedor oficial) | El motor natural del ecosistema .NET; los otros llegan en v3/v4 |
 | Contenedor de la API | `mcr.microsoft.com/dotnet/sdk:10.0` + `dotnet watch` | Guardar un `.cs` recompila y reinicia solo (ciclo de desarrollo del curso) |
@@ -41,7 +41,7 @@
     │   └── ServicioProducto.cs       # reglas de negocio; recibe IRepositorioProducto
     ├── Repositorios/
     │   ├── IRepositorioProducto.cs   # interface: 5 métodos de datos (async)
-    │   └── RepositorioProductoPostgres.cs   # ADO.NET + SQL parametrizado
+    │   └── RepositorioProductoPostgres.cs   # Dapper + SQL a mano parametrizado
     ├── Excepciones/
     │   └── NoEncontradoExcepcion.cs  # la excepción de negocio que el controller vuelve 404
     └── pruebas/
@@ -57,7 +57,7 @@ HTTP → ASP.NET routing        (los atributos [HttpGet]/[HttpPost]… deciden e
      → ProductoController     (try/catch: traduce excepciones a códigos HTTP)
      → IServicioProducto      (interfaz — reglas de negocio)
      → IRepositorioProducto   (interfaz — el servicio no sabe qué motor hay detrás)
-     → RepositorioProductoPostgres (ADO.NET + parámetros @)
+     → RepositorioProductoPostgres (Dapper + parámetros @)
      → PostgreSQL
 ```
 
@@ -110,17 +110,20 @@ Cuando v3 agregue PostgreSQL, **solo esta sección** se convierte en la
 fábrica real — controllers y servicios no se tocan (ese es el examen de la
 v3).
 
-### 4.4 SQL del repositorio (ADO.NET, siempre parametrizado)
+### 4.4 SQL del repositorio (Dapper, siempre parametrizado)
 ```sql
-SELECT LIMIT @limite codigo, nombre, stock, valorunitario FROM producto ORDER BY codigo
+SELECT codigo, nombre, stock, valorunitario FROM producto ORDER BY codigo LIMIT @limite
 SELECT … WHERE codigo = @codigo
 INSERT INTO producto (codigo, nombre, stock, valorunitario) VALUES (@codigo, @nombre, @stock, @valorunitario)
 UPDATE producto SET … WHERE codigo = @codigo_clave   -- los campos que lleguen (PUT: los 3; PATCH: los enviados)
 DELETE FROM producto WHERE codigo = @codigo
 ```
-- `LIMIT @limite` es el "LIMIT" del dialecto PostgreSQL (y acepta parámetro).
-- Conexión por operación con `await using` (se cierra sola, incluso con
-  error); todo `async`.
+- `LIMIT @limite` es el Top-N del dialecto PostgreSQL (va al FINAL y
+  acepta parámetro).
+- Dapper ejecuta ese SQL tal cual: `QueryAsync<Producto>` para lecturas
+  (mapea columna→propiedad por nombre) y `ExecuteAsync` para escrituras
+  (devuelve filas afectadas). Conexión por operación con `await using`;
+  todo `async`.
 - El SET del UPDATE se arma solo con columnas que salen de las PETICIONES
   (lista blanca), nunca con claves del cliente.
 - Detalle amable del motor: en PostgreSQL, las filas afectadas de un UPDATE

@@ -115,7 +115,7 @@ proyecto_construccion_de_software2/
 │                                #   los 13 endpoints en orden didáctico (alternativa a Swagger)
 │
 ├── api_facturas/                # LA API DE LA v1 — C#/ASP.NET Core (puerto 8042)
-│   ├── ApiFacturas.csproj       # El proyecto .NET (paquetes: Npgsql y Swashbuckle)
+│   ├── ApiFacturas.csproj       # El proyecto .NET (paquetes: Npgsql, Dapper y Swashbuckle)
 │   ├── Program.cs               # Punto de entrada: ENSAMBLADOR (DI) + 422 + rutas
 │   ├── appsettings.json         # Cadena de conexión (default localhost:15442)
 │   ├── Dockerfile               # Imagen sdk:10.0 + dotnet watch
@@ -124,7 +124,7 @@ proyecto_construccion_de_software2/
 │   ├── Peticiones/              # Los body por verbo (Crear/Reemplazo/Actualizar):
 │   │                            #   sus anotaciones validan la entrada → 422
 │   ├── Servicios/               # Capa 2 — negocio: interfaz + reglas
-│   ├── Repositorios/            # Capa 3 — datos: interfaz + ADO.NET/PostgreSQL
+│   ├── Repositorios/            # Capa 3 — datos: interfaz + Dapper (SQL a mano)
 │   ├── Excepciones/             # NoEncontradoExcepcion (el servicio la lanza → 404)
 │   └── pruebas/                 # Proyecto de consola: el servicio con repositorio
 │                                #   FALSO en memoria (criterio 6, corre sin BD)
