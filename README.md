@@ -1,6 +1,6 @@
 # Proyecto Construcción de Software — construcción por versiones
 
-Proyecto de curso (ITM). Aquí NO se descarga un sistema terminado:
+Proyecto de curso (USB Medellín). Aquí NO se descarga un sistema terminado:
 **se construye un sistema real por versiones en C# / ASP.NET Core**, guiado
 por especificaciones. El repositorio siempre contiene la **versión en
 curso, funcionando** — usted la ejecuta, la estudia y luego la
@@ -196,5 +196,5 @@ de aceptación (commit + tag). Mapa completo:
 
 ---
 
-*Proyecto Construcción de Software · ITM · Base de datos bdfacturas
+*Proyecto Construcción de Software · USB Medellín · Base de datos bdfacturas
 (facturación + RBAC).*
