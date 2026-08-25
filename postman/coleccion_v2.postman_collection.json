@@ -1,11 +1,11 @@
 {
   "info": {
     "name": "API Facturas v2 — Construcción de Software (C# + PostgreSQL)",
-    "description": "Acumulativa: las 13 peticiones de la v1 (producto) + las 12 de la v2 (persona y factura maestro-detalle con SPs y triggers). Orden didáctico; cada petición explica en su descripción qué esperar. La variable {{base}} apunta al proyecto del curso (localhost:8042); para probar SU reconstrucción cámbiela a localhost:8142.",
+    "description": "Acumulativa: las 13 peticiones de la v1 (producto) + las 12 de la v2 (persona y factura maestro-detalle con SPs y triggers). Orden didáctico; cada petición explica en su descripción qué esperar. La variable {{base}} apunta al proyecto del curso (localhost:8043); para probar SU reconstrucción cámbiela a localhost:8143.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "base", "value": "http://localhost:8042" }
+    { "key": "base", "value": "http://localhost:8043" }
   ],
   "item": [
     {

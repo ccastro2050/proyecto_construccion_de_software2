@@ -95,7 +95,7 @@ usted no escribe los pasos, escribe el resultado (el mismo espíritu de SDD).
       - pgdata:/var/lib/postgresql/data   # volumen nombrado: los datos sobreviven
       - ./db/bdfacturas_postgres.sql:/docker-entrypoint-initdb.d/bdfacturas_postgres.sql:ro
     ports:
-      - "15442:5432"                 # "puerto en su PC : puerto interno"
+      - "15443:5432"                 # "puerto en su PC : puerto interno"
     healthcheck:                     # ¿la BD ya RESPONDE consultas?
       test: ["CMD-SHELL", "pg_isready -U postgres -d bdfacturas_postgres_local"]
 ```
@@ -118,7 +118,7 @@ conocerá por contraste.
       - /app/bin                     # volúmenes anónimos: compilados de Linux
       - /app/obj                     #   sin mezclarse con los de Windows
     ports:
-      - "8042:8042"
+      - "8043:8043"
     environment:
       # El host es el NOMBRE del servicio (postgres), no localhost:
       ConnectionStrings__Postgres: "Host=postgres;Port=5432;…"
@@ -131,7 +131,7 @@ conocerá por contraste.
 Las tres ideas que este archivo demuestra:
 
 1. **Dos redes de nombres**: hacia su PC, puertos publicados
-   (`localhost:8042`, `localhost:15442`); entre contenedores, nombres de
+   (`localhost:8043`, `localhost:15443`); entre contenedores, nombres de
    servicio (`postgres:5432`). El mismo motor tiene dos "direcciones"
    según quién lo llame.
 2. **Dependencias con condiciones**: `service_healthy` (el motor

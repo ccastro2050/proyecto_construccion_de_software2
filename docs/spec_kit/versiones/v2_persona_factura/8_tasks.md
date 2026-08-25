@@ -18,7 +18,7 @@
 - [ ] `docker compose up -d` (la BD ya tiene TODO lo que la v2 necesita:
       tablas, SPs y triggers están en `db/bdfacturas_postgres.sql` desde la v1).
 
-**Verificar:** un cliente SQL a `localhost:15442` ve los SPs
+**Verificar:** un cliente SQL a `localhost:15443` ve los SPs
 (`SELECT name FROM sys.procedures` incluye los 4 de factura) y
 `SELECT count(*) FROM persona` da **6**.
 

@@ -26,8 +26,8 @@
 └── api_facturas/
     ├── ApiFacturas.csproj            # el proyecto .NET (paquetes: Npgsql y Swashbuckle)
     ├── Program.cs                    # punto de entrada: ENSAMBLADOR (DI) + 422 + rutas
-    ├── appsettings.json              # cadena de conexión (default localhost:15442)
-    ├── Dockerfile                    # sdk:10.0 + dotnet watch (puerto 8042)
+    ├── appsettings.json              # cadena de conexión (default localhost:15443)
+    ├── Dockerfile                    # sdk:10.0 + dotnet watch (puerto 8043)
     ├── Modelos/
     │   └── Producto.cs               # el MODELO = la ENTIDAD: 4 propiedades tipadas
     ├── Peticiones/
@@ -153,8 +153,8 @@ contenedor inicializador: esa lección llegará con el segundo motor.)
 ## 5. Docker: un solo comando desde v1
 
 La constitución (Artículo 4) manda: `docker compose up -d --build` deja TODO
-funcionando. En v1 eso son **dos servicios**: `postgres` (15442 al host,
-se siembra solo) y `api-facturas` (8042, código montado +
+funcionando. En v1 eso son **dos servicios**: `postgres` (15443 al host,
+se siembra solo) y `api-facturas` (8043, código montado +
 `dotnet watch`, `bin/` y `obj/` en volúmenes anónimos para no mezclar
 compilados de Linux con los de Windows). El detalle línea por línea está en
 el `docker-compose.yml` de la raíz, comentado.

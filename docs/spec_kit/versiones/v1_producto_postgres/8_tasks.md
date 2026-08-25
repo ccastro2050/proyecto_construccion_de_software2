@@ -12,21 +12,21 @@
       `bdfacturas_postgres.sql` (la BD completa en dialecto PostgreSQL —
       no se escribe ni se genera con IA; ver [3_plan.md](3_plan.md) §4.6).
 - [ ] Crear el `docker-compose.yml` con el servicio `postgres` (imagen
-      16-alpine, volumen `pgdata`, puerto 15442, healthcheck con
+      16-alpine, volumen `pgdata`, puerto 15443, healthcheck con
       pg_isready, y el script montado en `/docker-entrypoint-initdb.d/`)
       — ver [3_plan.md](3_plan.md) §5. Levantar: `docker compose up -d`.
 - [ ] Crear `api_facturas/` con subcarpetas `Modelos/`, `Peticiones/`, `Controllers/`,
       `Servicios/`, `Repositorios/`, `Excepciones/` y `pruebas/`.
 
 **Verificar:** `docker compose ps` muestra `postgres (healthy)`; un
-cliente SQL a `localhost:15442` (usuario `postgres`) ve las **12 tablas**
+cliente SQL a `localhost:15443` (usuario `postgres`) ve las **12 tablas**
 y `SELECT count(*) FROM producto` da **8**.
 
 ## Fase 1 — El proyecto .NET y el modelo Producto (la clase entidad)
 - [ ] `ApiFacturas.csproj`: proyecto Web de .NET 10, paquete
       `Npgsql`, y la exclusión de `pruebas/**`.
 - [ ] `appsettings.json` con la cadena de conexión (default
-      `localhost:15442` para correr sin Docker).
+      `localhost:15443` para correr sin Docker).
 - [ ] `Modelos/Producto.cs`: la clase entidad con las 4 propiedades
       tipadas `{ get; set; }` (`Codigo` string, `Nombre` string, `Stock`
       int, `Valorunitario` decimal). En C#, las propiedades SON los
@@ -85,9 +85,9 @@ con `errores[]`), y el contraste PUT vs PATCH con `{"stock": 99}` (422 vs
 
 ## Fase 6 — Docker: un solo comando
 - [ ] `api_facturas/Dockerfile`: imagen `dotnet/sdk:10.0`, `dotnet watch`,
-      `ASPNETCORE_URLS` en 8042, `DOTNET_USE_POLLING_FILE_WATCHER`.
+      `ASPNETCORE_URLS` en 8043, `DOTNET_USE_POLLING_FILE_WATCHER`.
 - [ ] Agregar al `docker-compose.yml` el servicio `api-facturas`: `build:`,
-      código montado + `bin/` y `obj/` en volúmenes anónimos, puerto 8042,
+      código montado + `bin/` y `obj/` en volúmenes anónimos, puerto 8043,
       variable `ConnectionStrings__Postgres` con el host interno
       `postgres:5432`, y `depends_on` de `postgres` con
       `condition: service_healthy`.

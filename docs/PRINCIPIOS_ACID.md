@@ -68,7 +68,7 @@ curso usa un motor relacional.
 
 ## 5. Ejercicio (véalo usted mismo)
 
-Conéctese a la BD (SQLTools a `localhost:15442`, usuario `sa`) y pruebe:
+Conéctese a la BD (SQLTools a `localhost:15443`, usuario `sa`) y pruebe:
 
 ```sql
 BEGIN TRANSACTION;

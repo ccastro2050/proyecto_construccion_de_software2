@@ -2,7 +2,7 @@
 # Proyecto Construcción de Software — versión 1:
 # api_facturas (C#/ASP.NET Core) + PostgreSQL
 #
-#   Navegador → API FACTURAS (C#, :8042) → PostgreSQL (bdfacturas)
+#   Navegador → API FACTURAS (C#, :8043) → PostgreSQL (bdfacturas)
 #
 # Uso: docker compose up -d --build     (UN solo comando)
 # Reset de la BD: docker compose down -v && docker compose up -d
@@ -25,7 +25,7 @@ services:
       # necesita contenedor inicializador:
       - ./db/bdfacturas_postgres.sql:/docker-entrypoint-initdb.d/bdfacturas_postgres.sql:ro
     ports:
-      - "15442:5432"     # puerto en su PC (para SQLTools/pgAdmin opcional)
+      - "15443:5432"     # puerto en su PC (para SQLTools/pgAdmin opcional)
     healthcheck:
       # ¿La BD ya RESPONDE consultas? (no solo "el contenedor existe")
       test: ["CMD-SHELL", "pg_isready -U postgres -d bdfacturas_postgres_local"]
@@ -42,7 +42,7 @@ services:
       - /app/obj                 #   sin mezclarse con los compilados de Windows
     restart: unless-stopped
     ports:
-      - "8042:8042"              # http://localhost:8042
+      - "8043:8043"              # http://localhost:8043
     environment:
       # La cadena usa el NOMBRE del servicio como host (postgres:5432),
       # no localhost: dentro de la red interna de compose los servicios

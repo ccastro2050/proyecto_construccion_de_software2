@@ -9,7 +9,7 @@
 >
 > **Prerrequisitos:** VS Code en Windows y el proyecto corriendo
 > (`docker compose up -d --build` desde la raíz — ver el
-> [README](../README.md)). PostgreSQL queda publicado en `localhost:15442`.
+> [README](../README.md)). PostgreSQL queda publicado en `localhost:15443`.
 
 ---
 
@@ -74,7 +74,7 @@ Llene el formulario con los datos del `docker-compose.yml`:
 | Connection name | `bdfacturas (csharp)` | Libre — cómo se verá en el panel |
 | Connect using | `Server and Port` | Conexión directa por red |
 | Server Address | `localhost` | El puerto está publicado hacia SU PC |
-| Port | `15442` | El puerto del host del compose (`15442:1433`) |
+| Port | `15443` | El puerto del host del compose (`15443:1433`) |
 | Database | `bdfacturas_postgres_local` | La BD que crea el inicializador |
 | Username | `sa` | Usuario administrador del contenedor |
 | Use password | `Save password` | Didáctico: credenciales de juguete |
@@ -90,8 +90,8 @@ opciones específicas del driver, visibles en la captura):
 | `encrypt` | ✅ (viene marcado) | La conexión viaja cifrada |
 | `trustServerCertificate` | ✅ **márquelo usted** | El mismo *Trust Server Certificate* de pgAdmin: el contenedor usa certificado autofirmado — sin esto el test falla |
 
-> El puerto es la clave: **15442, no 1433**. Dentro de la red de Docker
-> la BD escucha en 1433, pero hacia su PC el compose la publica en 15442
+> El puerto es la clave: **15443, no 1433**. Dentro de la red de Docker
+> la BD escucha en 1433, pero hacia su PC el compose la publica en 15443
 > (las "dos direcciones" que explica
 > [CONCEPTOS_DOCKER.md](CONCEPTOS_DOCKER.md)). La API usa la interna;
 > usted, desde Windows, la publicada.
@@ -107,7 +107,7 @@ connected!"* en verde; luego **SAVE CONNECTION** y **CONNECT NOW**.
 > **Si le sale este error al conectar o al hacer TEST:**
 >
 > ```
-> Error opening connection Failed to connect to localhost:15442
+> Error opening connection Failed to connect to localhost:15443
 > - self signed certificate; if the root CA is installed locally,
 > try running Node.js with --use-system-ca
 > ```
@@ -131,7 +131,7 @@ connected!"* en verde; luego **SAVE CONNECTION** y **CONNECT NOW**.
 >        "name": "bdfacturas (csharp)",
 >        "driver": "MSSQL",
 >        "server": "localhost",
->        "port": 15442,
+>        "port": 15443,
 >        "database": "bdfacturas_postgres_local",
 >        "username": "sa",
 >        "password": "Construccion123!",
@@ -265,7 +265,7 @@ del editor.
 
 > El mismo respeto que en pgAdmin: DELETE **siempre con WHERE**. Y la misma
 > moraleja: entre el paso 1 y el 3, PR009 también existía para la API
-> (`http://localhost:8042/api/producto/PR009`) — un solo dato, muchos
+> (`http://localhost:8043/api/producto/PR009`) — un solo dato, muchos
 > clientes.
 
 ---
@@ -291,7 +291,7 @@ Server del compose.
 | Paso | Qué aprendió |
 |---|---|
 | 0 | Instalar SQLTools + driver de PostgreSQL (y el tropiezo del driver faltante) |
-| 1 | Crear la conexión (localhost:15442) con test y guardarla |
+| 1 | Crear la conexión (localhost:15443) con test y guardarla |
 | 2 | Explorar el árbol: tablas, columnas, PK; la lupa |
 | 3 | SQL propio con `Ctrl+E Ctrl+E`: el JOIN de 3 tablas |
 | 4 | Ciclo de escritura: INSERT → verificar → DELETE con WHERE |
