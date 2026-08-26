@@ -159,9 +159,7 @@ v3  el RESTO de las entidades: toda la bdfacturas cubierta con
     UN motor (usuario con BCrypt, tablas puente)
 v4  segundo motor (SQL Server) — nace la fábrica de repositorios
 v5  tercer motor (MariaDB) + compose completo
-v6  API GENÉRICA de plataforma: /api/{tabla} multi-motor + JWT +
-    consultas parametrizadas + procedimientos almacenados
-v7  frontend FLASK (Jinja2): CRUD de las 12 entidades + login + facturación
+v6  frontend FLASK (Jinja2): CRUD de las 12 entidades + login + facturación
 ```
 
 La regla del juego: la **constitución** es permanente, cada versión tiene

@@ -8,7 +8,7 @@
 # Reset de la BD: docker compose down -v && docker compose up -d
 #
 # Este archivo CRECE por versiones: más adelante llegarán otros
-# motores, la API genérica y el front Flask (Jinja2).
+# motores y el front Flask (Jinja2).
 # ==============================================================
 services:
 
