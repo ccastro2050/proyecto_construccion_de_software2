@@ -14,6 +14,7 @@ services:
 
   # --- PostgreSQL 16 (liviano: la imagen pesa ~50 MB) ---
   postgres:
+    restart: unless-stopped   # si el PC se reinicia, este servicio revive con Docker
     image: postgres:16-alpine
     environment:
       POSTGRES_PASSWORD: "Construccion123!"    # clave del superusuario 'postgres'
