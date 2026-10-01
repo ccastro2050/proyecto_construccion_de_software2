@@ -1,0 +1,128 @@
+// RolUsuarioController — la capa HTTP del puente rol_usuario (v3).
+// Sin PUT/PATCH (una asignación no se edita); el DELETE recibe LA
+// PAREJA en la URL y borra exactamente esa.
+
+using ApiFacturas.Excepciones;
+using ApiFacturas.Modelos;
+using ApiFacturas.Peticiones;
+using ApiFacturas.Servicios;
+using Microsoft.AspNetCore.Mvc;
+
+namespace ApiFacturas.Controllers;
+
+[ApiController]
+[Route("api/rol-usuario")]
+public class RolUsuarioController : ControllerBase
+{
+    private readonly IServicioRolUsuario _servicio;
+
+    public RolUsuarioController(IServicioRolUsuario servicio)
+    {
+        _servicio = servicio;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Listar([FromQuery] int limite = 1000)
+    {
+        try
+        {
+            var lista = await _servicio.ListarAsync(limite);
+            if (lista.Count == 0) { return NoContent(); }
+            return Ok(new { tabla = "rol_usuario", limite, total = lista.Count, datos = lista });
+        }
+        catch (ArgumentException e)
+        {
+            return StatusCode(400, new { estado = 400, mensaje = "Parámetros inválidos.", detalle = e.Message });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new { estado = 500, mensaje = "Error interno.", detalle = e.Message });
+        }
+    }
+
+    [HttpGet("usuario/{email}")]
+    public async Task<IActionResult> PorLadoA(string email)
+    {
+        try
+        {
+            var lista = await _servicio.ObtenerPorUsuarioAsync(email);
+            return Ok(new { tabla = "rol_usuario", total = lista.Count, datos = lista });
+        }
+        catch (ArgumentException e)
+        {
+            return StatusCode(400, new { estado = 400, mensaje = "Parámetros inválidos.", detalle = e.Message });
+        }
+        catch (NoEncontradoExcepcion e)
+        {
+            return StatusCode(404, new { estado = 404, mensaje = "Sin asignaciones.", detalle = e.Message });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new { estado = 500, mensaje = "Error interno.", detalle = e.Message });
+        }
+    }
+
+    [HttpGet("rol/{idrol:int}")]
+    public async Task<IActionResult> PorLadoB(int idrol)
+    {
+        try
+        {
+            var lista = await _servicio.ObtenerPorRolAsync(idrol);
+            return Ok(new { tabla = "rol_usuario", total = lista.Count, datos = lista });
+        }
+        catch (ArgumentException e)
+        {
+            return StatusCode(400, new { estado = 400, mensaje = "Parámetros inválidos.", detalle = e.Message });
+        }
+        catch (NoEncontradoExcepcion e)
+        {
+            return StatusCode(404, new { estado = 404, mensaje = "Sin asignaciones.", detalle = e.Message });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new { estado = 500, mensaje = "Error interno.", detalle = e.Message });
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Crear([FromBody] RolUsuarioCrear body)
+    {
+        try
+        {
+            var asignacion = new RolUsuario
+            {
+                Fkemail = body.Fkemail!,
+                Fkidrol = body.Fkidrol!.Value,
+            };
+            await _servicio.CrearAsync(asignacion);
+            return Ok(new { estado = 200, mensaje = "Asignación creada exitosamente." });
+        }
+        catch (Exception e)
+        {
+            // Duplicado (PK compuesta) o llave inexistente (FK) → 500:
+            return StatusCode(500, new { estado = 500, mensaje = "Error interno.", detalle = e.Message });
+        }
+    }
+
+    [HttpDelete("{email}/{idrol:int}")]
+    public async Task<IActionResult> Eliminar(string email, int idrol)
+    {
+        try
+        {
+            var filas = await _servicio.EliminarAsync(email, idrol);
+            return Ok(new { estado = 200, mensaje = "Asignación eliminada exitosamente.", filasEliminadas = filas });
+        }
+        catch (ArgumentException e)
+        {
+            return StatusCode(400, new { estado = 400, mensaje = "Parámetros inválidos.", detalle = e.Message });
+        }
+        catch (NoEncontradoExcepcion e)
+        {
+            return StatusCode(404, new { estado = 404, mensaje = "Asignación no encontrada.", detalle = e.Message });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new { estado = 500, mensaje = "Error interno.", detalle = e.Message });
+        }
+    }
+}

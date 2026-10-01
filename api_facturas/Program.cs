@@ -48,6 +48,43 @@ builder.Services.AddScoped<IRepositorioFactura>(
     _ => new RepositorioFacturaPostgres(cadenaConexion));
 builder.Services.AddScoped<IServicioFactura, ServicioFactura>();
 
+// v3 — las 8 rebanadas que completan la BD: el ensamblador crece por
+// última vez "a mano". Nota didáctica: esta lista YA duele — ese dolor
+// es el argumento de la fábrica real que llegará con el segundo motor.
+builder.Services.AddScoped<IRepositorioEmpresa>(
+    _ => new RepositorioEmpresaPostgres(cadenaConexion));
+builder.Services.AddScoped<IServicioEmpresa, ServicioEmpresa>();
+builder.Services.AddScoped<IRepositorioCliente>(
+    _ => new RepositorioClientePostgres(cadenaConexion));
+builder.Services.AddScoped<IServicioCliente, ServicioCliente>();
+builder.Services.AddScoped<IRepositorioVendedor>(
+    _ => new RepositorioVendedorPostgres(cadenaConexion));
+builder.Services.AddScoped<IServicioVendedor, ServicioVendedor>();
+builder.Services.AddScoped<IRepositorioUsuario>(
+    _ => new RepositorioUsuarioPostgres(cadenaConexion));
+builder.Services.AddScoped<IServicioUsuario, ServicioUsuario>();
+builder.Services.AddScoped<IRepositorioRol>(
+    _ => new RepositorioRolPostgres(cadenaConexion));
+builder.Services.AddScoped<IServicioRol, ServicioRol>();
+builder.Services.AddScoped<IRepositorioRuta>(
+    _ => new RepositorioRutaPostgres(cadenaConexion));
+builder.Services.AddScoped<IServicioRuta, ServicioRuta>();
+builder.Services.AddScoped<IRepositorioRolUsuario>(
+    _ => new RepositorioRolUsuarioPostgres(cadenaConexion));
+builder.Services.AddScoped<IServicioRolUsuario, ServicioRolUsuario>();
+builder.Services.AddScoped<IRepositorioRutaRol>(
+    _ => new RepositorioRutaRolPostgres(cadenaConexion));
+builder.Services.AddScoped<IServicioRutaRol, ServicioRutaRol>();
+
+// v2 — el ensamblador CRECE (y es lo único de la v1 que crece):
+// las rebanadas nuevas se registran igual que la primera.
+builder.Services.AddScoped<IRepositorioPersona>(
+    _ => new RepositorioPersonaPostgres(cadenaConexion));
+builder.Services.AddScoped<IServicioPersona, ServicioPersona>();
+builder.Services.AddScoped<IRepositorioFactura>(
+    _ => new RepositorioFacturaPostgres(cadenaConexion));
+builder.Services.AddScoped<IServicioFactura, ServicioFactura>();
+
 // ------------------------------------------------------------
 // 2. Los controladores y la validación de la petición (el 422)
 // ------------------------------------------------------------
