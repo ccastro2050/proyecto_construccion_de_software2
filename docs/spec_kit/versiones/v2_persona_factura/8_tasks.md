@@ -92,7 +92,41 @@ para ver el JSON que el repositorio va a recibir.
 [7_quickstart.md](7_quickstart.md) §3 — lecturas con nombres, creación con
 stock descontado por el trigger, 422/500/409/404 según el caso.
 
-## Fase 7 — Cierre de la versión
+## Fase 7 — LAS PANTALLAS de los recursos con FK
+
+Una pantalla por recurso, con el desplegable de la clave foránea **cargado de
+la API**.
+
+| Qué se escribe | Dónde |
+|---|---|
+| El servicio del recurso | `front_blazor/Servicios/Servicio<Recurso>.cs` |
+| La pantalla | `front_blazor/Components/Pages/<Recursos>.razor` |
+| El menú, con la entrada nueva | `Components/Layout/NavMenu.razor` |
+
+**La parte que no es obvia:** la pantalla necesita **dos** llamadas al abrirse
+—la lista del recurso y el catálogo para el desplegable—, y la segunda es la
+que se olvida. Un `<select>` vacío no da error: simplemente no deja crear nada.
+
+**Verificación:** abra la pantalla y despliegue el `<select>`. Tiene que estar
+lleno, mostrando nombres.
+
+## Fase 8 — EL FORMULARIO INTEGRADO de factura (maestro-detalle)
+
+La pantalla `/facturas`: el maestro y el detalle **en una sola**, con un solo
+envío.
+
+| Qué se escribe | Qué resuelve |
+|---|---|
+| El estado de las líneas **en memoria del componente** | Agregar y quitar antes de guardar, sin tocar la API |
+| Un solo `POST` con la factura y sus líneas | Llama a `sp_insertar_factura_y_productosporfactura` |
+| El total **mostrado y no enviado** | Lo calcula `trg_actualizar_totales_y_stock` |
+| El botón de **anular**, no de eliminar | `sp_anular_factura` restaura el stock |
+
+**Verificación — y es la que no se puede simular:** agregue tres líneas, quite
+una, guarde, y consulte la factura. **Tienen que llegar dos.** Después anule la
+factura y compruebe que **el stock de los productos volvió a subir**.
+
+## Fase 9 — Cierre de la versión
 - [ ] **Regresión v1** (criterio 1): el smoke test de la v1 completo, sin
       cambios (salvo `"version":"v2"`).
 - [ ] Smoke test v2 completo ([7_quickstart.md](7_quickstart.md) §3).

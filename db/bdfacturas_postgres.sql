@@ -164,22 +164,36 @@ INSERT INTO rol (id, nombre) VALUES
 SELECT setval('rol_id_seq', (SELECT MAX(id) FROM rol));
 
 -- Rutas
+-- ---------------------------------------------------------------------------
+--  Los nombres de `ruta` NO son rutas HTTP, y por eso no empiezan con /
+--
+--  Antes decian '/producto', '/usuario'… y se confundian con los endpoints de
+--  la API —/api/producto—, que son otra cosa: estos son PANTALLAS del front y
+--  PERMISOS, y los consume verificar_acceso_ruta.
+--
+--  La notacion con punto lo deja claro:
+--     pantalla.productos    una pantalla a la que un rol entra o no
+--     permiso.crear         una accion concreta
+--
+--  Y el procedimiento usa el ID, no el texto: cambiar estos nombres no rompe
+--  nada. Lo que arregla es la confusion de quien lee.
+-- ---------------------------------------------------------------------------
 INSERT INTO ruta (ruta, descripcion) VALUES
-('/home', 'Página principal - Dashboard'),
-('/usuario', 'Gestión de usuarios'),
-('/factura', 'Gestión de facturas'),
-('/cliente', 'Gestión de clientes'),
-('/vendedor', 'Gestión de vendedores'),
-('/persona', 'Gestión de personas'),
-('/empresa', 'Gestión de empresas'),
-('/producto', 'Gestión de productos'),
-('/rol', 'Gestión de roles'),
-('/permiso', 'Gestión de permisos (asignación rol-ruta)'),
-('/permiso/crear', 'Crear permiso (POST)'),
-('/permiso/eliminar', 'Eliminar permiso (POST)'),
-('/ruta', 'Gestión de rutas del sistema'),
-('/ruta/crear', 'Crear ruta (POST)'),
-('/ruta/eliminar', 'Eliminar ruta (POST)');
+('pantalla.inicio', 'Página principal - Dashboard'),
+('pantalla.usuarios', 'Gestión de usuarios'),
+('pantalla.facturas', 'Gestión de facturas'),
+('pantalla.clientes', 'Gestión de clientes'),
+('pantalla.vendedores', 'Gestión de vendedores'),
+('pantalla.personas', 'Gestión de personas'),
+('pantalla.empresas', 'Gestión de empresas'),
+('pantalla.productos', 'Gestión de productos'),
+('pantalla.roles', 'Gestión de roles'),
+('pantalla.permisos', 'Gestión de permisos (asignación rol-ruta)'),
+('permiso.crear', 'Crear permiso (POST)'),
+('permiso.eliminar', 'Eliminar permiso (POST)'),
+('pantalla.rutas', 'Gestión de rutas del sistema'),
+('ruta.crear', 'Crear ruta (POST)'),
+('ruta.eliminar', 'Eliminar ruta (POST)');
 
 -- Usuarios
 INSERT INTO usuario (email, contrasena) VALUES

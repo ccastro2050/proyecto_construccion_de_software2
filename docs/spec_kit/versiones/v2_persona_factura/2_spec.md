@@ -110,6 +110,75 @@ Inexistente → **404**; ya anulada → **409** (`ConflictoExcepcion`).
 Los 7 contratos de la v1 (producto + diagnóstico) siguen cumpliéndose al
 pie de la letra; solo cambia `"version": "v2"` en el diagnóstico.
 
+### RF7 — Las pantallas de los recursos con clave foránea
+
+Una pantalla por recurso —`/clientes`, `/vendedores`— con **la clave foránea
+como lista desplegable cargada de la API**, no como un campo de texto donde el
+usuario digite un código.
+
+| | |
+|---|---|
+| **Qué hace la pantalla** | Al abrirse, pide a la API el catálogo del recurso referenciado y llena el `<select>` |
+| **Qué NO hace** | Pedirle al usuario que escriba `EMP03`. Si hay que digitar la llave, la integridad referencial la descubre el motor y el usuario ve un error que no entiende |
+| **Qué se revisa** | Que el desplegable muestre **el nombre** y mande **el código**. Es la diferencia entre lo que la persona lee y lo que viaja en el JSON |
+
+> **Esto es lo que la v2 enseña y la v1 no podía:** en la v1 ninguna tabla
+> tenía clave foránea, así que no había nada que elegir. Aquí aparece.
+
+### RF8 — El formulario integrado de factura (maestro-detalle)
+
+**Una sola pantalla, `/facturas`, que maneja la factura Y sus líneas.** No dos
+pantallas separadas, y esto es el corazón de la v2.
+
+| Parte | Qué lleva |
+|---|---|
+| **El maestro** | Los datos de la factura: cliente y vendedor **como desplegables**, fecha |
+| **El detalle** | Una tabla donde se **agregan y quitan líneas** antes de guardar: producto (desplegable), cantidad, valor |
+| **El total** | Se muestra calculado, **pero no se envía**: lo calcula el trigger `trg_actualizar_totales_y_stock` |
+| **El guardado** | **UN solo envío** con la factura y todas sus líneas juntas |
+
+**Tres cosas que se van a querer hacer y no se deben:**
+
+| | Por qué no |
+|---|---|
+| **Guardar la factura primero y las líneas después** | Si falla la segunda llamada queda una factura sin líneas. El `sp_insertar_factura_y_productosporfactura` existe justamente para que sea **una sola operación** |
+| **Calcular el total en el front y mandarlo** | El total lo pone el trigger. Si el front lo manda, hay dos verdades y una va a estar mal |
+| **Poner un botón de «eliminar factura»** | El borrado físico no se expone (ver §2). La palabra es **anular**, y llama a `sp_anular_factura` — que además **restaura el stock** |
+
+> **La pregunta que hay que hacerle a la pantalla:** agregue tres líneas, quite
+> una, y guarde. ¿Llegaron dos? Si el detalle se envía línea por línea a medida
+> que se agrega, la respuesta va a ser tres.
+
+### RF9 — El formulario integrado de usuario con sus roles
+
+**El mismo caso que la factura, y por eso va junto:** `usuario` y
+`rol_usuario` son un maestro con su detalle, y la base trae **sus propios
+procedimientos** para tratarlos como una sola cosa.
+
+| Procedimiento | Para qué |
+|---|---|
+| `listar_usuarios_con_roles` | La lista, con los roles de cada uno **ya pegados**. La API no hace el JOIN |
+| `consultar_usuario_con_roles` | Uno solo, con sus roles |
+| `crear_usuario_con_roles` | El usuario **y sus roles**, en una sola operación |
+| `actualizar_usuario_con_roles` | Ídem al editar |
+| `actualizar_roles_usuario` | Solo los roles, sin tocar el usuario |
+| `eliminar_usuario_con_roles` | Limpia el detalle y el maestro juntos |
+
+**La pantalla `/usuarios`:** los datos del usuario arriba, y los roles como
+**casillas o selección múltiple** —no un desplegable de uno, porque un usuario
+tiene varios—. Un solo envío.
+
+| | Por qué |
+|---|---|
+| **No se crea el usuario y después se le asignan los roles** | Quedaría un usuario sin rol si falla la segunda llamada. `crear_usuario_con_roles` existe para que sea UNA |
+| **No se arma el JOIN en C#** | `listar_usuarios_con_roles` ya lo trae. Repetirlo en la API es tener la consulta en dos sitios |
+| **La contraseña no se muestra al editar** | El campo va vacío: en blanco significa «no la cambie» |
+
+> **Y `rutarol` es el tercer caso del mismo patrón**, con `listar_rutarol`,
+> `crear_rutarol` y `eliminar_rutarol`: la tabla puente entre `ruta` y `rol`
+> —qué rol puede entrar a qué ruta—. **Su pantalla no decide permisos
+> todavía** (eso es la v3): solo administra la tabla.
+
 ## 4. Requisitos no funcionales
 
 - **RNF1 — Los de la v1 siguen todos** (capas estrictas, sin ORM, SQL
@@ -148,6 +217,20 @@ pie de la letra; solo cambia `"version": "v2"` en el diagnóstico.
 6. **Prueba de capas ampliada:** `dotnet run --project pruebas` ejercita
    producto Y persona con repositorios falsos en memoria — sin PostgreSQL —
    y termina en `CRITERIO 6 OK…`.
+
+### Y los de LAS PANTALLAS
+
+| | |
+|---|---|
+| **Los desplegables de FK traen datos de la API** | Abra `/clientes`: el `<select>` de empresa está lleno. Si está vacío, el front no pidió el catálogo |
+| **El desplegable muestra nombre y manda código** | Se ve «Acme S.A.S.» y en el JSON viaja `EMP03` |
+| **El formulario de factura es UNO** | Se agregan y quitan líneas **antes** de guardar, y se envía **una sola vez** |
+| **El total no lo manda el front** | Mire el JSON que sale: no lleva `total`. Lo pone el trigger |
+| **Agregar tres líneas, quitar una, guardar → llegan DOS** | Si llegan tres, el detalle se está enviando a medida que se agrega |
+| **No hay botón de «eliminar factura»** | Hay **anular**, y después de anular el stock volvió a subir |
+| **El usuario se crea CON sus roles, en un envío** | Y la lista los muestra sin que la API haga el JOIN |
+| **Al editar, la contraseña viene vacía** | En blanco significa «no la cambie», no «bórrela» |
+| **Con la API apagada, la pantalla sigue en pie** | Con su aviso y sin una sola fila |
 
 ## 6. Definición de TERMINADA
 
