@@ -92,27 +92,27 @@ para ver el JSON que el repositorio va a recibir.
 [7_quickstart.md](7_quickstart.md) §3 — lecturas con nombres, creación con
 stock descontado por el trigger, 422/500/409/404 según el caso.
 
-## Fase 7 — LAS PANTALLAS de los recursos con FK
+## Fase 7 — LAS INTERFACES GRÁFICAS de los recursos con FK
 
-Una pantalla por recurso, con el desplegable de la clave foránea **cargado de
+Una interfaz gráfica por recurso, con el desplegable de la clave foránea **cargado de
 la API**.
 
 | Qué se escribe | Dónde |
 |---|---|
 | El servicio del recurso | `front_blazor/Servicios/Servicio<Recurso>.cs` |
-| La pantalla | `front_blazor/Components/Pages/<Recursos>.razor` |
+| La interfaz gráfica | `front_blazor/Components/Pages/<Recursos>.razor` |
 | El menú, con la entrada nueva | `Components/Layout/NavMenu.razor` |
 
-**La parte que no es obvia:** la pantalla necesita **dos** llamadas al abrirse
+**La parte que no es obvia:** la interfaz gráfica necesita **dos** llamadas al abrirse
 —la lista del recurso y el catálogo para el desplegable—, y la segunda es la
 que se olvida. Un `<select>` vacío no da error: simplemente no deja crear nada.
 
-**Verificación:** abra la pantalla y despliegue el `<select>`. Tiene que estar
+**Verificación:** abra la interfaz gráfica y despliegue el `<select>`. Tiene que estar
 lleno, mostrando nombres.
 
 ## Fase 8 — EL FORMULARIO INTEGRADO de factura (maestro-detalle)
 
-La pantalla `/facturas`: el maestro y el detalle **en una sola**, con un solo
+La interfaz gráfica `/facturas`: el maestro y el detalle **en una sola**, con un solo
 envío.
 
 | Qué se escribe | Qué resuelve |

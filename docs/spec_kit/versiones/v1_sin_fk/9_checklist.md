@@ -71,7 +71,7 @@
 
 ## E. Alcance — ¿no se está anticipando?
 
-- [ ] Ningún documento nombra entidades, motores o pantallas fuera del
+- [ ] Ningún documento nombra entidades, motores o interfaces gráficas fuera del
       alcance declarado en [2_spec.md](2_spec.md).
 - [ ] Ningún documento anticipa una versión futura (Artículo 1 de la
       [constitución](../../1_constitution.md): lo que no pide esta versión, no se
@@ -98,7 +98,7 @@
 
 **La v1 no está cerrada con uno funcionando.** Marque los seis:
 
-| Recurso | `GET` lista | `GET` uno | `POST` | `PUT` | `PATCH` | `DELETE` | Pantalla |
+| Recurso | `GET` lista | `GET` uno | `POST` | `PUT` | `PATCH` | `DELETE` | Interfaz gráfica |
 |---|---|---|---|---|---|---|---|
 | `producto` | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
 | `empresa` | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
@@ -114,7 +114,7 @@
 | ☐ | **El `PUT` sin un campo da 422 y el MISMO body en `PATCH` da 200** — en al menos un recurso, y se entiende por qué |
 | ☐ | **El `PATCH` con body vacío da 400**, no 422: es regla de negocio, no de forma |
 | ☐ | **En `rol` y `ruta` el `POST` va SIN `id`** y la base lo asigna |
-| ☐ | **Con la API apagada, la pantalla sigue en pie**, con su aviso y sin una sola fila |
+| ☐ | **Con la API apagada, la interfaz gráfica sigue en pie**, con su aviso y sin una sola fila |
 | ☐ | `docker compose up -d --build` desde cero levanta los **tres** servicios |
 
 > **Si una fila de la tabla queda sin marcar, la versión no está cerrada.** No

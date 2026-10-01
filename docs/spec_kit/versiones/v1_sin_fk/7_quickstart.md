@@ -1,4 +1,4 @@
-# Quickstart — Versión 1: arranque y smoke test (API y pantalla)
+# Quickstart — Versión 1: arranque y smoke test (API y interfaz gráfica)
 
 > **Versión 1** · Validación rápida de la versión ya construida. Si aún no
 > hay nada construido, empiece por [8_tasks.md](8_tasks.md).
@@ -52,7 +52,7 @@ docker compose exec api-facturas dotnet run --project pruebas
 # → CRITERIO 6 OK: el servicio funciona con el repositorio falso, sin PostgreSQL
 ```
 
-## 2bis. La pantalla — criterios 7 a 10
+## 2bis. La interfaz gráfica — criterios 7 a 10
 
 **La API sola no cierra la versión.** Estos cuatro se comprueban en el
 navegador, no con `curl`.
@@ -60,8 +60,8 @@ navegador, no con `curl`.
 | | Qué hacer | Qué tiene que pasar |
 |---|---|---|
 | **7** | Abrir `http://localhost:8041/productos` | Lista los **8 productos**, con código, nombre, stock y valor |
-| **8** | Crear uno con un código que **ya existe** | El mensaje sale **en la pantalla**, y **lo que escribió NO se borra** |
-| **9** | Editar uno y usar los **dos** botones de guardar | «Guardar la ficha completa» (`PUT`) y «Guardar solo lo que cambié» (`PATCH`) hacen cosas distintas. La pantalla **no dice `PUT` ni `422`** |
+| **8** | Crear uno con un código que **ya existe** | El mensaje sale **en la interfaz gráfica**, y **lo que escribió NO se borra** |
+| **9** | Editar uno y usar los **dos** botones de guardar | «Guardar la ficha completa» (`PUT`) y «Guardar solo lo que cambié» (`PATCH`) hacen cosas distintas. La interfaz gráfica **no dice `PUT` ni `422`** |
 | **10** | Apagar la API y recargar | Ver abajo |
 
 ### El criterio 10, que es el único que no se puede simular

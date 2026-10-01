@@ -124,15 +124,15 @@ Inexistente → **404**; ya anulada → **409** (`ConflictoExcepcion`).
 Los 7 contratos de la v1 (producto + diagnóstico) siguen cumpliéndose al
 pie de la letra; solo cambia `"version": "v2"` en el diagnóstico.
 
-### RF7 — Las pantallas de los recursos con clave foránea
+### RF7 — Las interfaces gráficas de los recursos con clave foránea
 
-Una pantalla por recurso —`/clientes`, `/vendedores`— con **la clave foránea
+Una interfaz gráfica por recurso —`/clientes`, `/vendedores`— con **la clave foránea
 como lista desplegable cargada de la API**, no como un campo de texto donde el
 usuario digite un código.
 
 | | |
 |---|---|
-| **Qué hace la pantalla** | Al abrirse, pide a la API el catálogo del recurso referenciado y llena el `<select>` |
+| **Qué hace la interfaz gráfica** | Al abrirse, pide a la API el catálogo del recurso referenciado y llena el `<select>` |
 | **Qué NO hace** | Pedirle al usuario que escriba `EMP03`. Si hay que digitar la llave, la integridad referencial la descubre el motor y el usuario ve un error que no entiende |
 | **Qué se revisa** | Que el desplegable muestre **el nombre** y mande **el código**. Es la diferencia entre lo que la persona lee y lo que viaja en el JSON |
 
@@ -141,8 +141,8 @@ usuario digite un código.
 
 ### RF8 — El formulario integrado de factura (maestro-detalle)
 
-**Una sola pantalla, `/facturas`, que maneja la factura Y sus líneas.** No dos
-pantallas separadas, y esto es el corazón de la v2.
+**Una sola interfaz gráfica, `/facturas`, que maneja la factura Y sus líneas.** No dos
+interfaces gráficas separadas, y esto es el corazón de la v2.
 
 | Parte | Qué lleva |
 |---|---|
@@ -159,7 +159,7 @@ pantallas separadas, y esto es el corazón de la v2.
 | **Calcular el total en el front y mandarlo** | El total lo pone el trigger. Si el front lo manda, hay dos verdades y una va a estar mal |
 | **Poner un botón de «eliminar factura»** | El borrado físico no se expone (ver §2). La palabra es **anular**, y llama a `sp_anular_factura` — que además **restaura el stock** |
 
-> **La pregunta que hay que hacerle a la pantalla:** agregue tres líneas, quite
+> **La pregunta que hay que hacerle a la interfaz gráfica:** agregue tres líneas, quite
 > una, y guarde. ¿Llegaron dos? Si el detalle se envía línea por línea a medida
 > que se agrega, la respuesta va a ser tres.
 
@@ -178,7 +178,7 @@ procedimientos** para tratarlos como una sola cosa.
 | `actualizar_roles_usuario` | Solo los roles, sin tocar el usuario |
 | `eliminar_usuario_con_roles` | Limpia el detalle y el maestro juntos |
 
-**La pantalla `/usuarios`:** los datos del usuario arriba, y los roles como
+**La interfaz gráfica `/usuarios`:** los datos del usuario arriba, y los roles como
 **casillas o selección múltiple** —no un desplegable de uno, porque un usuario
 tiene varios—. Un solo envío.
 
@@ -190,7 +190,7 @@ tiene varios—. Un solo envío.
 
 > **Y `rutarol` es el tercer caso del mismo patrón**, con `listar_rutarol`,
 > `crear_rutarol` y `eliminar_rutarol`: la tabla puente entre `ruta` y `rol`
-> —qué rol puede entrar a qué ruta—. **Su pantalla no decide permisos
+> —qué rol puede entrar a qué ruta—. **Su interfaz gráfica no decide permisos
 > todavía** (eso es la v3): solo administra la tabla.
 
 ## 4. Requisitos no funcionales
@@ -232,7 +232,7 @@ tiene varios—. Un solo envío.
    producto Y persona con repositorios falsos en memoria — sin PostgreSQL —
    y termina en `CRITERIO 6 OK…`.
 
-### Y los de LAS PANTALLAS
+### Y los de LAS INTERFACES GRÁFICAS
 
 | | |
 |---|---|
@@ -244,7 +244,7 @@ tiene varios—. Un solo envío.
 | **No hay botón de «eliminar factura»** | Hay **anular**, y después de anular el stock volvió a subir |
 | **El usuario se crea CON sus roles, en un envío** | Y la lista los muestra sin que la API haga el JOIN |
 | **Al editar, la contraseña viene vacía** | En blanco significa «no la cambie», no «bórrela» |
-| **Con la API apagada, la pantalla sigue en pie** | Con su aviso y sin una sola fila |
+| **Con la API apagada, la interfaz gráfica sigue en pie** | Con su aviso y sin una sola fila |
 
 ## 6. Definición de TERMINADA
 

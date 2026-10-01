@@ -74,7 +74,7 @@
 
 ## E. Alcance — ¿no se está anticipando?
 
-- [ ] Ningún documento nombra entidades, motores o pantallas fuera del
+- [ ] Ningún documento nombra entidades, motores o interfaces gráficas fuera del
       alcance declarado en [2_spec.md](2_spec.md).
 - [ ] Ningún documento anticipa una versión futura (Artículo 1 de la
       [constitución](../../1_constitution.md): lo que no pide esta versión, no se

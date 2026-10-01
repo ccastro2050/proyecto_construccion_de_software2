@@ -8,7 +8,7 @@ namespace FrontFacturas.Servicios;
 // ============================================================
 // ServicioProducto — el ÚNICO sitio del front que sabe de HTTP.
 //
-// Las pantallas llaman métodos con nombre de dominio (ListarAsync,
+// Las interfaces gráficas llaman métodos con nombre de dominio (ListarAsync,
 // CrearAsync) y reciben objetos o un mensaje de error. No ven códigos de
 // estado, ni rutas, ni JSON.
 //
@@ -25,7 +25,7 @@ public class ServicioProducto(HttpClient cliente)
 
     /// <summary>Lo que devuelve cada operación: o salió bien, o hay un
     /// mensaje para mostrarle a la persona. Nunca una excepción suelta que
-    /// tumbe la pantalla.</summary>
+    /// tumbe la interfaz.</summary>
     public record Resultado<T>(bool Bien, T? Dato, string? Mensaje)
     {
         public static Resultado<T> Ok(T dato) => new(true, dato, null);
@@ -51,7 +51,7 @@ public class ServicioProducto(HttpClient cliente)
             // EL SOBRE DEL CONTRATO: { tabla, limite, total, datos[] }
             //
             // La API NO devuelve un arreglo pelado. Deserializar a
-            // List<Producto> directo falla en silencio y la pantalla sale
+            // List<Producto> directo falla en silencio y la interfaz gráfica sale
             // vacía sin decir por qué — se descubrió levantándolo, no
             // leyéndolo. Ver 6_contracts.md.
             // ============================================================
@@ -62,7 +62,7 @@ public class ServicioProducto(HttpClient cliente)
         }
         catch (Exception)
         {
-            // La API apagada llega aquí. La pantalla tiene que SEGUIR EN PIE:
+            // La API apagada llega aquí. La interfaz gráfica tiene que SEGUIR EN PIE:
             // es un criterio de aceptación, no una cortesía.
             return Resultado<List<Producto>>.Falla(
                 "No se pudo conectar con el servicio. Intente de nuevo en un momento.");

@@ -174,7 +174,7 @@ completo actualizado.
 
 **A la terminal SOLO se le pegan COMANDOS** — lo que viene en las cajitas
 de código del chat, uno a la vez. Si pega el texto del mensaje (las
-frases), la terminal intentará ejecutar cada palabra y llenará la pantalla
+frases), la terminal intentará ejecutar cada palabra y llenará la interfaz gráfica
 de errores tipo `'Te' no se reconoce como nombre de un cmdlet` (no daña
 nada, pero asusta). Al chat, texto; a la terminal, comandos.
 
@@ -217,7 +217,7 @@ El proyecto es C# sobre ASP.NET Core (.NET 10) + PostgreSQL — así lo fija
 LO QUE HAY QUE CONSTRUIR, Y SON SEIS RECURSOS — NO UNO:
 
 La v1 es el CRUD de las SEIS tablas que NO tienen clave foranea, cada una
-con su pantalla:
+con su interfaz gráfica:
 
    producto   codigo (texto, PK) · nombre · stock · valorunitario
    empresa    codigo (texto, PK) · nombre
@@ -228,7 +228,7 @@ con su pantalla:
 
 Son SEIS REBANADAS VERTICALES IDENTICAS salvo los campos: modelo, tres
 peticiones por verbo, interfaz + repositorio, interfaz + servicio,
-controlador, y su pantalla. Que se repitan es el punto del ejercicio.
+controlador, y su interfaz. Que se repitan es el punto del ejercicio.
 
 DOS COSAS QUE CAMBIAN SEGUN LA TABLA, y no se pueden calcar:
 
@@ -243,10 +243,10 @@ DOS COSAS QUE CAMBIAN SEGUN LA TABLA, y no se pueden calcar:
     columna, y el campo llega NULL EN SILENCIO —la API responde 200 con el
     campo vacio—.
 
-Y LA VERSION INCLUYE SU PANTALLA: seis pantallas en Blazor Server, una por
+Y LA VERSION INCLUYE SU INTERFAZ GRÁFICA: seis interfaces gráficas en Blazor Server, una por
 recurso, con direccion propia (/productos, /empresas, /personas, /roles,
 /rutas, /usuarios) y UN SERVICIO POR RECURSO —nunca un ApiService generico
-con la tabla como parametro—. La pantalla no le habla al usuario en jerga:
+con la tabla como parametro—. La interfaz gráfica no le habla al usuario en jerga:
 ni PUT, ni PATCH, ni 422. Los dos botones de guardar se llaman "Guardar la
 ficha completa" y "Guardar solo lo que cambie".
  Si en tu respuesta aparece OTRO lenguaje o framework (Python,
@@ -384,7 +384,7 @@ no escribas ni modifiques SQL de creación de tablas.
 LO QUE HAY QUE CONSTRUIR, Y SON SEIS RECURSOS — NO UNO:
 
 La v1 es el CRUD de las SEIS tablas que NO tienen clave foranea, cada una
-con su pantalla:
+con su interfaz gráfica:
 
    producto   codigo (texto, PK) · nombre · stock · valorunitario
    empresa    codigo (texto, PK) · nombre
@@ -395,7 +395,7 @@ con su pantalla:
 
 Son SEIS REBANADAS VERTICALES IDENTICAS salvo los campos: modelo, tres
 peticiones por verbo, interfaz + repositorio, interfaz + servicio,
-controlador, y su pantalla. Que se repitan es el punto del ejercicio.
+controlador, y su interfaz. Que se repitan es el punto del ejercicio.
 
 DOS COSAS QUE CAMBIAN SEGUN LA TABLA, y no se pueden calcar:
 
@@ -410,10 +410,10 @@ DOS COSAS QUE CAMBIAN SEGUN LA TABLA, y no se pueden calcar:
     columna, y el campo llega NULL EN SILENCIO —la API responde 200 con el
     campo vacio—.
 
-Y LA VERSION INCLUYE SU PANTALLA: seis pantallas en Blazor Server, una por
+Y LA VERSION INCLUYE SU INTERFAZ GRÁFICA: seis interfaces gráficas en Blazor Server, una por
 recurso, con direccion propia (/productos, /empresas, /personas, /roles,
 /rutas, /usuarios) y UN SERVICIO POR RECURSO —nunca un ApiService generico
-con la tabla como parametro—. La pantalla no le habla al usuario en jerga:
+con la tabla como parametro—. La interfaz gráfica no le habla al usuario en jerga:
 ni PUT, ni PATCH, ni 422. Los dos botones de guardar se llaman "Guardar la
 ficha completa" y "Guardar solo lo que cambie".
 

@@ -39,7 +39,7 @@
         LOS DOS BOTONES DE GUARDAR, y sus nombres no son decorativos:
         «la ficha completa» es el PUT (reemplazo: si falta un campo, 422) y
         «solo lo que cambié» es el PATCH (parcial: el mismo cuerpo, 200).
-        La pantalla NO le dice PUT ni PATCH a la persona.
+        La interfaz gráfica NO le dice PUT ni PATCH a la persona.
     *@
     <div class="botones">
         @if (editando)
@@ -124,7 +124,7 @@ else
         else
         {
             // Y aquí lo que importa: el error NO borra lo que la persona
-            // escribió. Queda en pantalla para que pueda corregirlo.
+            // escribió. Queda en interfaz gráfica para que pueda corregirlo.
             Avisar(r.Mensaje!, true);
         }
     }

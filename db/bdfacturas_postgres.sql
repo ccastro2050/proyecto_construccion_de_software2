@@ -168,30 +168,30 @@ SELECT setval('rol_id_seq', (SELECT MAX(id) FROM rol));
 --  Los nombres de `ruta` NO son rutas HTTP, y por eso no empiezan con /
 --
 --  Antes decian '/producto', '/usuario'… y se confundian con los endpoints de
---  la API —/api/producto—, que son otra cosa: estos son PANTALLAS del front y
+--  la API —/api/producto—, que son otra cosa: estos son INTERFACES GRÁFICAS del front y
 --  PERMISOS, y los consume verificar_acceso_ruta.
 --
 --  La notacion con punto lo deja claro:
---     pantalla.productos    una pantalla a la que un rol entra o no
+--     interfaz.productos    una interfaz gráfica a la que un rol entra o no
 --     permiso.crear         una accion concreta
 --
 --  Y el procedimiento usa el ID, no el texto: cambiar estos nombres no rompe
 --  nada. Lo que arregla es la confusion de quien lee.
 -- ---------------------------------------------------------------------------
 INSERT INTO ruta (ruta, descripcion) VALUES
-('pantalla.inicio', 'Página principal - Dashboard'),
-('pantalla.usuarios', 'Gestión de usuarios'),
-('pantalla.facturas', 'Gestión de facturas'),
-('pantalla.clientes', 'Gestión de clientes'),
-('pantalla.vendedores', 'Gestión de vendedores'),
-('pantalla.personas', 'Gestión de personas'),
-('pantalla.empresas', 'Gestión de empresas'),
-('pantalla.productos', 'Gestión de productos'),
-('pantalla.roles', 'Gestión de roles'),
-('pantalla.permisos', 'Gestión de permisos (asignación rol-ruta)'),
+('interfaz.inicio', 'Página principal - Dashboard'),
+('interfaz.usuarios', 'Gestión de usuarios'),
+('interfaz.facturas', 'Gestión de facturas'),
+('interfaz.clientes', 'Gestión de clientes'),
+('interfaz.vendedores', 'Gestión de vendedores'),
+('interfaz.personas', 'Gestión de personas'),
+('interfaz.empresas', 'Gestión de empresas'),
+('interfaz.productos', 'Gestión de productos'),
+('interfaz.roles', 'Gestión de roles'),
+('interfaz.permisos', 'Gestión de permisos (asignación rol-ruta)'),
 ('permiso.crear', 'Crear permiso (POST)'),
 ('permiso.eliminar', 'Eliminar permiso (POST)'),
-('pantalla.rutas', 'Gestión de rutas del sistema'),
+('interfaz.rutas', 'Gestión de rutas del sistema'),
 ('ruta.crear', 'Crear ruta (POST)'),
 ('ruta.eliminar', 'Eliminar ruta (POST)');
 

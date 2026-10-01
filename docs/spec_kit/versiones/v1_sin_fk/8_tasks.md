@@ -1,4 +1,4 @@
-# Tareas — Versión 1: las seis tablas sin FK, con su pantalla
+# Tareas — Versión 1: las seis tablas sin FK, con su interfaz gráfica
 
 > **Versión 1** · El orden de construcción, partiendo de CERO. Cada fase
 > termina en algo **verificable**. Requisitos: [2_spec.md](2_spec.md) ·
@@ -83,7 +83,7 @@ y `SELECT count(*) FROM producto` da **8**.
 con `errores[]`), y el contraste PUT vs PATCH con `{"stock": 99}` (422 vs
 200).
 
-## Fase 6 — LA PANTALLA (la otra mitad de la versión)
+## Fase 6 — LA INTERFAZ GRÁFICA (la otra mitad de la versión)
 
 El front en **Blazor Server / .NET 10**, en `front_blazor/`, en su propio
 contenedor y en el puerto **8041**.
@@ -94,7 +94,7 @@ contenedor y en el puerto **8041**.
 | La clase `Producto` **del front** | `Modelos/Producto.cs` |
 | `ServicioProducto`: el único sitio que sabe de HTTP | `Servicios/ServicioProducto.cs` |
 | El cascarón y el menú | `Components/App.razor` · `Routes.razor` · `Layout/` |
-| La pantalla del recurso | `Components/Pages/Productos.razor` |
+| La interfaz gráfica del recurso | `Components/Pages/Productos.razor` |
 | El CSS **escrito a mano** | `wwwroot/app.css` |
 
 **Tres cosas que se van a querer hacer y no se deben:**
@@ -106,7 +106,7 @@ contenedor y en el puerto **8041**.
 | **Meter Bootstrap por CDN** | El CSS va escrito a mano. Un front que necesita internet para verse bien no arranca en un salón sin red |
 
 **Verificación:** `http://localhost:8041/productos` lista los 8 productos, se
-crea uno desde la pantalla, y **los dos botones de guardar** hacen cosas
+crea uno desde la interfaz gráfica, y **los dos botones de guardar** hacen cosas
 distintas (criterios 7 a 9 de [2_spec.md](2_spec.md)).
 
 ## Fase 7 — La prueba que separa los dos procesos
@@ -121,7 +121,7 @@ Recargue `http://localhost:8041/productos`.
 **no hay ni una fila**. Es el criterio 10, y es el único que no se puede
 simular: o los dos procesos están separados, o no.
 
-Después, `docker compose start api-facturas` y la pantalla vuelve a listar.
+Después, `docker compose start api-facturas` y la interfaz gráfica vuelve a listar.
 
 ## Fase 8 — Docker: un solo comando
 - [ ] `api_facturas/Dockerfile`: imagen `dotnet/sdk:10.0`, `dotnet watch`,

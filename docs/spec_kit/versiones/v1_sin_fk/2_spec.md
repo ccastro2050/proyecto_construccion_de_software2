@@ -1,4 +1,4 @@
-# Especificación — Versión 1: las SEIS tablas sin clave foránea, con su pantalla
+# Especificación — Versión 1: las SEIS tablas sin clave foránea, con su interfaz gráfica
 
 > **Versión 1** del desarrollo incremental ([mapa de versiones](../0_mapa_versiones.md)).
 > Rige la constitución del proyecto: [../../1_constitution.md](../../1_constitution.md).
@@ -51,7 +51,7 @@ dejar el **esqueleto arquitectónico correcto** sobre el que las versiones
 siguientes agregan las tablas con clave foránea (v2), el control de acceso
 (v3) y el aplicativo completo (v4) **sin reescribir lo construido**.
 
-Y el esqueleto incluye **las dos mitades**: la API y la pantalla. Que se
+Y el esqueleto incluye **las dos mitades**: la API y la interfaz. Que se
 construyan en paralelo desde la v1 es lo que impide descubrir a la tercera
 versión que el contrato era incómodo de pintar.
 
@@ -61,7 +61,7 @@ versión que el contrato era incómodo de pintar.
 > `bdfacturas` son **seis** —`producto` · `empresa` · `persona` · `rol` · `ruta` · `usuario`—, y se pueden
 > llenar sin que exista nada más. Por eso son las primeras.
 >
-> **Y la versión entrega su API Y SU PANTALLA.** Media versión no es una
+> **Y la versión entrega su API Y SU INTERFAZ GRÁFICA.** Media versión no es una
 > versión.
 
 **Incluye:**
@@ -69,7 +69,7 @@ versión que el contrato era incómodo de pintar.
   actualizar parcialmente y eliminar. Son **seis rebanadas verticales
   idénticas salvo los campos** — y que se repitan es el punto: con una sola
   no aparece la pregunta de si conviene un genérico.
-- **Una PANTALLA por recurso**, con dirección propia (`/productos`,
+- **Una INTERFAZ GRÁFICA por recurso**, con dirección propia (`/productos`,
   `/empresas`, …), nunca una ruta con el nombre de la tabla como parámetro.
 - **Modelo entidad** (`Producto`): la clase con las 4 propiedades tipadas
   (en C#, las propiedades `{ get; set; }` SON los getters/setters del
@@ -184,21 +184,21 @@ inexistente → 404.
    `docker compose exec`) ejecuta el servicio con un repositorio FALSO en
    memoria — sin PostgreSQL — y todas las verificaciones pasan.
 
-### Y los de LA PANTALLA, que son la otra mitad de la versión
+### Y los de LA INTERFAZ GRÁFICA, que son la otra mitad de la versión
 
 7. **`http://localhost:8041/productos` lista los 8 productos**, cada uno con
    su código, nombre, stock y valor unitario. La dirección es **propia del
    recurso** —`/productos`—, no una ruta con el nombre de la tabla como
    parámetro.
-8. **Se crea un producto desde la pantalla** y aparece en la lista sin
+8. **Se crea un producto desde la interfaz gráfica** y aparece en la lista sin
    recargar a mano. Y si la API lo rechaza —código duplicado, stock
-   negativo—, **el mensaje sale EN LA PANTALLA**, no en la consola del
+   negativo—, **el mensaje sale EN LA INTERFAZ GRÁFICA**, no en la consola del
    navegador, y **lo que la persona había escrito NO se borra**.
 9. **Los dos botones de guardar existen y hacen cosas distintas:** «Guardar
    la ficha completa» (el `PUT`: si falta un campo, la API responde 422) y
    «Guardar solo lo que cambié» (el `PATCH`: el mismo cuerpo responde 200).
-   **La pantalla no le dice `PUT` ni `PATCH` ni `422` a la persona.**
-10. **Con la API apagada, la pantalla SIGUE EN PIE.** Se comprueba así:
+   **La interfaz gráfica no le dice `PUT` ni `PATCH` ni `422` a la persona.**
+10. **Con la API apagada, la interfaz gráfica SIGUE EN PIE.** Se comprueba así:
 
     ```powershell
     docker compose stop api-facturas
@@ -210,7 +210,7 @@ inexistente → 404.
     maneja el caso de que la API no responda, que es el mismo problema visto
     de otro lado.
 
-> **Una versión no está cerrada si la API responde y la pantalla no.** Los
+> **Una versión no está cerrada si la API responde y la interfaz gráfica no.** Los
 > criterios 7 a 10 pesan lo mismo que los seis de arriba.
 
 ## 6. Clarificaciones

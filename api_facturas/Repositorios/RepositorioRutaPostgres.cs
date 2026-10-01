@@ -31,8 +31,8 @@ public class RepositorioRutaPostgres : IRepositorioRuta
     //
     // Dapper mapea columna -> propiedad POR NOMBRE. Sin el alias, RutaTexto
     // llega null —y llega null EN SILENCIO: la API responde 200 con el campo
-    // vacio, y la pantalla sale con una columna en blanco sin un solo error—.
-    // Se descubrio mirando la pantalla, no leyendo el codigo.
+    // vacio, y la interfaz gráfica sale con una columna en blanco sin un solo error—.
+    // Se descubrio mirando la interfaz gráfica, no leyendo el codigo.
 
     public async Task<List<Ruta>> ObtenerTodosAsync(int limite)
     {

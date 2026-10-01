@@ -302,7 +302,7 @@ cobra la ventaja de ninguna.
 ### El manual de marca de la v4
 
 La imagen corporativa no se improvisa el último día: **se escribe antes en un
-manual, y después la pantalla lo cumple.** Eso es lo que se evalúa.
+manual, y después la interfaz gráfica lo cumple.** Eso es lo que se evalúa.
 
 **El equipo escoge:**
 
@@ -314,7 +314,7 @@ manual, y después la pantalla lo cumple.** Eso es lo que se evalúa.
 **Es libre.** Lo que **no** es libre es que exista:
 
 > **Tiene que haber un manual de marca en el repositorio, como `.pdf` y/o
-> `.md`.** Sin él no hay contra qué comparar la pantalla, y el criterio de
+> `.md`.** Sin él no hay contra qué comparar la interfaz gráfica, y el criterio de
 > imagen corporativa no se puede calificar.
 
 **Lo mínimo que ese manual debe fijar:**
@@ -352,7 +352,7 @@ según la calidad de lo entregado**)** o **No cumple (de 0 a 2.9)**.
 | **Borrado lógico** | En las tablas de la versión, con inactivos filtrados | Borrado físico |
 | **Git y GitHub** | Repos privados con el profesor invitado; cada estudiante en su rama; TODO por PR; solo el encargado hace merge; tags v1…vN; commits descriptivos | Commits directos a main, repo público o sin el profesor, "un solo commit con todo" |
 | **Dashboard y consultas (v4)** | 10 consultas de 4+ tablas con gráficos claros | Menos de 10 consultas, consultas de menos de 4 tablas, o sin dashboard |
-| **Imagen corporativa y responsive (v4)** | **Existe un manual de marca** —propio o el del ejemplo— y la pantalla lo cumple: los colores y las tipografías salen de él, no de un gusto; todo responsive | No hay manual, o lo hay y la pantalla no lo respeta, o no es responsive |
+| **Imagen corporativa y responsive (v4)** | **Existe un manual de marca** —propio o el del ejemplo— y la interfaz gráfica lo cumple: los colores y las tipografías salen de él, no de un gusto; todo responsive | No hay manual, o lo hay y la interfaz gráfica no lo respeta, o no es responsive |
 | **Publicación (v4)** | Publicado, funcional, con secretos en variables de entorno del servidor | No publicado o con secretos expuestos |
 
 Dentro de la franja "Cumple", la nota (3.0 a 5.0) refleja la calidad:

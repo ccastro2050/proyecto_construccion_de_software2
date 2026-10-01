@@ -18,12 +18,12 @@ volumen sin lección nueva»*.
 | | |
 |---|---|
 | **Qué tenía de cierto** | `cliente` y `vendedor` son el mismo molde de la v1. Como ejercicio de replicación, no enseñan nada nuevo |
-| **Por qué se revisó igual** | El criterio de la versión **no es la lección nueva: es el modelo**. La v2 son **las tablas con clave foránea**, y dejar dos por fuera deja el modelo a medias — y la pantalla de factura sin los desplegables de los que depende |
+| **Por qué se revisó igual** | El criterio de la versión **no es la lección nueva: es el modelo**. La v2 son **las tablas con clave foránea**, y dejar dos por fuera deja el modelo a medias — y la interfaz gráfica de factura sin los desplegables de los que depende |
 | **Qué sí era volumen y se quitó** | `empresa` y `persona`, que **no tienen clave foránea**: son de la **v1**. Estaban aquí por error, no por decisión |
 
 > **La lección de `cliente` y `vendedor` no es el CRUD: es el desplegable.** En
 > la v1 ninguna tabla tenía clave foránea, así que no había nada que elegir en
-> una pantalla. Aquí aparece, y aparece seis veces.
+> una interfaz. Aquí aparece, y aparece seis veces.
 
 ## D2 — Factura SOLO por procedimientos almacenados
 **Decisión:** el repositorio de factura no escribe SQL de tablas: llama 4

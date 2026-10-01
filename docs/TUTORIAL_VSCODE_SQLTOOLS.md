@@ -216,7 +216,7 @@ archivo. Deben salir las 6 facturas con su cliente en una grilla.
 
 ![Paso 3 — el JOIN ejecutado: 6 facturas con su cliente](img_sqltools/paso03_join_facturas.jpg)
 
-Para leer en esta pantalla:
+Para leer en esta interfaz gráfica:
 
 - Las **6 facturas** con el nombre del cliente resuelto por el doble
   JOIN (factura → cliente → persona): eso que la tabla guarda como

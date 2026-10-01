@@ -238,9 +238,9 @@ más carpetas de componentes (y el compose crecerá con ellas).
 
 ```
 v1  CRUD de las SEIS tablas sin clave foranea (producto, empresa,
-    persona, rol, ruta, usuario) — API Y PANTALLA
+    persona, rol, ruta, usuario) — API Y INTERFAZ GRÁFICA
 v2  CRUD de las SEIS con clave foranea: las FK como listas
-    desplegables, las puente, y la factura maestro-detalle — API Y PANTALLA   <- USTED ESTA AQUI
+    desplegables, las puente, y la factura maestro-detalle — API Y INTERFAZ GRÁFICA   <- USTED ESTA AQUI
 v3  control de acceso: JWT, sesiones y permisos por rol
 v4  el resto: 10 consultas multitabla, dashboard, manual de marca,
     responsive/PWA y publicacion
@@ -250,7 +250,7 @@ v4  el resto: 10 consultas multitabla, dashboard, manual de marca,
 > motor por version» y «el front al final» cambio de lugar — ver
 > [el mapa](docs/spec_kit/versiones/0_mapa_versiones.md).
 >
-> **Y cada version entrega su API y su PANTALLA**, en Blazor Server,
+> **Y cada version entrega su API y su INTERFAZ GRÁFICA**, en Blazor Server,
 > en su propio contenedor. Media version no es una version.
 
 La regla del juego: la **constitución** es permanente, cada versión tiene

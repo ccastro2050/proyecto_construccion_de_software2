@@ -4,9 +4,9 @@
 > anterior está cerrada** (commit + tag). Este mapa da la dirección; el spec
 > kit de cada versión da el detalle.
 >
-> **Y cada versión entrega su API Y SU PANTALLA.** No hay una versión «de
+> **Y cada versión entrega su API Y SU INTERFAZ GRÁFICA.** No hay una versión «de
 > back» y otra «de front»: se construyen en paralelo, y una versión no está
-> cerrada si la API responde y la pantalla no.
+> cerrada si la API responde y la interfaz gráfica no.
 >
 > La ruta es la que define
 > [0_METODOLOGIA.md](../../../ProyectosDeAula/docs/0_METODOLOGIA.md) §2; aquí
@@ -16,8 +16,8 @@
 
 | Versión | Qué agrega (acumulativo) | Estado |
 |---|---|---|
-| v1 | CRUD completo de **las seis tablas sin clave foránea** — **API y pantallas** | **Cerrada** · tag `v1` |
-| **v2** | CRUD de **TODAS las tablas** — con la v2 están las 12: las FK como **listas desplegables cargadas desde la API**, las puente, y la facturación maestro-detalle — **API y pantallas** | **En curso** ([spec](v2_con_fk/2_spec.md)) |
+| v1 | CRUD completo de **las seis tablas sin clave foránea** — **API y interfaces gráficas** | **Cerrada** · tag `v1` |
+| **v2** | CRUD de **TODAS las tablas** — con la v2 están las 12: las FK como **listas desplegables cargadas desde la API**, las puente, y la facturación maestro-detalle — **API y interfaces gráficas** | **En curso** ([spec](v2_con_fk/2_spec.md)) |
 | v3 | **JWT**, sesiones y control de acceso por roles; CRUD de `usuario`, `rol`, `rol_usuario`, `ruta` y `rutarol` solo para administradores | Sin especificar |
 | v4 | **10 consultas multitabla** (4+ tablas cada una), dashboard con gráficos, **imagen corporativa con su manual de marca**, páginas corporativas, responsive/PWA y **publicación** en un servidor | Sin especificar |
 
@@ -35,13 +35,13 @@ al final— es la que uno hace por inercia.
 
 | | |
 |---|---|
-| **Lo terminado se le puede mostrar a alguien** | Una versión que solo trae endpoints se sustenta con Swagger. Una que trae pantallas se le muestra a quien la pidió |
+| **Lo terminado se le puede mostrar a alguien** | Una versión que solo trae endpoints se sustenta con Swagger. Una que trae interfaces gráficas se le muestra a quien la pidió |
 | **El contrato se ejercita de inmediato** | Uno descubre que el JSON es incómodo **cuando le toca pintarlo**. Si el front llega tres versiones después, el contrato lleva tres versiones equivocado |
 | **No hay front de golpe al final** | Es el error que se paga caro: doce entidades de API esperando un front que nace con una sola |
 | **Es lo que pide el curso** | `0_METODOLOGIA.md` §2, textual: *«v1 — CRUD de las tablas sin FK del módulo — **API REST + Frontend funcionando**»* |
 
 > **La regla operativa:** una versión **no está cerrada** si la API responde y
-> la pantalla no. **Media versión no es una versión.**
+> la interfaz gráfica no. **Media versión no es una versión.**
 
 ### El stack del front
 
@@ -104,6 +104,6 @@ el front quedaba en la **v6**.
 2. **Una versión cerrada no se reabre**: los ajustes van en la siguiente.
 3. **Regresión obligatoria**: al cerrar la vN, los criterios de todas las
    versiones anteriores deben seguir pasando — **incluidos los de sus
-   pantallas**.
+   interfaces gráficas**.
 4. El repositorio siempre muestra la **versión en curso, funcionando** — con
-   su API **y su pantalla**.
+   su API **y su interfaz gráfica**.
