@@ -98,3 +98,73 @@ footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--borde)
     table { font-size: .85rem; }
     td.acciones { flex-direction: column; }
 }
+
+/* ==========================================================================
+   LO QUE LA v2 AGREGA AL ESTILO
+   Tres cosas nuevas en la interfaz, tres bloques aqui: los DESPLEGABLES (que
+   la v1 no tenia porque no habia claves foraneas), el DETALLE anidado de la
+   factura y las CASILLAS de los roles.
+   ========================================================================== */
+
+/* --- los desplegables: se ven igual que los campos de texto -------------- */
+.campos select {
+    padding: 8px 10px; border: 1px solid var(--borde); border-radius: 5px;
+    font-size: .95rem; font-weight: 400; font-family: inherit;
+    background: #fff; color: var(--tinta);
+}
+.campos select:focus { outline: 2px solid var(--primario); border-color: var(--primario); }
+.campos select:disabled { background: #e9edf2; color: #6b7280; }
+
+/* --- notas y pistas: explican ANTES de que la persona se estrelle -------- */
+.nota {
+    margin-top: 14px; padding: 10px 12px; font-size: .88rem;
+    background: #fff; border-left: 3px solid var(--primario); color: #374151;
+}
+.nota code { background: var(--suave); padding: 1px 5px; border-radius: 3px; }
+.pista { font-size: .8rem; font-weight: 400; color: #6b7280; }
+
+hr { border: 0; border-top: 1px solid var(--borde); margin: 22px 0; }
+
+/* --- el detalle de la factura: una tabla DENTRO de otra cosa ------------- */
+.detalle { margin-top: 14px; background: #fff; }
+.detalle th { background: #eef2f6; }
+.detalle tfoot td { background: var(--suave); border-top: 2px solid var(--borde); }
+
+/* --- una factura emitida: encabezado + su detalle ----------------------- */
+.factura {
+    border: 1px solid var(--borde); border-radius: 8px;
+    padding: 14px 16px; margin-bottom: 18px;
+}
+.factura-cabeza {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 14px; flex-wrap: wrap;
+}
+.factura-datos { font-size: .88rem; color: #6b7280; }
+
+/* El estado se VE, no hay que leerlo: una factura anulada tiene que notarse
+   de un golpe de vista. */
+.estado {
+    margin-left: 8px; padding: 2px 9px; border-radius: 11px;
+    font-size: .74rem; text-transform: uppercase; letter-spacing: .04em;
+}
+.estado-activa  { background: var(--bien-f);  color: var(--bien); }
+.estado-anulada { background: var(--error-f); color: var(--error); }
+
+/* --- las casillas de los roles ------------------------------------------ */
+.casillas {
+    margin-top: 16px; border: 1px solid var(--borde); border-radius: 6px;
+    padding: 12px 14px; background: #fff;
+}
+.casillas legend { font-size: .88rem; font-weight: 600; padding: 0 6px; }
+.casilla {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-right: 18px; font-size: .92rem; cursor: pointer;
+}
+.casilla input { width: 16px; height: 16px; cursor: pointer; }
+
+/* --- una etiqueta por rol: se cuentan de un vistazo --------------------- */
+.etiqueta {
+    display: inline-block; margin-right: 6px; padding: 2px 9px;
+    background: var(--suave); border: 1px solid var(--borde);
+    border-radius: 11px; font-size: .8rem;
+}

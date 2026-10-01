@@ -14,6 +14,15 @@
 
 ## La ruta — **cuatro versiones**
 
+> **Cada versión INCLUYE la anterior.** La v2 incluye la v1, la v3 incluye la
+> v2 y la v4 incluye la v3. No se reinicia nada y no se empieza de cero: lo
+> construido sigue en pie, con su código, su interfaz gráfica y sus criterios de
+> aceptación —y esos criterios se vuelven a correr, que es lo que se llama **la
+> regresión**.
+>
+> De ahí que el repositorio de la v3 tenga las doce tablas operables: no porque
+> la v3 las agregue, sino porque **trae la v1 y la v2 adentro**.
+
 | Versión | Qué agrega (acumulativo) | Estado |
 |---|---|---|
 | v1 | CRUD completo de **las seis tablas sin clave foránea** — **API y interfaces gráficas** | **Cerrada** · tag `v1` |
@@ -80,9 +89,20 @@ Las 12 tablas de `bdfacturas`, repartidas:
 | Versión | Tablas | Criterio |
 |---|---|---|
 | **v1** | `producto` · `empresa` · `persona` · `rol` · `ruta` · `usuario` | **Las SEIS sin clave foránea.** Se pueden llenar sin que exista nada más |
-| **v2** | `cliente` · `vendedor` · `factura` · `productosporfactura` · `rol_usuario` · `rutarol` | **Las SEIS con clave foránea**, incluidas las puente. Con la v2, las **12** están |
+| **v2** | `cliente` · `vendedor` · `factura` · `productosporfactura` · `rol_usuario` · `rutarol` · `usuario_con_roles` | **Las SEIS con clave foránea**, incluidas las puente. Con la v2, las **12** están |
 | **v3** | — | **No agrega tablas.** El CRUD de `usuario`, `rol` y `ruta` es de la v1; el de `rol_usuario` y `rutarol`, de la v2. La v3 agrega **la puerta** |
 | **v4** | — | No agrega tablas: **consultas, dashboard, marca y publicación** |
+
+> **`usuario_con_roles` no es una tabla**, y por eso aparece en la lista con una
+> advertencia: es un **recurso** —`api/usuario-con-roles`— que opera `usuario` y
+> `rol_usuario` **juntas**, a través de los cinco procedimientos almacenados que
+> la base ya trae. Está en el reparto porque tiene controlador, servicio,
+> repositorio e interfaz gráfica propios, y lo que no se reparte no se audita.
+>
+> **Por qué existe además de `api/usuario` y `api/rol-usuario`:** porque crear un
+> usuario y después asignarle los roles son **dos** operaciones, y si falla la
+> segunda queda un usuario sin ningún rol. `crear_usuario_con_roles` lo hace en
+> **una** transacción.
 
 > **Ojo:** las 12 tablas **existen en la base desde la v1** (Artículo 5 de la
 > [constitución](../1_constitution.md)). Lo que reparte esta tabla es qué

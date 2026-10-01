@@ -47,7 +47,8 @@ public class RepositorioUsuarioPostgres : IRepositorioUsuario
         const string sql = @"INSERT INTO usuario (email, contrasena)
                              VALUES (@Email, @Contrasena)";
         await using var conexion = CrearConexion();
-        await conexion.ExecuteAsync(sql, entidad);
+        await ErroresPostgres.TraducirAsync(
+            () => conexion.ExecuteAsync(sql, entidad));
     }
 
     public async Task<int> ActualizarAsync(string email, Dictionary<string, object> datos)
@@ -60,7 +61,8 @@ public class RepositorioUsuarioPostgres : IRepositorioUsuario
         var parametros = new DynamicParameters(datos);
         parametros.Add("clave", email);
         await using var conexion = CrearConexion();
-        return await conexion.ExecuteAsync(sql, parametros);
+        return await ErroresPostgres.TraducirAsync(
+            () => conexion.ExecuteAsync(sql, parametros));
     }
 
     public async Task<int> EliminarAsync(string email)
@@ -68,6 +70,7 @@ public class RepositorioUsuarioPostgres : IRepositorioUsuario
         // Si otras tablas lo referencian, la FK del motor rechaza -> 500.
         const string sql = "DELETE FROM usuario WHERE email = @email";
         await using var conexion = CrearConexion();
-        return await conexion.ExecuteAsync(sql, new { email });
+        return await ErroresPostgres.TraducirAsync(
+            () => conexion.ExecuteAsync(sql, new { email }));
     }
 }

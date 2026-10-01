@@ -1,216 +1,400 @@
-# Cómo construir la VERSIÓN 2 con IA — sobre su proyecto de la v1
+# Cómo construir la VERSIÓN 2 con IA — por chat o con un IDE agéntico
 
-> Guía de la **v2** (las versiones son acumulativas: la v2 se construye
-> **encima de su proyecto de la v1 terminado** — no se parte de cero ni se
-> reescribe nada de producto). El método general — los dos caminos (chat
-> web / IDE agéntico), cómo pegar archivos, a qué carpeta va cada comando,
-> los hábitos de la conversación — es el MISMO de la
-> [guía de la v1](../v1_sin_fk/GUIA_IA1.md): aquí está lo que cambia para la v2.
+> **La v2 se construye ENCIMA de la v1.** Esto no es un proyecto nuevo: es un
+> sistema vivo al que se le agrega sin romperlo, y es la lección de fondo de
+> esta versión.
+>
+> | | |
+> |---|---|
+> | **Qué hay que construir** | [2_spec.md](2_spec.md) |
+> | **El orden** | [8_tasks.md](8_tasks.md) — **doce** fases |
+> | **Los formatos** | [6_contracts.md](6_contracts.md) |
+> | **Cómo se verifica** | [7_quickstart.md](7_quickstart.md) |
 
 ---
 
-## 0. Punto de partida (verifíquelo ANTES de abrir la IA)
+## 0. Los dos caminos
 
-Su proyecto `mi_v1_sin_fk/` con la **v1 funcionando**: el smoke test de
-la v1 pasa ([7_quickstart de v1](../v1_sin_fk/7_quickstart.md) §2,
-con sus puertos +100). Si la v1 no pasa, primero ciérrela — la v2 hereda
-sus cimientos, incluidos sus bugs.
-
-La BD **no cambia**: los SPs y triggers que la v2 estrena están en su
-`db/bdfacturas_postgres.sql` desde la v1. No hay artefactos nuevos que copiar de
-`db/`.
-
-## A. Camino del chat web
-
-### A.1 Qué subirle (los 8 archivos de la v2)
-
-| # | Archivo | Papel |
+| | **Camino A — chat web** | **Camino B — IDE agéntico** |
 |---|---|---|
-| 1 | `docs/spec_kit/1_constitution.md` | Las reglas permanentes (las mismas de la v1) |
-| 2 | `docs/spec_kit/versiones/v2_con_fk/2_spec.md` | QUÉ agrega la v2 y sus criterios |
-| 3 | `.../v2_con_fk/3_plan.md` | CÓMO: los archivos nuevos y el diseño |
-| 4 | `.../v2_con_fk/4_research.md` | Decisiones y alternativas |
-| 5 | `.../v2_con_fk/5_data_model.md` | Las tablas nuevas + los SPs y triggers |
-| 6 | `.../v2_con_fk/6_contracts.md` | Los 10 endpoints nuevos exactos |
-| 7 | `.../v2_con_fk/7_quickstart.md` | Regresión v1 + smoke test v2 |
-| 8 | `.../v2_con_fk/8_tasks.md` | Las fases, en orden |
+| **Herramientas** | Gemini, DeepSeek, ChatGPT… | Antigravity, Cursor, Claude Code… |
+| **Quién toca el disco** | **Usted.** La IA le entrega texto y usted lo pega | **El agente.** Escribe los archivos |
+| **Cómo recibe las specs** | **Se las SUBE** como adjuntos | **Las LEE** del repositorio |
+| **El riesgo** | Perder el hilo en una conversación larga | Que toque lo que no debe |
+| **Qué se aprende** | A dirigir con una especificación | A **supervisar** con una especificación |
 
-**No suba los documentos de la v1** (la IA no los necesita: lo que importa
-del pasado es su CÓDIGO, y ese se lo pega usted cuando lo pida). Tampoco el
-mapa de versiones (la v2 no anticipa la v3).
+**Son el mismo trabajo y la misma spec.** Se elige uno, no los dos a la vez.
 
-### A.2 Prepare su proyecto (5 minutos)
+> **Y en los dos el método es el mismo, que es lo que importa:** **fase por
+> fase**, los archivos **de a uno**, y no se avanza sin verificar.
 
-Todos los comandos van en la terminal integrada de VS Code (PowerShell),
-**parado en la raíz de SU proyecto**.
+---
 
-1. **Cree la CARPETA nueva** (la única de la v2: la de sus specs — las
-   carpetas de código ya existen todas desde la v1):
+## 1. El punto de partida — verifíquelo ANTES de abrir la IA
 
-   ```powershell
-   mkdir docs\spec_kit\versiones\v2_con_fk
-   ```
-
-2. **Copie las specs de la v2** desde el clon del curso (los 7 `.md` +
-   esta guía) — ajuste la primera ruta a donde tenga el clon:
-
-   ```powershell
-   Copy-Item ..\proyecto_construccion_de_software2\docs\spec_kit\versiones\v2_con_fk\* docs\spec_kit\versiones\v2_con_fk\
-   ```
-
-   (También sirve el explorador de Windows: Ctrl+C, Ctrl+V de la carpeta
-   completa, como en la v1.)
-
-3. **Cree los ARCHIVOS VACÍOS nuevos** — los 18 que la IA irá llenando:
-
-   ```powershell
-   New-Item api_facturas\Modelos\Persona.cs, api_facturas\Modelos\Factura.cs, api_facturas\Modelos\ProductoDeFactura.cs, api_facturas\Peticiones\PersonaCrear.cs, api_facturas\Peticiones\PersonaReemplazo.cs, api_facturas\Peticiones\PersonaActualizar.cs, api_facturas\Peticiones\FacturaCrear.cs, api_facturas\Controllers\PersonaController.cs, api_facturas\Controllers\FacturaController.cs, api_facturas\Servicios\IServicioPersona.cs, api_facturas\Servicios\ServicioPersona.cs, api_facturas\Servicios\IServicioFactura.cs, api_facturas\Servicios\ServicioFactura.cs, api_facturas\Repositorios\IRepositorioPersona.cs, api_facturas\Repositorios\RepositorioPersonaPostgres.cs, api_facturas\Repositorios\IRepositorioFactura.cs, api_facturas\Repositorios\RepositorioFacturaPostgres.cs, api_facturas\Excepciones\ConflictoExcepcion.cs
-   ```
-
-4. Sepa desde ya qué archivos de la v1 **CRECEN** (la IA le entregará la
-   versión completa actualizada y usted REEMPLAZA el contenido):
-   `Program.cs` (4 AddScoped nuevos + version "v2") y
-   `pruebas/Programa.cs` (el repo falso de persona). **Ningún otro archivo
-   de la v1 se toca.**
-
-Los 18 archivos nuevos, con su fase (estructura de
-[3_plan.md](3_plan.md) §1):
-
-```
-api_facturas/
-├── Program.cs                        ★ CRECE en Fase 3 y Fase 6
-├── Modelos/         Persona.cs ← F1 · Factura.cs, ProductoDeFactura.cs ← F4
-├── Peticiones/      PersonaCrear/Reemplazo/Actualizar.cs ← F1 · FacturaCrear.cs ← F4
-├── Controllers/     PersonaController.cs ← F3 · FacturaController.cs ← F6
-├── Servicios/       IServicioPersona/ServicioPersona.cs ← F2 · IServicioFactura/ServicioFactura.cs ← F6
-├── Repositorios/    IRepositorioPersona/RepositorioPersonaPostgres.cs ← F2
-│                    IRepositorioFactura/RepositorioFacturaPostgres.cs ← F5
-├── Excepciones/     ConflictoExcepcion.cs ← F4
-└── pruebas/         Programa.cs ★ CRECE en Fase 2
+```powershell
+docker compose up -d --build
 ```
 
-### A.3 El prompt de la v2 (cópielo tal cual como PRIMER mensaje)
+Y la prueba de humo de la v1
+([7_quickstart de la v1](../v1_sin_fk/7_quickstart.md) §2) **pasa completa**.
 
-Los tres chequeos previos son los de siempre (adjuntos completos, modo
-razonamiento ON, búsqueda web OFF — [guía v1](../v1_sin_fk/GUIA_IA1.md) A.3).
+> **Si la v1 no arranca, no empiece la v2.** Construir encima de algo que no
+> funciona garantiza que después no se sabrá qué rompió qué.
+
+---
+
+## Camino A — Chat web
+
+### A.1 Qué subirle: los 8 archivos de la v2
+
+| Archivo | Qué le dice a la IA |
+|---|---|
+| `docs/spec_kit/1_constitution.md` | Las reglas permanentes del proyecto |
+| `.../v2_con_fk/2_spec.md` | **Qué** construir y sus 18 criterios |
+| `.../v2_con_fk/3_plan.md` | **Cómo**: la pila, las capas, los archivos |
+| `.../v2_con_fk/4_research.md` | Las decisiones y por qué |
+| `.../v2_con_fk/5_data_model.md` | Las tablas, los procedimientos, el disparador |
+| `.../v2_con_fk/6_contracts.md` | Los formatos exactos |
+| `.../v2_con_fk/7_quickstart.md` | Cómo se verifica |
+| `.../v2_con_fk/8_tasks.md` | El orden, en 12 fases |
+
+> **Los conceptuales de `docs/conceptos/` NO se suben.** Son para **usted** —
+> para entender qué está pidiendo y poder discutirlo—. La IA no los necesita, y
+> ocupan el contexto que hace falta para el trabajo.
+>
+> **El `9_checklist.md` tampoco se sube.** Se firma antes, y es suyo.
+
+### A.2 Prepare SU proyecto
+
+Usted ya tiene su proyecto de la v1 **funcionando**. La v2 se construye ahí
+mismo.
+
+**1. Copie la carpeta de specs de la v2** desde el clon del curso a su
+proyecto:
+
+```
+docs\spec_kit\versiones\v2_con_fk\     (los 8 .md, menos GUIA_IA2)
+```
+
+**2. Cree las carpetas nuevas** (solo si no las tiene):
+
+```powershell
+mkdir front_blazor\Modelos, front_blazor\Servicios, front_blazor\Components\Pages
+```
+
+**3. Cree los archivos VACÍOS de la API** — la IA no puede tocar su disco, y
+usted los va llenando uno por uno:
+
+```powershell
+New-Item api_facturas\Modelos\Cliente.cs, api_facturas\Peticiones\ClienteCrear.cs,`
+  api_facturas\Peticiones\ClienteReemplazo.cs,`
+  api_facturas\Peticiones\ClienteActualizar.cs,`
+  api_facturas\Repositorios\IRepositorioCliente.cs,`
+  api_facturas\Repositorios\RepositorioClientePostgres.cs,`
+  api_facturas\Servicios\IServicioCliente.cs,`
+  api_facturas\Servicios\ServicioCliente.cs,`
+  api_facturas\Controllers\ClienteController.cs,`
+  api_facturas\Modelos\Vendedor.cs, api_facturas\Peticiones\VendedorCrear.cs,`
+  api_facturas\Peticiones\VendedorReemplazo.cs,`
+  api_facturas\Peticiones\VendedorActualizar.cs,`
+  api_facturas\Repositorios\IRepositorioVendedor.cs,`
+  api_facturas\Repositorios\RepositorioVendedorPostgres.cs,`
+  api_facturas\Servicios\IServicioVendedor.cs,`
+  api_facturas\Servicios\ServicioVendedor.cs,`
+  api_facturas\Controllers\VendedorController.cs,`
+  api_facturas\Modelos\Factura.cs, api_facturas\Modelos\ProductoDeFactura.cs,`
+  api_facturas\Peticiones\FacturaCrear.cs,`
+  api_facturas\Repositorios\IRepositorioFactura.cs,`
+  api_facturas\Repositorios\RepositorioFacturaPostgres.cs,`
+  api_facturas\Servicios\IServicioFactura.cs,`
+  api_facturas\Servicios\ServicioFactura.cs,`
+  api_facturas\Controllers\FacturaController.cs,`
+  api_facturas\Excepciones\ConflictoExcepcion.cs,`
+  api_facturas\Modelos\RolUsuario.cs,`
+  api_facturas\Peticiones\RolUsuarioCrear.cs,`
+  api_facturas\Repositorios\IRepositorioRolUsuario.cs,`
+  api_facturas\Repositorios\RepositorioRolUsuarioPostgres.cs,`
+  api_facturas\Servicios\IServicioRolUsuario.cs,`
+  api_facturas\Servicios\ServicioRolUsuario.cs,`
+  api_facturas\Controllers\RolUsuarioController.cs,`
+  api_facturas\Modelos\RutaRol.cs, api_facturas\Peticiones\RutaRolCrear.cs,`
+  api_facturas\Repositorios\IRepositorioRutaRol.cs,`
+  api_facturas\Repositorios\RepositorioRutaRolPostgres.cs,`
+  api_facturas\Servicios\IServicioRutaRol.cs,`
+  api_facturas\Servicios\ServicioRutaRol.cs,`
+  api_facturas\Controllers\RutaRolController.cs,`
+  api_facturas\Modelos\UsuarioConRoles.cs,`
+  api_facturas\Peticiones\UsuarioConRolesCrear.cs,`
+  api_facturas\Peticiones\UsuarioConRolesActualizar.cs,`
+  api_facturas\Repositorios\IRepositorioUsuarioConRoles.cs,`
+  api_facturas\Repositorios\RepositorioUsuarioConRolesPostgres.cs,`
+  api_facturas\Servicios\IServicioUsuarioConRoles.cs,`
+  api_facturas\Servicios\ServicioUsuarioConRoles.cs,`
+  api_facturas\Controllers\UsuarioConRolesController.cs
+```
+
+**4. Y los de la interfaz gráfica:**
+
+```powershell
+New-Item front_blazor\Modelos\Cliente.cs, front_blazor\Servicios\ServicioCliente.cs,`
+  front_blazor\Modelos\Vendedor.cs,`
+  front_blazor\Servicios\ServicioVendedor.cs,`
+  front_blazor\Modelos\Factura.cs, front_blazor\Servicios\ServicioFactura.cs,`
+  front_blazor\Modelos\RolUsuario.cs,`
+  front_blazor\Servicios\ServicioRolUsuario.cs,`
+  front_blazor\Modelos\RutaRol.cs, front_blazor\Servicios\ServicioRutaRol.cs,`
+  front_blazor\Modelos\UsuarioConRoles.cs,`
+  front_blazor\Servicios\ServicioUsuarioConRoles.cs,`
+  front_blazor\Components\Pages\Clientes.razor,`
+  front_blazor\Components\Pages\Vendedores.razor,`
+  front_blazor\Components\Pages\Facturas.razor,`
+  front_blazor\Components\Pages\UsuariosYRoles.razor,`
+  front_blazor\Components\Pages\RolesPorUsuario.razor,`
+  front_blazor\Components\Pages\PermisosPorRol.razor
+```
+
+> **Son 49 archivos de API y 18 de front, y la cuenta sorprende.**
+> Es la medida honesta de lo que son seis recursos con sus capas — y es
+> exactamente el argumento del que nace la idea de generar código: cuando se
+> repite tanto, hay un patrón, y el patrón se puede decir una vez.
+
+**Dos archivos EXISTENTES crecen, y solo dos:**
+
+| | |
+|---|---|
+| `api_facturas\Program.cs` | Suma el registro de los seis recursos |
+| `front_blazor\Program.cs` | Suma los seis servicios del front |
+
+(Y `front_blazor\Components\Layout\NavMenu.razor`, que suma las entradas del
+menú.)
+
+**Antes de abrir el chat, verifique:**
+
+- [ ] `docs\spec_kit\versiones\v2_con_fk\` tiene **8** archivos `.md`.
+- [ ] Su v1 **arranca y su prueba de humo pasa**.
+- [ ] La base tiene las **12** tablas, los **procedimientos** y el
+      **disparador** — no solo las seis de la v1.
+
+```powershell
+docker compose exec postgres psql -U postgres -d bdfacturas_postgres_local -c "\dt"
+docker compose exec postgres psql -U postgres -d bdfacturas_postgres_local -c "\df"
+```
+
+### A.3 El prompt de la v2 — cópielo tal cual como PRIMER mensaje
+
+Los tres chequeos previos son los de la v1: **adjuntos completos**, **modo
+razonamiento ON**, **búsqueda web OFF**.
 
 ```
 Actúa como mi asistente de programación para construir la VERSIÓN 2 de un
-proyecto universitario. Te adjunto 8 documentos: la constitución (reglas
+proyecto universitario. Te adjunto 8 documentos: la constitución (las reglas
 permanentes) y el spec kit de la versión 2 (spec, plan, research, modelo de
 datos, contratos, quickstart y tareas).
 
-El proyecto es C# sobre ASP.NET Core (.NET 10) + PostgreSQL — así lo fija
-3_plan.md. Si en tu respuesta aparece OTRO lenguaje o framework (Python,
-Java, Node, PHP…), significa que no leíste los documentos adjuntos: detente
-y dímelo en vez de continuar.
+El proyecto es C# sobre ASP.NET Core (.NET 10) + PostgreSQL, con la interfaz
+gráfica en Blazor Server — así lo fija 3_plan.md. Si en tu respuesta aparece
+otro lenguaje o framework (Python, Java, Node, PHP, React…), significa que no
+leíste los documentos: detente y dímelo en vez de continuar.
 
-CONTEXTO CLAVE — las versiones son acumulativas:
-Mi proyecto YA TIENE la versión 1 construida y funcionando según estos
-mismos documentos (CRUD de producto con capas e interfaces; su spec está
-cerrada). La v2 se construye ENCIMA: NO reescribas, NO "mejores" y NO me
-vuelvas a entregar nada de producto. Solo dos archivos existentes crecen
-(Program.cs y pruebas/Programa.cs) — de esos me entregarás la versión
-completa actualizada. Si para algo necesitas ver mi código actual de la v1,
-pídemelo y te lo pego.
+CONTEXTO — LAS VERSIONES SON ACUMULATIVAS:
+
+Mi proyecto YA TIENE la versión 1 construida y funcionando: el CRUD completo
+de las SEIS tablas SIN clave foránea (producto, empresa, persona, rol, ruta,
+usuario), con su API y sus seis interfaces gráficas. Esa versión está CERRADA.
+
+La v2 se construye ENCIMA. No reescribas nada de la v1, no la "mejores" y no
+me vuelvas a entregar ninguno de esos seis recursos. Si para algo necesitas
+ver mi código actual, pídemelo y te lo pego.
+
+QUÉ CONSTRUYE LA VERSIÓN 2 — las SEIS tablas CON clave foránea:
+
+  cliente              CRUD de 5 verbos. Dos claves foráneas: fkcodpersona
+                       obligatoria, fkcodempresa OPCIONAL y nullable
+  vendedor             CRUD de 5 verbos. Una clave foránea obligatoria
+  factura +            CUATRO operaciones, no seis: listar, consultar, crear
+  productosporfactura  y ANULAR. Todas por procedimiento almacenado
+  rol_usuario          tabla puente: listar por los dos lados, agregar y
+                       quitar con las DOS claves. Sin PUT ni PATCH
+  rutarol              la otra tabla puente, igual
+
+Y un recurso más, que no es una tabla nueva:
+
+  usuario_con_roles    el usuario Y sus roles en UNA operación, con los cinco
+                       procedimientos que la base ya trae. Ruta:
+                       api/usuario-con-roles
+
+Con la v2 están las 12 tablas de bdfacturas.
 
 REGLAS DE TRABAJO (no negociables):
 
-1. La especificación manda. No agregues NADA que los documentos no pidan:
-   ni CRUD de cliente/vendedor, ni endpoints de editar/borrar factura, ni
-   frameworks, ni fábricas "por si acaso". Si crees que falta algo,
-   pregúntame antes.
-2. Vamos a seguir 8_tasks.md FASE POR FASE, en orden. En cada fase:
+1. La especificación manda. No agregues NADA que los documentos no pidan: ni
+   token ni login (eso es la v3), ni endpoints para editar o borrar
+   físicamente una factura (no se exponen: la operación es ANULAR), ni
+   fábricas, ni otro motor de base de datos (eso es la v5). Si crees que
+   falta algo, pregúntame antes de escribirlo.
+
+2. Vamos a seguir 8_tasks.md FASE POR FASE, en orden, las doce. En cada fase:
    a. Me explicas en 3-5 líneas qué vamos a hacer y por qué.
    b. Me entregas los archivos DE A UNO: la ruta exacta y el contenido
-      COMPLETO de UN archivo (con los comentarios didácticos en español
-      que exige la constitución). Esperas mi "listo" y sigues con el
-      siguiente.
-   c. Al cerrar la fase me dices su comando de verificación y qué salida
-      esperar (correrla en el momento es opcional).
-   NOTA: los archivos nuevos YA EXISTEN VACÍOS en mi proyecto — no me des
-   comandos para crearlos.
-3. Los errores NO nos frenan: te pego el error, me das el archivo completo
-   corregido; si no sale rápido, seguimos y lo retomamos al final con el
-   smoke test de 7_quickstart.md.
-4. El código debe cumplir 6_contracts.md al pie de la letra — incluidos el
-   409 de anular dos veces y la regla de que la API NUNCA calcula
-   subtotales, totales ni stock (eso lo hacen los SPs y triggers de la BD).
-5. Todo en español: nombres, comentarios y mensajes. C# sobre ASP.NET Core
-   (.NET 10).
-6. Yo trabajo en Windows con VS Code (terminal PowerShell) y Docker
-   Desktop. Dame los comandos para ese entorno.
-7. Mi proyecto corre con los puertos de la v1 desplazados +100 (convivo
-   con el clon del curso): API en 8143 y PostgreSQL en 15543, con
-   name: mi_v1_sin_fk en el compose. Cuando me des URLs o comandos de
-   prueba, usa localhost:8143 y localhost,15543.
+      COMPLETO de UN archivo, con los comentarios didácticos en español que
+      exige la constitución. Esperas mi "listo" y sigues con el siguiente.
+   c. Al cerrar la fase me das su comando de verificación y qué salida
+      esperar.
+   Los archivos nuevos YA EXISTEN VACÍOS en mi proyecto: no me des comandos
+   para crearlos.
 
-Al final, la versión 2 está TERMINADA solo cuando: (a) el smoke test de la
-V1 sigue pasando completo (regresión — no rompimos nada), y (b) los 6
-criterios de aceptación de 2_spec.md de la v2 pasan con el smoke test de
-7_quickstart.md.
+3. Los errores no nos frenan: te pego el error, me das el archivo completo
+   corregido. Si no sale rápido, seguimos y lo retomamos en el cierre.
+
+4. Cumple 6_contracts.md al pie de la letra. En particular:
+   - La API NUNCA calcula subtotales, total ni stock: eso lo hacen los
+     procedimientos y el disparador de la base.
+   - Al crear una factura, el cuerpo NO lleva total ni subtotales ni fecha.
+   - api/rol-usuario lleva GUION; api/rutarol NO lo lleva.
+   - El 409 tiene tres causas: clave foránea inexistente, pareja repetida en
+     una tabla puente, y factura ya anulada.
+   - La contraseña vacía al editar un usuario significa "déjela como está".
+
+5. CADA VERSIÓN ES API + INTERFAZ GRÁFICA. Las fases 9, 10 y 11 son del front
+   en Blazor Server, y la versión no está cerrada sin ellas. En particular:
+   - Las claves foráneas van como DESPLEGABLES cargados de la API: muestran
+     el nombre, mandan el código. No como campos de texto.
+   - El formulario de factura es UNO: se agregan y quitan renglones ANTES de
+     guardar, y se envía UNA sola vez.
+   - El formulario de usuario con roles usa CASILLAS, y también un solo envío.
+   - El nombre de un archivo .razor es el nombre de una clase: no puede
+     llamarse igual que un modelo, o no compila.
+
+6. Todo en español: nombres, comentarios y mensajes.
+
+7. Trabajo en Windows con VS Code (terminal PowerShell) y Docker Desktop. Dame
+   los comandos para ese entorno, y usa curl.exe con la extensión (en
+   PowerShell, curl pelado es otra cosa).
+
+La versión 2 está TERMINADA solo cuando: (a) la prueba de humo de la V1 pasa
+completa —la regresión, no rompimos nada— y (b) los 18 criterios de
+aceptación de 2_spec.md §5 pasan con 7_quickstart.md, incluidos los ocho de
+las interfaces gráficas.
 
 Empieza: resume en máximo 10 líneas qué vamos a construir y sobre qué base
-(para confirmar que entendiste que la v1 ya existe), y arranca con la Fase 0.
+—para confirmar que entendiste que la v1 ya existe y no se toca— y arranca
+con la Fase 0.
 ```
 
-### A.4 El método (lo nuevo respecto a la v1)
+### A.4 El método de la conversación
 
-Los hábitos son los de la [guía v1](../v1_sin_fk/GUIA_IA1.md) A.4 (pegar y "listo",
-no atascarse en errores, reiniciar el chat si responde en otro lenguaje o
-pierde contexto). Además, para la v2:
+1. **Pegue y diga "listo".** Un archivo por turno. La tentación de pedir
+   "dame todos los de la fase" es la que llena el chat de código que no se
+   revisó.
+2. **Proteja la v1.** Si la IA le entrega un archivo de `producto` o de
+   `persona` "mejorado", **no lo pegue**: *«eso es de la v1 cerrada, no se
+   toca»*. Las únicas excepciones son los dos `Program.cs` y el menú.
+3. **Cuando pida ver código de la v1, péguelo completo.** Típicamente
+   `Program.cs`, un controlador y un repositorio: los necesita para calcar el
+   estilo.
+4. **Si responde en otro lenguaje o pierde el hilo, reinicie el chat** y
+   vuelva a subir los 8 documentos. No insista en una conversación perdida.
+5. **El cierre es doble y en ese orden:** primero la **regresión** de la v1,
+   después la prueba de humo de la v2.
 
-1. **Proteja la v1.** Si la IA le entrega un archivo de producto
-   "mejorado", no lo pegue: "eso es de la v1 cerrada, no se toca" (regla
-   del CONTEXTO CLAVE). Las únicas excepciones: `Program.cs` y
-   `pruebas/Programa.cs`.
-2. **Cuando pida ver código v1, péguelo completo** (típicamente
-   `Program.cs`, `ProductoController.cs` o el `Programa.cs` de pruebas —
-   los necesita para calcar el estilo y para entregar los que crecen).
-3. **El cierre es doble**: primero la REGRESIÓN de la v1 (su smoke test
-   completo) y luego el smoke test de la v2 — en ese orden. Con sus
-   puertos: donde el quickstart diga `8043` use `8143`.
+---
 
-## B. Camino del IDE agéntico
+## Camino B — IDE agéntico
 
-Preparación como en la [guía v1](../v1_sin_fk/GUIA_IA1.md) B.1, con una diferencia:
-abra el IDE **sobre su proyecto de la v1** (que ya tiene código) y copie
-antes la carpeta `v2_con_fk` de specs (paso A.2.1).
+### B.1 Preparación
+
+Abra el IDE **sobre su proyecto de la v1** —el que ya tiene código— y copie
+antes la carpeta `v2_con_fk` de specs (paso A.2.1). **No hay que crear
+archivos vacíos:** el agente los crea.
+
+### B.2 El prompt para el agente — cópielo tal cual
 
 ```
-Construye la VERSIÓN 2 de este proyecto. Las versiones son acumulativas:
-este proyecto YA TIENE la v1 construida y funcionando (CRUD de producto);
-NO la modifiques — solo Program.cs y pruebas/Programa.cs crecen.
+Construye la VERSIÓN 2 de este proyecto.
 
-Primero lee, en este orden: docs/spec_kit/1_constitution.md y los 7
-documentos de docs/spec_kit/versiones/v2_con_fk/ (2_spec a
-8_tasks). Puedes leer el código v1 existente para calcar su estilo.
+LAS VERSIONES SON ACUMULATIVAS: este proyecto YA TIENE la v1 construida y
+funcionando —el CRUD de las seis tablas SIN clave foránea (producto, empresa,
+persona, rol, ruta, usuario) con su API y sus seis interfaces gráficas—. NO la
+modifiques. Los únicos archivos existentes que crecen son
+api_facturas/Program.cs, front_blazor/Program.cs y
+front_blazor/Components/Layout/NavMenu.razor.
+
+Primero LEE, en este orden: docs/spec_kit/1_constitution.md y los 8
+documentos de docs/spec_kit/versiones/v2_con_fk/ (2_spec a 8_tasks). Puedes
+leer el código de la v1 para calcar su estilo. docs/spec_kit/ es SOLO
+LECTURA. La base de datos ya está completa en db/ desde la v1: no toques SQL.
+
 Después resume en máximo 10 líneas qué vas a construir y sobre qué base, y
-espera mi confirmación antes de tocar nada. docs/spec_kit/ es solo lectura.
-La BD ya está en db/ desde la v1 — no toques SQL.
+ESPERA MI CONFIRMACIÓN antes de tocar un solo archivo.
+
+QUÉ CONSTRUYE LA VERSIÓN 2 — las seis tablas CON clave foránea: cliente,
+vendedor, factura (+ productosporfactura), rol_usuario y rutarol. Más el
+recurso usuario_con_roles, que opera usuario y rol_usuario juntas con los
+cinco procedimientos de la base. Con la v2 están las 12 tablas.
 
 REGLAS (no negociables):
-1. La especificación manda: nada que los documentos no pidan (ni CRUD de
-   cliente/vendedor, ni editar/borrar factura). Ante la duda, pregunta.
-2. Sigue 8_tasks.md FASE POR FASE; al cerrar cada fase EJECUTA su
-   verificación, muéstrame el resultado real y espera mi OK.
-3. Cumple 6_contracts.md al pie de la letra (el 409 del doble anular
-   incluido); la API NUNCA calcula subtotales/total/stock — eso es de los
-   SPs y triggers.
-4. Todo en español, C# (.NET 10), comentarios didácticos.
-5. Cierre doble: la regresión de la v1 (su quickstart completo) y el smoke
-   test de la v2 (7_quickstart.md §3), con evidencia de los 6 criterios.
+
+1. La especificación manda: nada que los documentos no pidan. Ni token ni
+   login (v3), ni editar/borrar físicamente una factura (no se exponen: la
+   operación es ANULAR), ni fábricas ni otro motor (v5). Ante la duda,
+   pregunta.
+
+2. Sigue 8_tasks.md FASE POR FASE, las doce. Al cerrar cada fase EJECUTA su
+   verificación, muéstrame el resultado REAL —no lo que esperabas— y espera
+   mi OK antes de seguir.
+
+3. Cumple 6_contracts.md al pie de la letra: la API nunca calcula
+   subtotales/total/stock; el cuerpo de crear factura no los lleva;
+   api/rol-usuario con guion y api/rutarol sin guion; el 409 con sus tres
+   causas; la contraseña vacía al editar significa "déjela como está".
+
+4. CADA VERSIÓN ES API + INTERFAZ GRÁFICA. Las fases 9, 10 y 11 son del front
+   en Blazor Server y la versión no cierra sin ellas: desplegables cargados
+   de la API, el formulario de factura con UN solo envío, las casillas de
+   roles con UN solo envío. Y el nombre de un .razor no puede chocar con el
+   de un modelo.
+
+5. Todo en español, con comentarios didácticos.
+
+6. Un commit por fase, con mensaje en español que diga qué se construyó.
+
+7. Cierre doble: primero la regresión de la v1 (su quickstart completo),
+   después los 18 criterios de 7_quickstart.md —incluidos los ocho del
+   navegador—. Con evidencia.
 ```
 
-La supervisión es la de la [guía v1](../v1_sin_fk/GUIA_IA1.md) B.3, más una alarma
-nueva: **si el diff toca archivos de producto** (distintos de `Program.cs`
-y `pruebas/Programa.cs`), recháselo — la v1 está cerrada.
+### B.3 Cómo supervisar al agente
 
-## Por qué así (la lección de la v2)
+| Alarma | Qué hacer |
+|---|---|
+| **El diff toca un archivo de la v1** (distinto de los dos `Program.cs` y el menú) | Recházelo. La v1 está cerrada |
+| **Aparece un `SELECT` en `RepositorioFacturaPostgres.cs`** | Recházelo: factura es solo procedimientos |
+| **El front manda `total`** | Recházelo. Lo pone el disparador |
+| **Dice «listo» sin haber ejecutado la verificación** | Pídale la salida real. «Debería funcionar» no es una verificación |
+| **Hace las doce fases de un tirón** | Párelo. El valor del método está en verificar cada fase |
+| **Agrega un paquete de NuGet** | Pregúntele dónde lo pide la spec. Si no lo pide, fuera |
 
-En la v1 la lección era dirigir a la IA **desde cero** con una spec. En la
-v2 la lección es la de la vida real: casi nunca se parte de cero — se
-agrega sobre un sistema vivo SIN romperlo. Por eso el prompt protege la v1,
-por eso el cierre empieza por la regresión, y por eso la spec de la v2 solo
-describe el DELTA: lo acumulado ya tiene dueño (las specs cerradas de las
-versiones anteriores).
+---
+
+## Por qué así — la lección de la v2
+
+En la v1 la lección era **dirigir a una IA desde cero** con una
+especificación. En la v2 es la de la vida real: **casi nunca se parte de
+cero**.
+
+| | |
+|---|---|
+| **Por eso el prompt protege la v1** | Lo que ya funciona tiene dueño: su spec cerrada |
+| **Por eso el cierre empieza por la regresión** | Lo primero que hay que saber es si se rompió algo |
+| **Por eso la spec de la v2 solo describe el DELTA** | Lo acumulado está especificado en otra parte, y repetirlo es garantizar que un día las dos copias no coincidan |
+
+> **Y la trampa de esta versión, que vale la pena decir:** los cuatro errores
+> más probables de la v2 —el sobre deserializado mal, el alias que falta en
+> Dapper, el `JsonPropertyName` olvidado, la cadena vacía en vez de `null`—
+> **fallan en silencio**. No hay excepción ni error en el log: hay un dato
+> equivocado, con HTTP 200.
+>
+> Por eso el cierre se hace **mirando la interfaz gráfica**, y no solo leyendo
+> respuestas de la API. Una IA que no ejecuta la verificación no puede
+> encontrarlos, y usted tampoco si no abre el navegador.

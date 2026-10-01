@@ -1,5 +1,5 @@
 // ============================================================
-// Programa.cs — Prueba de capas (criterio 6 de la v1).
+// Programa.cs — Prueba de capas (criterio 10 de la v2).
 //
 // Verifica que ServicioProducto funciona con un repositorio
 // FALSO en memoria que implementa IRepositorioProducto — sin
@@ -47,9 +47,9 @@ try { await servicio.ListarAsync(0); Verificar(false, "debió lanzar ArgumentExc
 catch (ArgumentException) { /* esperado */ }
 
 // ------------------------------------------------------------
-// v2 — la prueba CRECE: el mismo guion, ahora sobre PERSONA con
-// SU repositorio falso. Si el molde se replicó bien, esto pasa
-// sin sorpresas (esa es la evidencia del criterio 6 de la v2).
+// La REGRESION de la v1: el mismo guion sobre PERSONA, que es uno
+// de los seis recursos sin clave foránea. Si el molde de la v1 se
+// replicó bien, esto pasa sin sorpresas.
 // ------------------------------------------------------------
 
 var servicioPersona = new ServicioPersona(new RepositorioPersonaFalsoEnMemoria());
@@ -67,7 +67,43 @@ catch (NoEncontradoExcepcion) { /* esperado */ }
 try { await servicioPersona.ActualizarAsync("T1", new()); Verificar(false, "persona: debió lanzar ArgumentException"); }
 catch (ArgumentException) { /* esperado */ }
 
-Console.WriteLine("CRITERIO 6 OK: producto y persona funcionan con repositorios falsos, sin PostgreSQL");
+// ------------------------------------------------------------
+// v2 — AQUI ESTA LO NUEVO: un recurso CON CLAVE FORANEA.
+//
+// `cliente` tiene dos: fkcodpersona y fkcodempresa. Y el repositorio
+// falso NO LAS COMPRUEBA — ni siquiera sabe que existen—, así que esta
+// prueba crea un cliente que apunta a una persona inventada y PASA.
+//
+// Eso no es un hueco de la prueba: es exactamente lo que hay que ver.
+// La integridad referencial vive EN LA BASE, no en el servicio. El
+// servicio no la puede comprobar ni le toca, y por eso la misma
+// operación contra PostgreSQL responde 409 (criterio 3) y aquí no.
+//
+// Si el servicio validara la FK, esta prueba fallaría — y querría decir
+// que la regla está duplicada en dos sitios.
+// ------------------------------------------------------------
+
+var servicioCliente = new ServicioCliente(new RepositorioClienteFalsoEnMemoria());
+
+await servicioCliente.CrearAsync(new Cliente
+{
+    Credito = 500000m,
+    Fkcodpersona = "PERSONA_QUE_NO_EXISTE",   // el falso no tiene integridad referencial
+    Fkcodempresa = null,                       // y el opcional es opcional de verdad
+});
+Verificar((await servicioCliente.ListarAsync(10)).Count == 1, "cliente: crear + listar");
+Verificar((await servicioCliente.ListarAsync(10))[0].Fkcodempresa is null, "cliente: la empresa quedó en null");
+Verificar(await servicioCliente.ActualizarAsync(1, new() { ["credito"] = 900000m }) == 1, "cliente: actualizar");
+Verificar((await servicioCliente.ObtenerAsync(1)).Credito == 900000m, "cliente: el crédito quedó en 900000");
+Verificar(await servicioCliente.EliminarAsync(1) == 1, "cliente: eliminar");
+
+try { await servicioCliente.ObtenerAsync(999); Verificar(false, "cliente: debió lanzar NoEncontradoExcepcion"); }
+catch (NoEncontradoExcepcion) { /* esperado */ }
+
+try { await servicioCliente.ActualizarAsync(1, new()); Verificar(false, "cliente: debió lanzar ArgumentException"); }
+catch (ArgumentException) { /* esperado */ }
+
+Console.WriteLine("CRITERIO 10 OK: producto, persona y cliente funcionan con repositorios falsos, sin PostgreSQL");
 
 // Mini-verificador (función local): si la condición es falsa, reporta
 // y sale con error (terminar con 0 = pasó; con 1 = falló).
@@ -178,5 +214,65 @@ class RepositorioPersonaFalsoEnMemoria : IRepositorioPersona
     public Task<int> EliminarAsync(string codigo)
     {
         return Task.FromResult(_datos.Remove(codigo) ? 1 : 0);
+    }
+}
+
+// ------------------------------------------------------------
+// v2 — el repositorio falso de CLIENTE.
+//
+// Dos cosas lo diferencian de los de arriba, y las dos son de la v2:
+//
+//   1. LA CLAVE LA GENERA EL REPOSITORIO, no quien crea. En PostgreSQL
+//      la pone el SERIAL; aquí, un contador. El servicio no la fija en
+//      ninguno de los dos casos — y por eso no nota la diferencia.
+//
+//   2. NO HAY INTEGRIDAD REFERENCIAL. `fkcodpersona` es un texto y nada
+//      más: nadie comprueba que esa persona exista. Contra PostgreSQL,
+//      la misma operación responde 409. La regla vive en la BASE.
+// ------------------------------------------------------------
+class RepositorioClienteFalsoEnMemoria : IRepositorioCliente
+{
+    private readonly Dictionary<int, Cliente> _datos = new();
+    private int _siguienteId = 1;
+
+    public Task<List<Cliente>> ObtenerTodosAsync(int limite)
+    {
+        var lista = _datos.Values.OrderBy(c => c.Id).Take(limite).ToList();
+        return Task.FromResult(lista);
+    }
+
+    public Task<Cliente?> ObtenerPorIdAsync(int id)
+    {
+        _datos.TryGetValue(id, out var cliente);
+        return Task.FromResult(cliente);
+    }
+
+    public Task CrearAsync(Cliente entidad)
+    {
+        // El SERIAL, imitado: la clave la pone quien guarda, no quien pide.
+        entidad.Id = _siguienteId++;
+        _datos[entidad.Id] = entidad;
+        return Task.CompletedTask;
+    }
+
+    public Task<int> ActualizarAsync(int id, Dictionary<string, object> datos)
+    {
+        if (!_datos.TryGetValue(id, out var cliente))
+        {
+            return Task.FromResult(0);
+        }
+        if (datos.TryGetValue("credito", out var credito)) { cliente.Credito = (decimal)credito; }
+        if (datos.TryGetValue("fkcodpersona", out var p)) { cliente.Fkcodpersona = (string)p; }
+        if (datos.TryGetValue("fkcodempresa", out var e))
+        {
+            // DBNull es lo que el controlador manda para decir «ponga NULL».
+            cliente.Fkcodempresa = e is DBNull ? null : (string?)e;
+        }
+        return Task.FromResult(1);
+    }
+
+    public Task<int> EliminarAsync(int id)
+    {
+        return Task.FromResult(_datos.Remove(id) ? 1 : 0);
     }
 }

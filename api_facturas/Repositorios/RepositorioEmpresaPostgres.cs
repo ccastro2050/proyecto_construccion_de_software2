@@ -47,7 +47,8 @@ public class RepositorioEmpresaPostgres : IRepositorioEmpresa
         const string sql = @"INSERT INTO empresa (codigo, nombre)
                              VALUES (@Codigo, @Nombre)";
         await using var conexion = CrearConexion();
-        await conexion.ExecuteAsync(sql, entidad);
+        await ErroresPostgres.TraducirAsync(
+            () => conexion.ExecuteAsync(sql, entidad));
     }
 
     public async Task<int> ActualizarAsync(string codigo, Dictionary<string, object> datos)
@@ -60,7 +61,8 @@ public class RepositorioEmpresaPostgres : IRepositorioEmpresa
         var parametros = new DynamicParameters(datos);
         parametros.Add("clave", codigo);
         await using var conexion = CrearConexion();
-        return await conexion.ExecuteAsync(sql, parametros);
+        return await ErroresPostgres.TraducirAsync(
+            () => conexion.ExecuteAsync(sql, parametros));
     }
 
     public async Task<int> EliminarAsync(string codigo)
@@ -68,6 +70,7 @@ public class RepositorioEmpresaPostgres : IRepositorioEmpresa
         // Si otras tablas lo referencian, la FK del motor rechaza -> 500.
         const string sql = "DELETE FROM empresa WHERE codigo = @codigo";
         await using var conexion = CrearConexion();
-        return await conexion.ExecuteAsync(sql, new { codigo });
+        return await ErroresPostgres.TraducirAsync(
+            () => conexion.ExecuteAsync(sql, new { codigo }));
     }
 }

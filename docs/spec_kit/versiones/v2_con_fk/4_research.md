@@ -1,92 +1,158 @@
-# Investigación y decisiones — Versión 2
+# Investigación y decisiones — Versión 2: las tablas con clave foránea
 
-> **Versión 2** · **Lectura opcional**: el porqué del [plan](3_plan.md),
-> con las alternativas que se descartaron.
+> **Qué es este documento:** las decisiones que se tomaron y **las
+> alternativas que se descartaron, con su razón**. No es relleno: su utilidad
+> aparece el día que alguien pregunte «¿y por qué no hicieron…?» — y la
+> respuesta esté escrita en vez de olvidada.
 
 ---
 
-## D1 — ¿Por qué persona Y factura en la misma versión?
-Porque enseñan lecciones opuestas y se refuerzan: persona demuestra que el
-molde de la v1 **se replica sin pensar** (si costó trabajo, la arquitectura
-estaba mal); factura demuestra que no todo es CRUD — hay lógica que
-**pertenece a la BD**. Una versión solo-persona sería trivial; una
-solo-factura dejaría sin practicar la replicación.
-**Esta decisión se REVISÓ, y conviene dejar escrito por qué.** Decía:
-*«alternativa descartada: agregar también cliente/vendedor/empresa — puro
-volumen sin lección nueva»*.
+## D1 — La clave foránea inexistente: ¿422 o 409?
+
+| Opción | Argumento |
+|---|---|
+| **422** | «El dato está mal, y el 422 es para datos malos» |
+| **409** ✅ | **El dato NO está mal: tiene la forma correcta.** `"NOEXISTE"` es un texto de la longitud permitida. Lo que se rompe es el **estado** de la base: esa fila no está |
+
+**Lo que decide:** el 422 se reserva para lo que la **petición** puede
+rechazar sin consultar nada —un campo que falta, un número negativo, un tipo
+equivocado—. Saber si `P001` existe **requiere ir a la base**, y eso ya es
+estado.
+
+> **Y es la razón por la que el 409 aparece en la v2 y no antes:** es la
+> primera versión en la que una fila **depende de otra**. En la v1 no había
+> nada que violar.
+
+## D2 — `fkcodempresa` sin empresa: ¿cadena vacía o `null`?
+
+**`null`.** Y conviene decir por qué `""` es tentador y está mal: un
+`<select>` de HTML no sabe de `null` —su opción vacía vale `""`— así que lo
+más fácil es dejar que viaje tal cual.
+
+```
+""     ->  un codigo de empresa de cero caracteres, que NO existe  ->  409
+null   ->  «este cliente no tiene empresa»                         ->  200
+```
+
+**La conversión se hace en la interfaz gráfica, justo antes de enviar.** Y
+queda escrita en el código, porque es el tipo de detalle que se olvida y
+produce un 409 que nadie entiende.
+
+## D3 — `factura`: ¿SQL en el repositorio, o procedimientos?
+
+| Opción | Argumento |
+|---|---|
+| **SQL en C#** | Más fácil de leer para quien no sabe plpgsql. Todo el código en un solo lenguaje |
+| **Procedimientos** ✅ | **La base ya los trae** —seis, escritos y probados— y la transacción es suya |
+
+**Lo que decide, y no es la pereza:** el detalle de una factura y su
+encabezado tienen que entrar **juntos o no entrar**. Con `INSERT` desde C#
+habría que manejar la transacción en la API, y el cálculo del total viviría en
+dos sitios —el disparador y el servicio—. **El día que la regla del total
+cambie, cambia en uno.**
+
+> **Qué se pierde, para no pintarlo bonito:** el estudiante tiene que leer
+> plpgsql, que no se enseñó. Se compensa con el `5_data_model`, que explica
+> qué hace cada procedimiento, y con que el repositorio **solo** llame: no hay
+> que escribir plpgsql, hay que leerlo.
+
+## D4 — La traducción de los errores de plpgsql: por patrón del mensaje
+
+Los `RAISE EXCEPTION` de plpgsql **no traen número**: todos llegan con
+`SQLSTATE P0001`. Así que para distinguir «no existe» de «ya está anulada» hay
+que mirar **el texto**.
+
+```csharp
+catch (PostgresException e) when (e.SqlState == "P0001"
+                                  && e.MessageText.Contains("no existe"))
+    => throw new NoEncontradoExcepcion(e.MessageText);   // 404
+```
+
+| Opción | Argumento |
+|---|---|
+| **Por patrón del mensaje** ✅ | Es lo que el motor da. Funciona hoy, sin tocar la base |
+| **Un código propio en el JSON del procedimiento** | **Mejor**, y está descartado solo por alcance |
+
+> **Está escrito aquí a propósito, porque es frágil y se nota:** si alguien
+> traduce el mensaje del procedimiento al inglés, la API deja de responder 404
+> y responde 500 — **sin que nada falle al compilar**. La alternativa buena
+> —que cada procedimiento devuelva `{"error":"no_encontrado"}`— implica tocar
+> la base, y la base **se entrega dada**. Queda como deuda **conocida**, que es
+> distinto de un descuido.
+
+## D5 — Un recurso `usuario-con-roles` además de los otros dos
+
+Ya existen `api/usuario` y `api/rol-usuario`. ¿Por qué un tercero?
+
+| Opción | Argumento |
+|---|---|
+| **Dos llamadas desde el front** | Ningún endpoint nuevo. «Crear el usuario y después asignarle los roles» |
+| **Un recurso nuevo** ✅ | **Una** transacción |
+
+**Lo que decide:** con dos llamadas, un fallo en la segunda deja **un usuario
+sin ningún rol** — que no puede hacer nada, y que nadie sabe que está ahí
+hasta que alguien se queja. La base **ya trae** `crear_usuario_con_roles` para
+que sea una.
+
+> **Y los tres recursos se quedan**, que es la parte que suele incomodar:
+> administran cosas distintas. El primero la tabla sola, el segundo la puente
+> pareja a pareja, el tercero el conjunto. **La interfaz gráfica usa el
+> tercero.** Quitar los otros dos no ahorraría nada y le quitaría al
+> administrador la operación fina.
+
+## D6 — El total de la factura: ¿lo manda el front?
+
+**No.** Lo calcula el disparador, y el front lo **muestra** sin enviarlo.
+
+| Opción | Argumento |
+|---|---|
+| **El front lo manda** | Un cálculo menos en la base. Y el front ya lo tiene, porque lo está mostrando |
+| **Lo calcula la base** ✅ | **Una sola fuente de verdad** |
+
+**Lo que decide:** si los dos lo calculan, un día no van a coincidir —por un
+redondeo, por un precio que cambió entre que se cargó el desplegable y se
+emitió— y **va a ganar el número que nadie revisó**. El que manda es el de la
+base, así que es el único que se guarda.
+
+> **Lo que el front muestra se llama «total estimado» en la interfaz**, y no es
+> un adorno: es decirle a la persona que ese número es una ayuda, no el
+> documento.
+
+## D7 — El detalle: ¿renglón por renglón, o todo junto?
+
+**Todo junto, en un solo envío.** Y es el criterio que no se puede simular.
+
+| Opción | Argumento |
+|---|---|
+| **Un POST por renglón** | Más simple de programar: cada botón hace su llamada |
+| **Un solo POST al final** ✅ | La transacción del procedimiento **sirve para algo** |
+
+**Lo que decide:** con un POST por renglón, agregar tres y quitar uno deja
+**tres** en la base —el borrado del tercero habría que programarlo también— y
+un fallo a mitad deja una factura incompleta que nadie pidió.
+
+> **Cómo se comprueba, y es el criterio 13:** agregue tres renglones, quite
+> uno, emita. **Tienen que llegar dos.**
+
+## D8 — Las interfaces de las tablas puente: ¿se llaman como la tabla?
+
+**No**, y por dos razones distintas.
 
 | | |
 |---|---|
-| **Qué tenía de cierto** | `cliente` y `vendedor` son el mismo molde de la v1. Como ejercicio de replicación, no enseñan nada nuevo |
-| **Por qué se revisó igual** | El criterio de la versión **no es la lección nueva: es el modelo**. La v2 son **las tablas con clave foránea**, y dejar dos por fuera deja el modelo a medias — y la interfaz gráfica de factura sin los desplegables de los que depende |
-| **Qué sí era volumen y se quitó** | `empresa` y `persona`, que **no tienen clave foránea**: son de la **v1**. Estaban aquí por error, no por decisión |
+| **La técnica** | El nombre de un archivo `.razor` **es el nombre de una clase**. `RolUsuario.razor` genera una clase `RolUsuario` que **tapa el modelo** del mismo nombre, y el proyecto **no compila**. Pasó |
+| **La humana** | El menú le habla a una persona. «Roles por usuario» y «Permisos por rol» dicen qué hay ahí; `rol_usuario` y `rutarol` son nombres de tabla |
 
-> **La lección de `cliente` y `vendedor` no es el CRUD: es el desplegable.** En
-> la v1 ninguna tabla tenía clave foránea, así que no había nada que elegir en
-> una interfaz. Aquí aparece, y aparece seis veces.
+> **Y de ahí salió una corrección en el auditor:** adivinaba el recurso de cada
+> interfaz **por el nombre del archivo**, lo que forzaba a llamarlas como la
+> tabla. Ahora lee el servicio que la interfaz inyecta
+> —`@inject ServicioRolUsuario Servicio`—, que es un dato y no una suposición.
 
-## D2 — Factura SOLO por procedimientos almacenados
-**Decisión:** el repositorio de factura no escribe SQL de tablas: llama 4
-SPs (`un CALL de texto`) y deserializa su JSON.
-**Por qué:** la BD ya resuelve la transacción completa (encabezado +
-renglones + trigger) — reimplementarla en C# duplicaría la lógica y abriría
-la puerta a que API y BD calculen distinto (la pesadilla de consistencia).
-Además es la lección ACID del curso en acción: la factura se crea ENTERA o
-no se crea ([PRINCIPIOS_ACID.md](../../../PRINCIPIOS_ACID.md)).
-**Alternativa descartada:** INSERTs desde C# con transacción ADO.NET —
-funcionaría, pero repite lo que el trigger ya hace y no enseña SPs.
+## D9 — Lo que NO se investigó, y por qué
 
-## D3 — ¿Por qué NO exponer sp_actualizar ni sp_borrar en v2?
-Anular ES la operación de negocio real (las facturas no se editan ni se
-borran en contabilidad; se anulan). Exponer el borrado físico invitaría a
-usarlo. El SP existe para el administrador de BD; si una versión futura lo
-necesita, será una decisión registrada en SU spec.
-
-## D4 — Los renglones de la petición viajan al SP como JSON
-El SP recibe `@p_productos NVARCHAR(MAX)` y lo abre con `json_array_elements`.
-**Decisión:** el servicio serializa la lista (ya validada por la petición)
-a ese JSON — un solo viaje a la BD, una sola transacción.
-**Alternativa descartada:** un INSERT por renglón desde C# — N viajes y la
-transacción quedaría del lado equivocado.
-
-## D5 — Validación por capas: la petición primero, el SP de respaldo
-`[MinLength(1)]` en la lista y `[Range(1, …)]` en cantidad matan en **422**
-los errores de forma ANTES de tocar la BD. El `RAISE EXCEPTION` del SP (mínimo
-de renglones) queda como **defensa en profundidad**: protege a la BD de
-CUALQUIER cliente, no solo de esta API. No es redundancia — son dos
-fronteras distintas.
-
-## D6 — Los RAISE EXCEPTION del SP → excepciones de negocio (en el repositorio)
-`sp_consultar` y `sp_anular` lanzan `RAISE EXCEPTION` (SQLSTATE `P0001`)
-con mensajes distintos ("no existe" / "ya está anulada"). **Decisión:** el
-repositorio los captura con `catch … when` filtrando por P0001 + patrón
-del mensaje y lanza `NoEncontradoExcepcion` (→404) o la nueva
-`ConflictoExcepcion` (→409).
-**Por qué en el repositorio:** los números de error del motor son un
-detalle del proveedor de datos; servicio y controller no deben conocer
-`PostgresException`. **Por qué 409:** anular dos veces no es "no existe" (404)
-ni "petición mal formada" (422) — es un conflicto con el ESTADO actual del
-recurso: exactamente la semántica de 409 Conflict.
-
-## D7 — Stock insuficiente → 500, no 400
-El trigger lanza su error con el mensaje «Stock insuficiente…» y la API lo
-reporta como 500 con ese mensaje en `detalle`. ¿No debería ser 400/409?
-Defendible — pero exigiría reconocer los mensajes del trigger uno a uno.
-**La v2 elige la regla simple de la v1:** lo que la BD rechaza es 500 con
-el detalle visible. Refinar ese mapeo puede ser decisión de una versión
-futura (quedaría registrado en su spec).
-
-## D8 — Lecturas de factura como modelos tipados, no JSON crudo
-El SP ya devuelve JSON: ¿por qué deserializar a `Factura`/`ProductoDeFactura`
-en vez de re-emitirlo tal cual? Porque el contrato de la API es de la API:
-tiparlo (a) congela el formato aunque el SP cambie, (b) da IntelliSense y
-errores de compilación, y (c) enseña `System.Text.Json` con
-`[JsonPropertyName]` para el snake_case. El costo (2 clases) es bajo.
-
-## D9 — La prueba de capas de factura NO entra al criterio 6
-El repositorio falso de persona es idéntico al de producto (diccionario) y
-prueba la MISMA lección. Falsificar el de factura exigiría simular SPs,
-triggers y JSON — mucho andamiaje para ninguna lección nueva: la lógica de
-factura vive en la BD, así que su verificación honesta ES el smoke test
-contra la BD real (criterios 3–5). La prueba de capas se amplía solo con
-persona.
+| | |
+|---|---|
+| **Un ORM** | La constitución lo prohíbe: la idea es **ver el SQL**. No es una decisión de esta versión |
+| **Paginación de verdad** (`offset`, cursores) | El `?limite` alcanza para los volúmenes del curso. Agregarla ahora sería anticipación |
+| **Bloqueo optimista** (`ETag`, versión de fila) | Dos personas editando la misma fila es un problema real que **el curso no plantea** |
+| **Un segundo motor** | Es la **v5**, y su valor depende de que la interfaz del repositorio ya esté probada — que es lo que esta versión hace |

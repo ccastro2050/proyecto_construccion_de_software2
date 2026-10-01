@@ -1,9 +1,30 @@
 @*
-   El menú nombra RECURSOS del dominio, no tablas ni rutas de la API.
+   El menu nombra RECURSOS del dominio, no tablas ni rutas de la API.
    Dice «Productos», no «/api/producto».
+
+   Esta agrupado POR VERSION, y es la forma mas rapida de ver que la v2
+   INCLUYE la v1: lo de la v1 sigue ahi, y la v2 se le suma.
+
+     v1   las seis tablas SIN clave foranea
+     v2   las que SI tienen clave foranea, y con ellas estan las 12
 *@
 <nav class="menu">
     <span class="marca">Facturas</span>
     <NavLink href="" Match="NavLinkMatch.All">Inicio</NavLink>
+
+    @* --- la v1 --- *@
     <NavLink href="productos">Productos</NavLink>
+    <NavLink href="empresas">Empresas</NavLink>
+    <NavLink href="personas">Personas</NavLink>
+    <NavLink href="roles">Roles</NavLink>
+    <NavLink href="rutas">Rutas</NavLink>
+    <NavLink href="usuarios">Usuarios</NavLink>
+
+    @* --- la v2: las de clave foranea --- *@
+    <NavLink href="clientes">Clientes</NavLink>
+    <NavLink href="vendedores">Vendedores</NavLink>
+    <NavLink href="facturas">Facturas</NavLink>
+    <NavLink href="usuario-con-roles">Usuarios y roles</NavLink>
+    <NavLink href="rol-usuario">Roles por usuario</NavLink>
+    <NavLink href="ruta-rol">Permisos por rol</NavLink>
 </nav>

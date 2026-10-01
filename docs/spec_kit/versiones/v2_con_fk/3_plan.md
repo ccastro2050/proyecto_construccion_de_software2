@@ -1,205 +1,218 @@
-# Plan técnico — Versión 2: persona y factura (C#/ASP.NET Core + PostgreSQL)
+# Plan técnico — Versión 2: las tablas con clave foránea
 
-> **Nota (agosto de 2026):** el curso adoptó **Dapper** como
-> micro-ejecutor en TODOS los repositorios: el SQL sigue escrito a mano
-> y parametrizado; cambió el mapeo (`QueryAsync`/`ExecuteAsync` en vez
-> del ciclo DataReader) y los SPs se llaman con `DynamicParameters`.
-> Las tablas de "calco" entre dialectos siguen valiendo para los
-> PROVEEDORES (Npgsql/SqlClient/MySqlConnector) que Dapper usa por debajo.
-
-
-> **Versión 2** · CÓMO construir lo especificado en [2_spec.md](2_spec.md).
-> El porqué de cada decisión: [4_research.md](4_research.md) · contratos
-> exactos: [6_contracts.md](6_contracts.md) · orden: [8_tasks.md](8_tasks.md).
-> El stack NO cambia (es el de la [v1](../v1_sin_fk/3_plan.md) §1:
-> .NET 10 + ADO.NET + PostgreSQL, sin ORM).
+> | | |
+> |---|---|
+> | **Lo que hay que construir** | [2_spec.md](2_spec.md) |
+> | **Los formatos exactos** | [6_contracts.md](6_contracts.md) |
+> | **El orden** | [8_tasks.md](8_tasks.md) |
 
 ---
 
-## 1. Qué archivos se AGREGAN (la v1 no se toca, salvo Program.cs)
+## 1. La pila, que no cambia
 
-```
-api_facturas/
-├── Program.cs                        ★ CRECE: 4 AddScoped nuevos + version "v2"
-├── Modelos/
-│   ├── Persona.cs                    NUEVO: la entidad (4 propiedades string)
-│   ├── Factura.cs                    NUEVO: el maestro que devuelven los SPs
-│   └── ProductoDeFactura.cs          NUEVO: un renglón del detalle
-├── Peticiones/
-│   ├── PersonaCrear.cs               NUEVO: POST persona (todo obligatorio)
-│   ├── PersonaReemplazo.cs           NUEVO: PUT persona (todo obligatorio, sin código)
-│   ├── PersonaActualizar.cs          NUEVO: PATCH persona (todo opcional)
-│   └── FacturaCrear.cs               NUEVO: POST factura (+ ProductoDeFacturaCrear anidada)
-├── Controllers/
-│   ├── PersonaController.cs          NUEVO: calcado de ProductoController
-│   └── FacturaController.cs          NUEVO: 4 endpoints (2 GET, POST, POST anular)
-├── Servicios/
-│   ├── IServicioPersona.cs · ServicioPersona.cs        NUEVOS (calcados)
-│   └── IServicioFactura.cs · ServicioFactura.cs        NUEVOS
-├── Repositorios/
-│   ├── IRepositorioPersona.cs · RepositorioPersonaPostgres.cs   NUEVOS (calcados)
-│   └── IRepositorioFactura.cs · RepositorioFacturaPostgres.cs   NUEVOS (solo SPs)
-├── Excepciones/
-│   └── ConflictoExcepcion.cs         NUEVO: el 409 (ya está anulada)
-└── pruebas/
-    └── Programa.cs                   ★ CRECE: repo falso de persona + sus verificaciones
-```
-
-Todo lo demás (docker-compose, Dockerfile, db/, la rebanada de producto)
-queda **idéntico a la v1**.
-
-## 2. Rebanada 1: persona — calcar, no diseñar
-
-Regla de oro: **abrir el archivo gemelo de producto y replicarlo** cambiando
-entidad, campos y textos. Nada más.
-
-| Pieza | Se calca de | Cambios |
-|---|---|---|
-| `Persona.cs` | `Producto.cs` | 4 propiedades: `Codigo`, `Nombre`, `Email`, `Telefono` (todas `string`) |
-| `PersonaCrear/Reemplazo/Actualizar` | las 3 de producto | `[Required]` + `[StringLength]`: codigo 1–10 · nombre ≤100 · email ≤100 · telefono ≤20 (sin `[Range]`: no hay números) |
-| `IRepositorioPersona` / `RepositorioPersonaPostgres` | los de producto | tabla `persona`, mismos 5 métodos, mismos SQL con `@parametros` |
-| `IServicioPersona` / `ServicioPersona` | los de producto | mismas reglas (límite > 0, código no vacío, PATCH vacío → `ArgumentException`) |
-| `PersonaController` | `ProductoController` | `[Route("api/persona")]`, mismos 6 métodos y try/catch |
-
-## 3. Rebanada 2: factura — la API como traductora de SPs
-
-### 3.1 Los modelos de lectura (lo que los SPs devuelven)
-
-Los SPs retornan **JSON por el parámetro `INOUT p_resultado`**. El
-repositorio lo deserializa con `System.Text.Json` a modelos tipados
-(claves del JSON en snake_case → `[JsonPropertyName]`):
-
-```csharp
-public class Factura {
-    public int Numero; public string Fecha; public decimal Total;
-    public string Estado; public int Fkidcliente;
-    [JsonPropertyName("nombre_cliente")] public string NombreCliente;
-    public int Fkidvendedor;
-    [JsonPropertyName("nombre_vendedor")] public string NombreVendedor;
-    public List<ProductoDeFactura> Productos;   // el detalle anidado
-}
-public class ProductoDeFactura {
-    [JsonPropertyName("codigo_producto")] public string CodigoProducto;
-    [JsonPropertyName("nombre_producto")] public string NombreProducto;
-    public int Cantidad; public decimal Valorunitario; public decimal Subtotal;
-}
-```
-(Como propiedades `{ get; set; }` — abreviadas aquí. `PropertyNameCaseInsensitive`
-cubre las claves simples.)
-
-### 3.2 La petición del POST (validación anidada)
-
-```csharp
-public class FacturaCrear {
-    [Required] public int? Fkidcliente { get; set; }
-    [Required] public int? Fkidvendedor { get; set; }
-    [Required, MinLength(1, ErrorMessage = "La factura requiere mínimo 1 producto.")]
-    public List<ProductoDeFacturaCrear>? Productos { get; set; }
-}
-public class ProductoDeFacturaCrear {
-    [Required, StringLength(10, MinimumLength = 1)] public string? Codigo { get; set; }
-    [Required, Range(1, int.MaxValue)] public int? Cantidad { get; set; }
-}
-```
-ASP.NET valida la lista Y cada elemento → lista vacía o cantidad 0 mueren
-en **422** antes del controlador. (El SP tiene su propio mínimo con
-`RAISE EXCEPTION` — queda como respaldo, no como el camino normal.)
-
-### 3.3 El repositorio de factura: un CALL de texto
-
-`IRepositorioFactura` — 4 métodos, nada de SQL de tablas:
-
-```csharp
-Task<List<Factura>> ListarAsync();            // sp_listar_facturas_y_productosporfactura
-Task<Factura> ConsultarAsync(int numero);     // sp_consultar (el sobre {factura, productos} se APLANA a una Factura)
-Task<Factura> CrearAsync(int fkidcliente, int fkidvendedor, string productosJson);
-Task<string> AnularAsync(int numero);         // sp_anular_factura — su JSON se re-emite tal cual
-```
-
-Patrón de llamada (igual en los 4):
-```csharp
-await using var conexion = new NpgsqlConnection(_cadena);
-await using var comando = new NpgsqlCommand("sp_consultar_factura_y_productosporfactura", conexion)
-    { CommandType = un CALL de texto };
-comando.Parameters.AddWithValue("@p_numero", numero);
-var salida = new NpgsqlParameter("@p_resultado", SqlDbType.NVarChar, -1)
-    { Direction = ParameterDirection.Output };          // -1 = NVARCHAR(MAX)
-comando.Parameters.Add(salida);
-await conexion.OpenAsync();
-await comando.ExecuteNonQueryAsync();
-return JsonSerializer.Deserialize<…>((string)salida.Value, _opcionesJson)!;
-```
-Para `CrearAsync`, `@p_productos` recibe el JSON de los renglones
-(`[{"codigo":"PR001","cantidad":2}]`) — el servicio lo serializa desde la
-petición ya validada.
-
-### 3.4 Los RAISE EXCEPTION del SP se traducen a excepciones de negocio
-
-PostgreSQL no numera sus errores de negocio (no hay THROW 50003 como en
-otros motores): todo `RAISE EXCEPTION` sale con SQLSTATE **`P0001`**. La
-traducción filtra por P0001 + el PATRÓN del mensaje — los textos reales
-de `db/bdfacturas_postgres.sql` ("Factura N no existe", "Factura N ya
-está anulada"):
-
-```csharp
-catch (PostgresException ex) when (ex.SqlState == "P0001"
-                                   && ex.MessageText.Contains("no existe"))
-    { throw new NoEncontradoExcepcion(ex.MessageText); }     // → 404
-catch (PostgresException ex) when (ex.SqlState == "P0001"
-                                   && ex.MessageText.Contains("anulada"))
-    { throw new ConflictoExcepcion(ex.MessageText); }        // → 409
-// Cualquier otro error del motor (stock insuficiente del trigger, FK)
-// sube tal cual y el controller lo vuelve 500 con el mensaje en `detalle`.
-```
-La traducción vive en el REPOSITORIO: las señales de error del motor son un
-detalle de datos, no de negocio ni de HTTP.
-
-### 3.5 Servicio y controller de factura
-
-`ServicioFactura`: valida `numero > 0` y **no calcula nada** (RNF2). El
-JSON de renglones para el SP lo arma el **controller** desde la petición ya
-validada (lista blanca `codigo`/`cantidad`) — así el servicio no conoce las
-clases de `Peticiones/`, igual que en el molde de la v1.
-`FacturaController` (`[Route("api/factura")]`): 4 métodos con el try/catch
-de siempre + una fila nueva en la tabla de traducción:
-`ConflictoExcepcion → 409`.
-
-## 4. Program.cs: el ensamblador crece (y nada más)
-
-```csharp
-builder.Services.AddScoped<IRepositorioPersona>(_ => new RepositorioPersonaPostgres(cadena));
-builder.Services.AddScoped<IServicioPersona, ServicioPersona>();
-builder.Services.AddScoped<IRepositorioFactura>(_ => new RepositorioFacturaPostgres(cadena));
-builder.Services.AddScoped<IServicioFactura, ServicioFactura>();
-```
-Y el diagnóstico pasa a `"version": "v2"`. El 422 personalizado, Swagger y
-`MapControllers` quedan como están — los controllers nuevos se registran
-solos por sus atributos.
-
-## 5. Docker
-
-Sin cambios: mismos 3 servicios, mismos puertos (API 8043 · PostgreSQL
-15443 al host). `dotnet watch` recompila al agregar los archivos nuevos.
-
-## 6. Chequeo de constitución
-
-> **La compuerta 2** del método (ver [SDD_SPECKIT](../../../SDD_SPECKIT.md)):
-> antes de pasar a `8_tasks.md` se revisa la
-> [constitución](../../1_constitution.md) **artículo por artículo**. Si algo
-> no cumple, o se corrige el plan, o se enmienda la constitución. Nunca se
-> deja pasar "por esta vez".
-
-| Artículo | Cómo lo cumple esta versión |
+| | |
 |---|---|
-| **1** — El curso es POR VERSIONES y la especificación manda | El alcance de esta versión es el que declara [2_spec.md](2_spec.md) §2, y **no anticipa** nada de las siguientes. Cierra con commit y tag. |
-| **2** — Stack: C# y ASP.NET Core, con el SQL a la vista | C# sobre ASP.NET Core, SQL escrito a mano y **siempre parametrizado**, sin ORM de entidades. Los paquetes son los que el artículo permite (§1 de este plan). |
-| **3** — Arquitectura en capas con interfaces, desde el día 1 | Controlador → interfaz de servicio → interfaz de repositorio → repositorio (§3 de este plan). Solo el ensamblador conoce clases concretas. |
-| **4** — Un solo comando | `docker compose up -d --build` deja la versión funcionando (§5 de este plan). |
-| **5** — La base de datos viene DADA | La BD `bdfacturas` viene dada por los scripts de `db/`; esta versión solo nombra las tablas que su alcance le permite ([5_data_model.md](5_data_model.md)). |
-| **6** — Todo en español, comentado para principiantes | Nombres, rutas y mensajes en español, con comentarios línea a línea en el código. |
-| **7** — Contratos exactos | [6_contracts.md](6_contracts.md) fija verbos, rutas, códigos y formatos exactos, incluidos los desenlaces de error. |
-| **8** — Convenciones fijas | Puertos, rutas, sobre de respuesta y catálogo de errores, tal como los fija el artículo. |
+| **Lenguaje** | C# sobre ASP.NET Core (**.NET 10**) |
+| **Base** | PostgreSQL 16 |
+| **Acceso a datos** | **Dapper** — SQL a la vista, sin ORM |
+| **Interfaz gráfica** | **Blazor Server**, en su propio proyecto y su propio contenedor |
+| **Todo** | Docker Compose, con un solo `up` |
 
-**Complejidad justificada:** si esta versión se desvía de algún artículo,
-la desviación va aquí, con la alternativa más simple que se descartó y por
-qué no sirvió. Sin desviaciones anotadas, se entiende que no las hay.
+> **No se cambia nada de la pila en la v2.** Si en el plan apareciera un
+> paquete nuevo, un ORM o un framework de front, sería anticipación — y la
+> constitución la prohíbe.
+
+## 2. Las capas, que tampoco cambian
+
+```
+   HTTP  →  CONTROLADOR  →  SERVICIO  →  REPOSITORIO  →  PostgreSQL
+            sabe de HTTP    sabe de      sabe de SQL
+            y de nada más   reglas       y de nada más
+```
+
+| Capa | Qué sabe | Qué NO sabe |
+|---|---|---|
+| **Controlador** | Verbos, códigos de estado, el sobre de la respuesta | Nada de SQL |
+| **Servicio** | Las reglas del dominio | **Nada de HTTP.** No conoce `IActionResult` ni los códigos |
+| **Repositorio** | El SQL, o el `CALL` del procedimiento | Nada de reglas |
+
+**Y la regla que la v2 pone a prueba:** el servicio **no puede** devolver un
+código HTTP. Lanza una excepción del dominio —`NoEncontradoExcepcion`,
+`ConflictoExcepcion`— y **el controlador** la traduce. Si el servicio
+devolviera un 409, la capa de reglas sabría de HTTP y la frontera estaría
+rota.
+
+## 3. Lo que la v2 agrega, archivo por archivo
+
+### 3.1 Los dos recursos calcados — `cliente` y `vendedor`
+
+Rebanada vertical completa, idéntica en forma a la de la v1:
+
+```
+Modelos/Cliente.cs                    Modelos/Vendedor.cs
+Peticiones/ClienteCrear.cs            Peticiones/VendedorCrear.cs
+Peticiones/ClienteReemplazo.cs        Peticiones/VendedorReemplazo.cs
+Peticiones/ClienteActualizar.cs       Peticiones/VendedorActualizar.cs
+Repositorios/IRepositorioCliente.cs   Repositorios/IRepositorioVendedor.cs
+Repositorios/RepositorioClientePostgres.cs   …VendedorPostgres.cs
+Servicios/IServicioCliente.cs         Servicios/IServicioVendedor.cs
+Servicios/ServicioCliente.cs          Servicios/ServicioVendedor.cs
+Controllers/ClienteController.cs      Controllers/VendedorController.cs
+```
+
+> **Tres peticiones por recurso y no una, y es la lección que la v1 ya dejó:**
+> `Crear` tiene todo obligatorio, `Reemplazo` también —de ahí el **422** del
+> PUT— y `Actualizar` todo opcional —de ahí el **200** del PATCH con el mismo
+> cuerpo—. **Una sola clase para los tres verbos haría imposible esa
+> diferencia.**
+
+**Lo único nuevo de verdad:** traducir el error de clave foránea del motor.
+
+```
+PostgresException con SQLSTATE 23503  (foreign_key_violation)
+PostgresException con SQLSTATE 23505  (unique_violation)
+        ↓  el repositorio
+ConflictoExcepcion
+        ↓  el controlador
+409
+```
+
+### 3.2 `factura` — el repositorio que no escribe SQL de tablas
+
+```
+Modelos/Factura.cs                    el maestro, con la lista adentro
+Modelos/ProductoDeFactura.cs          un renglón del detalle
+Peticiones/FacturaCrear.cs            { fkidcliente, fkidvendedor, productos[] }
+Repositorios/IRepositorioFactura.cs
+Repositorios/RepositorioFacturaPostgres.cs   CUATRO `CALL`, cero SELECT de tablas
+Servicios/IServicioFactura.cs
+Servicios/ServicioFactura.cs
+Controllers/FacturaController.cs      4 endpoints, no 6
+```
+
+**Cómo se llama un procedimiento con INOUT, que es lo que hay que aprender:**
+
+```csharp
+// El CALL devuelve UNA fila cuya unica columna es el INOUT p_resultado.
+// ExecuteScalarAsync la lee como texto JSON:
+var resultado = await conexion.ExecuteScalarAsync<string?>(
+    "CALL sp_consultar_factura_y_productosporfactura(@p_numero, NULL)",
+    new { p_numero = numero });
+```
+
+| | |
+|---|---|
+| **El último `NULL`** | Es el parámetro `INOUT`. Hay que pasarlo, aunque no se use |
+| **El `::json`** | Al crear, el detalle viaja como texto y hay que **tiparlo**: `@p_productos::json`. Sin eso, el procedimiento recibe una cadena |
+| **La traducción del error** | Los `RAISE EXCEPTION` de plpgsql **no traen número**: todos llegan con `SQLSTATE P0001`. Se distinguen **por el patrón del mensaje** |
+
+> **Por qué por patrón del mensaje, que suena frágil:** porque es lo que el
+> motor da. La alternativa sería que cada procedimiento devolviera un código
+> propio en su JSON — mejor, y es una mejora que **no** es de esta versión.
+> Queda escrito en [4_research.md](4_research.md) para que la decisión esté a
+> la vista y no parezca un descuido.
+
+### 3.3 Las dos puentes — `rol_usuario` y `rutarol`
+
+```
+Modelos/RolUsuario.cs                 dos claves, ningún campo
+Modelos/RutaRol.cs
+Peticiones/RolUsuarioCrear.cs         sin Reemplazo ni Actualizar: NO HAY PUT NI PATCH
+Peticiones/RutaRolCrear.cs
+… repositorio, servicio y controlador de cada una
+```
+
+**Y las rutas, que hay que mirar y no adivinar:**
+
+| Tabla | Ruta | |
+|---|---|---|
+| `rol_usuario` | `api/rol-usuario` | **Con guion** |
+| `rutarol` | `api/rutarol` | **Sin guion**, porque la tabla no lleva subrayado |
+
+> Son dos convenciones distintas —**URL** y **SQL**— y asumir una por la otra
+> da **404**. Se lee el `[Route]` del controlador.
+
+### 3.4 `usuario-con-roles` — el recurso que no es una tabla
+
+```
+Modelos/UsuarioConRoles.cs            el usuario con sus roles anidados
+Peticiones/UsuarioConRolesCrear.cs       { email, contrasena, roles:[2,3] }
+Peticiones/UsuarioConRolesActualizar.cs  { contrasena?, roles:[1] }
+Repositorios/…UsuarioConRolesPostgres.cs  CINCO `CALL`
+Servicios/ServicioUsuarioConRoles.cs      ← aquí está su único trabajo propio
+Controllers/UsuarioConRolesController.cs
+```
+
+**El trabajo del servicio, que vale la pena ver:** traducir la lista de
+enteros del formulario al JSON que el procedimiento espera.
+
+```csharp
+// [1, 3]  ->  [{"fkidrol":1},{"fkidrol":3}]
+JsonSerializer.Serialize(idsRol.Select(id => new { fkidrol = id }));
+```
+
+> **La clave es `fkidrol`**, que es la que el procedimiento abre con
+> `json_array_elements`. Si se escribe `idrol`, el procedimiento **no
+> encuentra nada** y el usuario queda sin roles — **sin un solo error**. Se
+> mira el plpgsql, no se adivina.
+>
+> Y va en el servicio, no en el controlador, porque **la forma de ese JSON es
+> una regla del dominio, no del transporte**. Y no en el repositorio, porque el
+> repositorio ejecuta, no decide.
+
+### 3.5 El ensamblador — lo único de la v1 que crece
+
+`Program.cs` suma seis recursos. **Agrupado por versión y sin un solo registro
+repetido:** registrar dos veces la misma interfaz no rompe nada —gana el
+último— y por eso nadie lo nota, pero el que lo lee no sabe cuál manda.
+
+### 3.6 Las interfaces gráficas
+
+| Archivo | Qué enseña |
+|---|---|
+| `Clientes.razor` | **Dos** desplegables, uno **opcional** con «(ninguna)» → `null` |
+| `Vendedores.razor` | Uno obligatorio: el mismo patrón, sin la opción vacía |
+| `Facturas.razor` | **El maestro-detalle.** La pieza central |
+| `UsuariosYRoles.razor` | El mismo patrón con **casillas** |
+| `RolesPorUsuario.razor` | La puente cruda: **sin editar**, y el quitar con dos claves |
+| `PermisosPorRol.razor` | La otra puente, **con el aviso de que todavía no aplica nada** |
+
+**Un servicio del front POR RECURSO**, igual que en la v1 — doce líneas en el
+`Program.cs` del front. Un `ApiService` genérico sería más corto y es
+justamente lo que no se hace: con doce recursos, el que lee ya no sabe qué
+rutas existen.
+
+> **Y el nombre del archivo `.razor` ES el nombre de una clase.** Un
+> `RolUsuario.razor` tapa el modelo `RolUsuario` y **no compila**. De ahí que
+> las interfaces se llamen como la persona las llamaría —«Roles por
+> usuario»— y no como la tabla.
+
+## 4. Los cuatro tropiezos que esta versión tiene preparados
+
+| | Qué pasa | Cómo se ve |
+|---|---|---|
+| **1** | **El front deserializa el sobre a `List<T>`** | La interfaz sale **vacía sin un solo error**. La API devuelve `{tabla, limite, total, datos[]}` — hay que entrar a `datos` |
+| **2** | **Dapper mapea por NOMBRE de columna** | Una propiedad que no se llama igual que su columna llega `null` **en silencio**, con HTTP 200 y la celda en blanco. Se arregla con un alias: `SELECT ruta AS RutaTexto` |
+| **3** | **El `JsonPropertyName` de los procedimientos** | Los procedimientos devuelven `nombre_cliente` y `idrol`; las propiedades son `NombreCliente` e `IdRol`. Sin el atributo, llegan `null` y **0** |
+| **4** | **La cadena vacía de un desplegable opcional** | `""` no es `null`: es un código que no existe, y el motor responde **409** |
+| **5** | **Los desplegables cargados EN FILA** | Con la API apagada, cada petición espera sus 10 segundos de *timeout*. `/facturas` pide **cinco** listas: en fila son **50 segundos** en blanco antes de mostrar el aviso. Con `Task.WhenAll` son 10 |
+
+> **Este quinto no se encuentra leyendo: se encuentra MIDIENDO.** Apareció
+> cronometrando el criterio 18 —«apague la API y la interfaz sigue en pie»—. La
+> interfaz *sí* quedaba en pie y *sí* mostraba su aviso: lo hacía casi un
+> minuto después, que para quien la usa es lo mismo que estar roto. Un criterio
+> que se comprueba «a ojo» lo habría dado por bueno.
+
+> **Los cuatro primeros fallan EN SILENCIO**, y es lo que los hace caros. No hay
+> excepción, no hay log: hay un dato equivocado. Por eso el cierre de la
+> versión se hace **mirando la interfaz**, no solo leyendo respuestas de la
+> API.
+
+## 5. Lo que este plan deja FUERA a propósito
+
+| | Dónde va |
+|---|---|
+| Token, 401, 403, hash de contraseña | **v3** |
+| Consultas multitabla, tablero, marca, publicación | **v4** |
+| Segundo motor y la fábrica | **v5** |
+| Editar o borrar físicamente una factura | En ninguna: la operación es **anular** |

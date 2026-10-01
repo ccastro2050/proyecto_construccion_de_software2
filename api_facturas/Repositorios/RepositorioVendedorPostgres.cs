@@ -52,7 +52,8 @@ public class RepositorioVendedorPostgres : IRepositorioVendedor
                              VALUES (@Carnet, @Direccion, @Fkcodpersona)";
         await using var conexion = CrearConexion();
         // El OBJETO del modelo como fuente de parámetros (@Propiedad):
-        await conexion.ExecuteAsync(sql, entidad);
+        await ErroresPostgres.TraducirAsync(
+            () => conexion.ExecuteAsync(sql, entidad));
     }
 
     public async Task<int> ActualizarAsync(int id, Dictionary<string, object> datos)
@@ -66,7 +67,8 @@ public class RepositorioVendedorPostgres : IRepositorioVendedor
         parametros.Add("pk_clave", id);
         await using var conexion = CrearConexion();
         // ExecuteAsync devuelve las FILAS AFECTADAS (0 = no existía):
-        return await conexion.ExecuteAsync(sql, parametros);
+        return await ErroresPostgres.TraducirAsync(
+            () => conexion.ExecuteAsync(sql, parametros));
     }
 
     public async Task<int> EliminarAsync(int id)
@@ -74,6 +76,7 @@ public class RepositorioVendedorPostgres : IRepositorioVendedor
         // Si otras tablas lo referencian, la FK del motor rechaza → 500:
         const string sql = "DELETE FROM vendedor WHERE id = @id";
         await using var conexion = CrearConexion();
-        return await conexion.ExecuteAsync(sql, new { id });
+        return await ErroresPostgres.TraducirAsync(
+            () => conexion.ExecuteAsync(sql, new { id }));
     }
 }

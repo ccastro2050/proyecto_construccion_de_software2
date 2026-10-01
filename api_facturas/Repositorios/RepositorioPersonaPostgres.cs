@@ -52,7 +52,8 @@ public class RepositorioPersonaPostgres : IRepositorioPersona
                              VALUES (@Codigo, @Nombre, @Email, @Telefono)";
         await using var conexion = CrearConexion();
         // El OBJETO del modelo como fuente de parámetros (@Propiedad):
-        await conexion.ExecuteAsync(sql, persona);
+        await ErroresPostgres.TraducirAsync(
+            () => conexion.ExecuteAsync(sql, persona));
     }
 
     public async Task<int> ActualizarAsync(string codigo, Dictionary<string, object> datos)
@@ -66,7 +67,8 @@ public class RepositorioPersonaPostgres : IRepositorioPersona
         parametros.Add("pk_clave", codigo);
         await using var conexion = CrearConexion();
         // ExecuteAsync devuelve las FILAS AFECTADAS (0 = no existía):
-        return await conexion.ExecuteAsync(sql, parametros);
+        return await ErroresPostgres.TraducirAsync(
+            () => conexion.ExecuteAsync(sql, parametros));
     }
 
     public async Task<int> EliminarAsync(string codigo)
@@ -74,6 +76,7 @@ public class RepositorioPersonaPostgres : IRepositorioPersona
         // Si otras tablas lo referencian, la FK del motor rechaza → 500:
         const string sql = "DELETE FROM persona WHERE codigo = @codigo";
         await using var conexion = CrearConexion();
-        return await conexion.ExecuteAsync(sql, new { codigo });
+        return await ErroresPostgres.TraducirAsync(
+            () => conexion.ExecuteAsync(sql, new { codigo }));
     }
 }

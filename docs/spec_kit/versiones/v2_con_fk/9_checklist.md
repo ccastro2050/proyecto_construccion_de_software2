@@ -1,98 +1,78 @@
-# Lista de chequeo de requisitos — Versión 2
+# Lista de chequeo — Versión 2: antes de la primera línea de código
 
-> **La compuerta 3** del método (ver [SDD_SPECKIT](../../../SDD_SPECKIT.md)). Esta lista
-> revisa **la ESPECIFICACIÓN, no el código**: se pasa cuando los documentos
-> 2 a 8 de esta versión están escritos y ANTES de programar la primera
-> línea. Es el equivalente a mano de `checklists/requirements.md`, que en
-> Spec Kit genera `/speckit.checklist`.
-
-## Cómo se usa
-
-- **Las casillas las marca una persona.** Una IA puede ayudar a evaluar y a
-  señalar dudas, pero **no puede auto-aprobarse**: quien firma es quien
-  responde por la versión.
-- Se marca `[x]` solo cuando el criterio se cumple **hoy, en el documento**
-  — no "cuando lo arregle".
-- **Con una sola casilla en rojo no se escribe código.** Se vuelve al
-  documento que la causó, se corrige, y se pasa la lista otra vez.
-- Trabaja bien en pareja: un estudiante revisa la spec del otro. Las
-  ambigüedades que uno no ve, el otro las tropieza de una.
+> **Cuándo se firma esto:** **antes** de escribir código, no después. Es la
+> compuerta 3 del método: si una casilla no se puede marcar, la versión no
+> arranca — y lo que falta se arregla en los documentos, que es barato.
 
 ---
 
-## A. Claridad — ¿dice UNA sola cosa?
+## A. La especificación está completa
 
-- [ ] Ningún requisito usa palabras sin definir: *rápido, amigable,
-      eficiente, correcto, adecuado, robusto*.
-- [ ] No queda ningún marcador `[NECESITA ACLARACIÓN: …]` sin resolver en
-      la sección de **Clarificaciones** de [2_spec.md](2_spec.md).
-- [ ] Cada RF explica UNA cosa. Si uno necesita un "y" para entenderse, se
-      partió en dos.
-- [ ] Los RF no mencionan tecnología ni nombres de clase: el QUÉ está
-      separado del CÓMO, que vive en [3_plan.md](3_plan.md).
+- [ ] **No queda ningún `[NECESITA ACLARACIÓN: …]`** en [2_spec.md](2_spec.md).
+- [ ] Los **nueve** requisitos funcionales dicen **qué** tiene que pasar, no
+      cómo programarlo.
+- [ ] Los **18** criterios de aceptación son **verificables**: cada uno dice
+      qué hacer y qué tiene que pasar.
+- [ ] Las **clarificaciones** (§7) tienen su **razón**, no solo la decisión.
 
-## B. Medible — ¿se puede verificar?
+## B. El alcance está cerrado
 
-- [ ] Cada criterio de aceptación de [2_spec.md](2_spec.md) dice un **valor
-      concreto**: un número, un código de estado o un texto exacto.
-- [ ] Cada criterio se puede comprobar con **un comando** de
-      [7_quickstart.md](7_quickstart.md). Si no hay comando posible, no es
-      criterio.
-- [ ] Los códigos de error están dichos por su número (400, 404, 422,
-      500), no como "responde con un error".
+- [ ] La versión son **las seis tablas con clave foránea**, y los seis
+      recursos de la v1 **no se tocan**.
+- [ ] Está escrito que `persona`, `empresa`, `producto`, `rol`, `ruta` y
+      `usuario` **son de la v1**.
+- [ ] Está escrito que el **CRUD** de `rol_usuario` y `rutarol` **es de esta
+      versión**, y que lo de la v3 es **la puerta**, no su CRUD.
+- [ ] Está escrito que **editar y borrar físicamente una factura no se
+      exponen** — y por qué.
 
-## C. Completitud — ¿falta algo?
+## C. El contrato es exacto
 
-- [ ] Los RF cubren todo lo que promete el propósito: nada del alcance
-      quedó sin requisito.
-- [ ] [2_spec.md](2_spec.md) tiene su **NO incluye** explícito.
-- [ ] Cada entrada de [6_contracts.md](6_contracts.md) documenta sus
-      desenlaces de **ERROR**, no solo el camino feliz.
-- [ ] [5_data_model.md](5_data_model.md) trae los **datos exactos** de los
-      que dependen los comandos del smoke test.
-- [ ] Cada decisión de [4_research.md](4_research.md) tiene al menos una
-      alternativa descartada con su razón.
+- [ ] [6_contracts.md](6_contracts.md) nombra **las seis rutas nuevas**, con
+      su forma exacta: `api/cliente`, `api/vendedor`, `api/factura`,
+      `api/rol-usuario`, `api/rutarol`, `api/usuario-con-roles`.
+- [ ] Está dicho **cuál lleva guion y cuál no**, y por qué.
+- [ ] Está dicho que el sobre de `factura` **no trae `limite`**, y que
+      consultar una **no viene en sobre**.
+- [ ] Está dicho qué **NO se envía** al crear una factura: `total`,
+      `subtotal`, `fecha`.
+- [ ] Está dicho qué significa la **contraseña vacía** al editar un usuario.
+- [ ] El **409** aparece con sus tres causas: clave foránea inexistente,
+      pareja repetida, factura ya anulada.
 
-## D. Coherencia — ¿los documentos dicen lo mismo?
+## D. El plan no anticipa
 
-- [ ] Todo RF de [2_spec.md](2_spec.md) aparece en
-      [6_contracts.md](6_contracts.md).
-- [ ] Todo lo que promete [6_contracts.md](6_contracts.md) tiene una tarea
-      que lo construye en [8_tasks.md](8_tasks.md).
-- [ ] Todo criterio de aceptación tiene su comando en
-      [7_quickstart.md](7_quickstart.md), **con el mismo número**.
-- [ ] Los ejemplos de [6_contracts.md](6_contracts.md) usan datos que
-      existen en [5_data_model.md](5_data_model.md).
-- [ ] [3_plan.md](3_plan.md) no nombra ningún archivo que ninguna tarea
-      construya, y ninguna tarea construye un archivo que el plan no liste.
-- [ ] El **Chequeo de constitución** de [3_plan.md](3_plan.md) está
-      completo: artículo por artículo, sin saltarse ninguno.
-- [ ] La **regresión** está prevista: el [7_quickstart.md](7_quickstart.md)
-      conserva los smokes de las versiones anteriores, que deben seguir
-      pasando.
+- [ ] [3_plan.md](3_plan.md) no mete **ningún paquete nuevo**.
+- [ ] No hay **fábrica**, ni segundo motor: eso es la **v5**.
+- [ ] No hay **token** ni middleware de autenticación: eso es la **v3**.
+- [ ] Las **capas** siguen estrictas: el servicio **no** devuelve códigos
+      HTTP.
 
+## E. Las tareas son verificables
 
-## E. Alcance — ¿no se está anticipando?
+- [ ] Las **12** fases de [8_tasks.md](8_tasks.md) tienen cada una **su**
+      verificación escrita.
+- [ ] Cada fase es **un commit**.
+- [ ] Las fases del **front** están en la lista. Una versión sin interfaz
+      gráfica no está cerrada.
 
-- [ ] Ningún documento nombra entidades, motores o interfaces gráficas fuera del
-      alcance declarado en [2_spec.md](2_spec.md).
-- [ ] Ningún documento anticipa una versión futura (Artículo 1 de la
-      [constitución](../../1_constitution.md): lo que no pide esta versión, no se
-      escribe).
-- [ ] Las dependencias que nombra [3_plan.md](3_plan.md) son exactamente
-      las que permite la constitución.
+## F. El entorno está listo
+
+- [ ] `docker compose up -d --build` levanta la v1 **y la prueba de humo de la
+      v1 pasa**.
+- [ ] Los **puertos** del proyecto no chocan con nada —se revisó el registro—.
+- [ ] La base trae **las 12 tablas**, los **procedimientos** y el
+      **disparador**: se comprueba, no se supone.
 
 ---
 
-## Resultado
+## Firma
 
 | | |
 |---|---|
-| **Revisada por** | *(nombre de quien firma)* |
+| **Quién** | |
 | **Fecha** | |
-| **Casillas en rojo** | |
-| **Veredicto** | ⬜ En verde: puede empezar el código · ⬜ En rojo: vuelve a la spec |
+| **Casillas sin marcar, y por qué** | |
 
-> Si el veredicto es rojo, anote aquí qué documento hay que corregir y por
-> qué. Esa nota es la que evita repetir el mismo error en la versión
-> siguiente.
+> **Si queda una casilla sin marcar, se escribe aquí por qué.** Una lista con
+> huecos sin explicar es peor que no tenerla: da la impresión de que se revisó.

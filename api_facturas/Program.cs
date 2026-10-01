@@ -27,48 +27,59 @@ var builder = WebApplication.CreateBuilder(args);
 //   - pide IServicioProducto    → recibe ServicioProducto
 // El controlador y el servicio JAMÁS hacen "new" de clases concretas:
 // las reciben por constructor (inyección de dependencias).
-// Cuando la v3 agregue otro motor, SOLO estas líneas cambiarán.
+// Cuando la v5 agregue otro motor, SOLO estas líneas cambiarán.
 
 // La cadena de conexión: viene de appsettings.json, y en Docker la
 // sobreescribe la variable de entorno ConnectionStrings__Postgres.
 var cadenaConexion = builder.Configuration.GetConnectionString("Postgres")
     ?? throw new InvalidOperationException("Falta la cadena de conexión 'Postgres'.");
 
-// AddScoped = "una instancia por petición HTTP" (cada request estrena la suya):
+// AddScoped = "una instancia por peticion HTTP" (cada request estrena la suya).
+// Es el ensamblador, y crece de a una linea por recurso. Esa lista larga es
+// deliberada: cuando llegue el SEGUNDO MOTOR -la v5- es el argumento de la
+// fabrica, y el dolor de hoy es lo que la justifica.
+
+// ------------------------------------------------------------
+// LA v1 — las SEIS tablas SIN clave foranea
+// ------------------------------------------------------------
+// El criterio de la v1 es ese y no otro: ninguna de estas seis depende de
+// otra fila para existir, asi que se pueden construir en cualquier orden.
 builder.Services.AddScoped<IRepositorioProducto>(
     _ => new RepositorioProductoPostgres(cadenaConexion));
 builder.Services.AddScoped<IServicioProducto, ServicioProducto>();
-
-// v2 — el ensamblador CRECE (y es lo único de la v1 que crece):
-// las rebanadas nuevas se registran igual que la primera.
-builder.Services.AddScoped<IRepositorioPersona>(
-    _ => new RepositorioPersonaPostgres(cadenaConexion));
-builder.Services.AddScoped<IServicioPersona, ServicioPersona>();
-builder.Services.AddScoped<IRepositorioFactura>(
-    _ => new RepositorioFacturaPostgres(cadenaConexion));
-builder.Services.AddScoped<IServicioFactura, ServicioFactura>();
-
-// v3 — las 8 rebanadas que completan la BD: el ensamblador crece por
-// última vez "a mano". Nota didáctica: esta lista YA duele — ese dolor
-// es el argumento de la fábrica real que llegará con el segundo motor.
 builder.Services.AddScoped<IRepositorioEmpresa>(
     _ => new RepositorioEmpresaPostgres(cadenaConexion));
 builder.Services.AddScoped<IServicioEmpresa, ServicioEmpresa>();
-builder.Services.AddScoped<IRepositorioCliente>(
-    _ => new RepositorioClientePostgres(cadenaConexion));
-builder.Services.AddScoped<IServicioCliente, ServicioCliente>();
-builder.Services.AddScoped<IRepositorioVendedor>(
-    _ => new RepositorioVendedorPostgres(cadenaConexion));
-builder.Services.AddScoped<IServicioVendedor, ServicioVendedor>();
-builder.Services.AddScoped<IRepositorioUsuario>(
-    _ => new RepositorioUsuarioPostgres(cadenaConexion));
-builder.Services.AddScoped<IServicioUsuario, ServicioUsuario>();
+builder.Services.AddScoped<IRepositorioPersona>(
+    _ => new RepositorioPersonaPostgres(cadenaConexion));
+builder.Services.AddScoped<IServicioPersona, ServicioPersona>();
 builder.Services.AddScoped<IRepositorioRol>(
     _ => new RepositorioRolPostgres(cadenaConexion));
 builder.Services.AddScoped<IServicioRol, ServicioRol>();
 builder.Services.AddScoped<IRepositorioRuta>(
     _ => new RepositorioRutaPostgres(cadenaConexion));
 builder.Services.AddScoped<IServicioRuta, ServicioRuta>();
+builder.Services.AddScoped<IRepositorioUsuario>(
+    _ => new RepositorioUsuarioPostgres(cadenaConexion));
+builder.Services.AddScoped<IServicioUsuario, ServicioUsuario>();
+
+// ------------------------------------------------------------
+// LA v2 — las SEIS tablas CON clave foranea, y con ellas estan las 12
+// ------------------------------------------------------------
+// La v2 INCLUYE la v1: no se reinicia nada. Lo de arriba sigue en pie y esto
+// se le suma.
+//
+// Aqui aparecen los procedimientos almacenados y el trigger: factura no se
+// arma con INSERT sueltos, y usuario-con-roles tampoco.
+builder.Services.AddScoped<IRepositorioCliente>(
+    _ => new RepositorioClientePostgres(cadenaConexion));
+builder.Services.AddScoped<IServicioCliente, ServicioCliente>();
+builder.Services.AddScoped<IRepositorioVendedor>(
+    _ => new RepositorioVendedorPostgres(cadenaConexion));
+builder.Services.AddScoped<IServicioVendedor, ServicioVendedor>();
+builder.Services.AddScoped<IRepositorioFactura>(
+    _ => new RepositorioFacturaPostgres(cadenaConexion));
+builder.Services.AddScoped<IServicioFactura, ServicioFactura>();
 builder.Services.AddScoped<IRepositorioRolUsuario>(
     _ => new RepositorioRolUsuarioPostgres(cadenaConexion));
 builder.Services.AddScoped<IServicioRolUsuario, ServicioRolUsuario>();
@@ -76,14 +87,12 @@ builder.Services.AddScoped<IRepositorioRutaRol>(
     _ => new RepositorioRutaRolPostgres(cadenaConexion));
 builder.Services.AddScoped<IServicioRutaRol, ServicioRutaRol>();
 
-// v2 — el ensamblador CRECE (y es lo único de la v1 que crece):
-// las rebanadas nuevas se registran igual que la primera.
-builder.Services.AddScoped<IRepositorioPersona>(
-    _ => new RepositorioPersonaPostgres(cadenaConexion));
-builder.Services.AddScoped<IServicioPersona, ServicioPersona>();
-builder.Services.AddScoped<IRepositorioFactura>(
-    _ => new RepositorioFacturaPostgres(cadenaConexion));
-builder.Services.AddScoped<IServicioFactura, ServicioFactura>();
+// El recurso MAESTRO-DETALLE sobre la tabla puente: el usuario Y sus roles en
+// una sola operacion (RF9). No es una tabla mas -son las mismas dos-, es otra
+// forma de operarlas, y es la que usa la interfaz grafica.
+builder.Services.AddScoped<IRepositorioUsuarioConRoles>(
+    _ => new RepositorioUsuarioConRolesPostgres(cadenaConexion));
+builder.Services.AddScoped<IServicioUsuarioConRoles, ServicioUsuarioConRoles>();
 
 // ------------------------------------------------------------
 // 2. Los controladores y la validación de la petición (el 422)

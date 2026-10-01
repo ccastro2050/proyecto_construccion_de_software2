@@ -81,14 +81,89 @@ en un **proyecto propio, en una carpeta nueva y vacía**:
    integrada (*Terminal → New Terminal*, PowerShell), parado en su carpeta:
 
    ```powershell
-   mkdir docs\spec_kit\versiones\v1_sin_fk, db, api_facturas\Modelos, api_facturas\Peticiones, api_facturas\Controllers, api_facturas\Servicios, api_facturas\Repositorios, api_facturas\Excepciones, api_facturas\pruebas
+   mkdir docs\spec_kit\versiones\v1_sin_fk, db, api_facturas\Modelos, api_facturas\Peticiones, api_facturas\Controllers, api_facturas\Servicios, api_facturas\Repositorios, api_facturas\Excepciones, api_facturas\pruebas, front_blazor\Modelos, front_blazor\Servicios, front_blazor\Components\Layout, front_blazor\Components\Pages, front_blazor\wwwroot
    ```
 
 4. **Cree los ARCHIVOS VACÍOS** — **USTED los irá llenando** uno a uno,
    pegando en cada archivo el código que la IA le entregue:
 
    ```powershell
-   New-Item .gitignore, docker-compose.yml, api_facturas\ApiFacturas.csproj, api_facturas\Program.cs, api_facturas\appsettings.json, api_facturas\Dockerfile, api_facturas\Modelos\Producto.cs, api_facturas\Peticiones\ProductoCrear.cs, api_facturas\Peticiones\ProductoReemplazo.cs, api_facturas\Peticiones\ProductoActualizar.cs, api_facturas\Controllers\ProductoController.cs, api_facturas\Servicios\IServicioProducto.cs, api_facturas\Servicios\ServicioProducto.cs, api_facturas\Repositorios\IRepositorioProducto.cs, api_facturas\Repositorios\RepositorioProductoPostgres.cs, api_facturas\Excepciones\NoEncontradoExcepcion.cs, api_facturas\pruebas\PruebaCapas.csproj, api_facturas\pruebas\Programa.cs
+   # Los de la API — SEIS recursos con sus capas:
+   New-Item .gitignore, docker-compose.yml, api_facturas\ApiFacturas.csproj,`
+     api_facturas\Program.cs, api_facturas\appsettings.json,`
+     api_facturas\Dockerfile, api_facturas\Modelos\Producto.cs,`
+     api_facturas\Peticiones\ProductoCrear.cs,`
+     api_facturas\Peticiones\ProductoReemplazo.cs,`
+     api_facturas\Peticiones\ProductoActualizar.cs,`
+     api_facturas\Repositorios\IRepositorioProducto.cs,`
+     api_facturas\Repositorios\RepositorioProductoPostgres.cs,`
+     api_facturas\Servicios\IServicioProducto.cs,`
+     api_facturas\Servicios\ServicioProducto.cs,`
+     api_facturas\Controllers\ProductoController.cs,`
+     api_facturas\Modelos\Empresa.cs, api_facturas\Peticiones\EmpresaCrear.cs,`
+     api_facturas\Peticiones\EmpresaReemplazo.cs,`
+     api_facturas\Peticiones\EmpresaActualizar.cs,`
+     api_facturas\Repositorios\IRepositorioEmpresa.cs,`
+     api_facturas\Repositorios\RepositorioEmpresaPostgres.cs,`
+     api_facturas\Servicios\IServicioEmpresa.cs,`
+     api_facturas\Servicios\ServicioEmpresa.cs,`
+     api_facturas\Controllers\EmpresaController.cs,`
+     api_facturas\Modelos\Persona.cs, api_facturas\Peticiones\PersonaCrear.cs,`
+     api_facturas\Peticiones\PersonaReemplazo.cs,`
+     api_facturas\Peticiones\PersonaActualizar.cs,`
+     api_facturas\Repositorios\IRepositorioPersona.cs,`
+     api_facturas\Repositorios\RepositorioPersonaPostgres.cs,`
+     api_facturas\Servicios\IServicioPersona.cs,`
+     api_facturas\Servicios\ServicioPersona.cs,`
+     api_facturas\Controllers\PersonaController.cs, api_facturas\Modelos\Rol.cs,`
+     api_facturas\Peticiones\RolCrear.cs,`
+     api_facturas\Peticiones\RolReemplazo.cs,`
+     api_facturas\Peticiones\RolActualizar.cs,`
+     api_facturas\Repositorios\IRepositorioRol.cs,`
+     api_facturas\Repositorios\RepositorioRolPostgres.cs,`
+     api_facturas\Servicios\IServicioRol.cs,`
+     api_facturas\Servicios\ServicioRol.cs,`
+     api_facturas\Controllers\RolController.cs, api_facturas\Modelos\Ruta.cs,`
+     api_facturas\Peticiones\RutaCrear.cs,`
+     api_facturas\Peticiones\RutaReemplazo.cs,`
+     api_facturas\Peticiones\RutaActualizar.cs,`
+     api_facturas\Repositorios\IRepositorioRuta.cs,`
+     api_facturas\Repositorios\RepositorioRutaPostgres.cs,`
+     api_facturas\Servicios\IServicioRuta.cs,`
+     api_facturas\Servicios\ServicioRuta.cs,`
+     api_facturas\Controllers\RutaController.cs,`
+     api_facturas\Modelos\Usuario.cs, api_facturas\Peticiones\UsuarioCrear.cs,`
+     api_facturas\Peticiones\UsuarioReemplazo.cs,`
+     api_facturas\Peticiones\UsuarioActualizar.cs,`
+     api_facturas\Repositorios\IRepositorioUsuario.cs,`
+     api_facturas\Repositorios\RepositorioUsuarioPostgres.cs,`
+     api_facturas\Servicios\IServicioUsuario.cs,`
+     api_facturas\Servicios\ServicioUsuario.cs,`
+     api_facturas\Controllers\UsuarioController.cs,`
+     api_facturas\Excepciones\NoEncontradoExcepcion.cs,`
+     api_facturas\pruebas\PruebaCapas.csproj, api_facturas\pruebas\Programa.cs
+
+   # Y los de la INTERFAZ GRAFICA, que tambien es de la v1:
+   New-Item front_blazor\FrontFacturas.csproj, front_blazor\Program.cs,`
+     front_blazor\appsettings.json, front_blazor\Dockerfile,`
+     front_blazor\wwwroot\app.css, front_blazor\Components\App.razor,`
+     front_blazor\Components\Routes.razor,`
+     front_blazor\Components\_Imports.razor,`
+     front_blazor\Components\Layout\MainLayout.razor,`
+     front_blazor\Components\Layout\NavMenu.razor,`
+     front_blazor\Components\Pages\Home.razor, front_blazor\Modelos\Producto.cs,`
+     front_blazor\Servicios\ServicioProducto.cs,`
+     front_blazor\Modelos\Empresa.cs, front_blazor\Servicios\ServicioEmpresa.cs,`
+     front_blazor\Modelos\Persona.cs, front_blazor\Servicios\ServicioPersona.cs,`
+     front_blazor\Modelos\Rol.cs, front_blazor\Servicios\ServicioRol.cs,`
+     front_blazor\Modelos\Ruta.cs, front_blazor\Servicios\ServicioRuta.cs,`
+     front_blazor\Modelos\Usuario.cs, front_blazor\Servicios\ServicioUsuario.cs,`
+     front_blazor\Components\Pages\Productos.razor,`
+     front_blazor\Components\Pages\Empresas.razor,`
+     front_blazor\Components\Pages\Personas.razor,`
+     front_blazor\Components\Pages\Roles.razor,`
+     front_blazor\Components\Pages\Rutas.razor,`
+     front_blazor\Components\Pages\Usuarios.razor
    ```
 
    (`db/bdfacturas_postgres.sql` NO está en la lista a propósito:
@@ -112,6 +187,12 @@ debe existir, `docs\spec_kit\versiones\v1_sin_fk\` debe tener
 **7 archivos** (2_spec a 8_tasks), y `db\` debe tener `bdfacturas_postgres.sql`
 (con contenido, ~1.060 líneas). Si algo está vacío, falta el
 paso 5.
+
+> **Son 63 archivos de API y 29 de interfaz grafica, y la cuenta
+> sorprende.** Es la medida honesta de lo que son seis recursos con sus
+> capas — y es exactamente el argumento del que nace la idea de generar
+> codigo: cuando se repite tanto, hay un patron, y el patron se puede
+> decir una vez.
 
 La estructura queda lista ANTES de hablar con la IA (es la de `3_plan.md`
 §2); al lado, la fase en la que la IA le entregará el código de cada

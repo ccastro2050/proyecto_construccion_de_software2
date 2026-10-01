@@ -58,7 +58,8 @@ public class RepositorioRutaPostgres : IRepositorioRuta
         const string sql = @"INSERT INTO ruta (ruta, descripcion)
                              VALUES (@RutaTexto, @Descripcion)";
         await using var conexion = CrearConexion();
-        await conexion.ExecuteAsync(sql, entidad);
+        await ErroresPostgres.TraducirAsync(
+            () => conexion.ExecuteAsync(sql, entidad));
     }
 
     public async Task<int> ActualizarAsync(int id, Dictionary<string, object> datos)
@@ -71,7 +72,8 @@ public class RepositorioRutaPostgres : IRepositorioRuta
         var parametros = new DynamicParameters(datos);
         parametros.Add("clave", id);
         await using var conexion = CrearConexion();
-        return await conexion.ExecuteAsync(sql, parametros);
+        return await ErroresPostgres.TraducirAsync(
+            () => conexion.ExecuteAsync(sql, parametros));
     }
 
     public async Task<int> EliminarAsync(int id)
@@ -79,6 +81,7 @@ public class RepositorioRutaPostgres : IRepositorioRuta
         // Si otras tablas lo referencian, la FK del motor rechaza -> 500.
         const string sql = "DELETE FROM ruta WHERE id = @id";
         await using var conexion = CrearConexion();
-        return await conexion.ExecuteAsync(sql, new { id });
+        return await ErroresPostgres.TraducirAsync(
+            () => conexion.ExecuteAsync(sql, new { id }));
     }
 }
