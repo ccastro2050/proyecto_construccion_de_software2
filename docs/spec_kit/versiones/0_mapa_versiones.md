@@ -18,7 +18,7 @@
 |---|---|---|
 | v1 | CRUD completo de **las seis tablas sin clave foránea** — **API y interfaces gráficas** | **Cerrada** · tag `v1` |
 | **v2** | CRUD de **TODAS las tablas** — con la v2 están las 12: las FK como **listas desplegables cargadas desde la API**, las puente, y la facturación maestro-detalle — **API y interfaces gráficas** | **En curso** ([spec](v2_con_fk/2_spec.md)) |
-| v3 | **JWT**, sesiones y control de acceso por roles; CRUD de `usuario`, `rol`, `rol_usuario`, `ruta` y `rutarol` solo para administradores | Sin especificar |
+| v3 | **El control de acceso**: la contraseña con hash, la sesión con token, y el permiso resuelto por `verificar_acceso_ruta`. **No agrega tablas**: le pone la puerta a lo que ya existe | Sin especificar |
 | v4 | **10 consultas multitabla** (4+ tablas cada una), dashboard con gráficos, **imagen corporativa con su manual de marca**, páginas corporativas, responsive/PWA y **publicación** en un servidor | Sin especificar |
 
 > **Son cuatro, y no más.** Si aparece una quinta, es que algo de las cuatro
@@ -61,7 +61,7 @@ Las 12 tablas de `bdfacturas`, repartidas:
 |---|---|---|
 | **v1** | `producto` · `empresa` · `persona` · `rol` · `ruta` · `usuario` | **Las SEIS sin clave foránea.** Se pueden llenar sin que exista nada más |
 | **v2** | `cliente` · `vendedor` · `factura` · `productosporfactura` · `rol_usuario` · `rutarol` | **Las SEIS con clave foránea**, incluidas las puente. Con la v2, las **12** están |
-| **v3** | — | No agrega tablas: le pone **JWT y control de acceso por rol** a lo que ya existe |
+| **v3** | — | **No agrega tablas.** El CRUD de `usuario`, `rol` y `ruta` es de la v1; el de `rol_usuario` y `rutarol`, de la v2. La v3 agrega **la puerta** |
 | **v4** | — | No agrega tablas: **consultas, dashboard, marca y publicación** |
 
 > **Ojo:** las 12 tablas **existen en la base desde la v1** (Artículo 5 de la
