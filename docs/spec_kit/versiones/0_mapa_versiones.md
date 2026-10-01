@@ -21,11 +21,31 @@
 | v3 | **El control de acceso**: la contraseña con hash, la sesión con token, y el permiso resuelto por `verificar_acceso_ruta`. **No agrega tablas**: le pone la puerta a lo que ya existe | Sin especificar |
 | v4 | **10 consultas multitabla** (4+ tablas cada una), dashboard con gráficos, **imagen corporativa con su manual de marca**, páginas corporativas, responsive/PWA y **publicación** en un servidor | Sin especificar |
 
-> **Son cuatro, y no más.** Si aparece una quinta, es que algo de las cuatro
-> se dejó a medias y se está aplazando.
+> **Las cuatro del curso son estas.** Si aparece una quinta *dentro* de
+> ellas, es que algo se dejó a medias y se está aplazando. La v5 que sí
+> existe está **después**, y es de otra naturaleza — ver abajo.
 >
 > **Este repositorio está en la v2**, y trae **todas las anteriores
 > funcionando**: la regresión es obligatoria.
+
+### Y una v5, que está FUERA de las cuatro del curso
+
+| Versión | Qué agrega | Estado |
+|---|---|---|
+| **v5** | **Otros motores de base de datos**: una segunda y una tercera implementación del repositorio —SQL Server, MariaDB— y la **fábrica** que elige cuál usar por configuración | Futura |
+
+**Por qué está fuera de las cuatro, y no es un desprecio:**
+
+| | |
+|---|---|
+| **El curso son cuatro** | `0_METODOLOGIA.md` §2 fija cuatro, y el calendario del semestre está armado sobre esas cuatro |
+| **No agrega funcionalidad al producto** | Cambiar de motor agrega **una implementación de la misma interfaz**. Quien usa el sistema no nota nada |
+| **Y aun así vale la pena** | Es **la prueba** de que la interfaz del repositorio servía: se agrega un motor **sin tocar el servicio ni el controlador**. La inversión de dependencias, comprobada en vez de prometida |
+
+> **Es la única versión cuyo criterio de éxito es que NO haya que cambiar
+> nada.** En las otras cuatro, terminar significa que algo nuevo funciona; en
+> la v5, terminar significa que lo viejo **siguió** funcionando con otro motor
+> debajo.
 
 ## La estrategia: back y front EN PARALELO
 
@@ -88,14 +108,13 @@ el front quedaba en la **v6**.
 | | |
 |---|---|
 | **El front en la v6** | Era el error que el método existe para evitar. Doce entidades de API esperando un front que nace al final, con el contrato ya equivocado tres versiones atrás |
-| **Una versión por motor** | Cambiar de motor **no agrega funcionalidad**: agrega una implementación de la misma interfaz. Es un ejercicio legítimo, pero no es una versión del producto — es una variante del repositorio |
+| **UNA versión POR MOTOR** | Eran tres versiones —v4 SQL Server, v5 MariaDB— para lo que es **una sola**: la v5, con la fábrica. Tres motores no son tres versiones |
 | **Seis versiones** | `0_METODOLOGIA.md` fija **cuatro**, y el calendario del semestre está armado sobre esas cuatro |
 
-> **El multi-motor no desapareció del curso: cambió de lugar.** La fábrica de
-> repositorios y la segunda implementación son un ejercicio **dentro** de la
-> versión que corresponda, cuando el patrón ya esté sostenido — no una versión
-> aparte. Una interfaz con dos implementaciones se demuestra en una tarde; un
-> front no.
+> **El multi-motor no desapareció: es la v5**, después de las cuatro del
+> curso. Lo que se corrigió fue repartirlo en TRES versiones —una por
+> motor— y poner el front al final. Un motor más se agrega en una tarde;
+> una interfaz gráfica no.
 
 ## Reglas del mapa
 
