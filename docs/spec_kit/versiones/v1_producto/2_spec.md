@@ -165,6 +165,35 @@ inexistente → 404.
    `docker compose exec`) ejecuta el servicio con un repositorio FALSO en
    memoria — sin PostgreSQL — y todas las verificaciones pasan.
 
+### Y los de LA PANTALLA, que son la otra mitad de la versión
+
+7. **`http://localhost:8048/productos` lista los 8 productos**, cada uno con
+   su código, nombre, stock y valor unitario. La dirección es **propia del
+   recurso** —`/productos`—, no una ruta con el nombre de la tabla como
+   parámetro.
+8. **Se crea un producto desde la pantalla** y aparece en la lista sin
+   recargar a mano. Y si la API lo rechaza —código duplicado, stock
+   negativo—, **el mensaje sale EN LA PANTALLA**, no en la consola del
+   navegador, y **lo que la persona había escrito NO se borra**.
+9. **Los dos botones de guardar existen y hacen cosas distintas:** «Guardar
+   la ficha completa» (el `PUT`: si falta un campo, la API responde 422) y
+   «Guardar solo lo que cambié» (el `PATCH`: el mismo cuerpo responde 200).
+   **La pantalla no le dice `PUT` ni `PATCH` ni `422` a la persona.**
+10. **Con la API apagada, la pantalla SIGUE EN PIE.** Se comprueba así:
+
+    ```powershell
+    docker compose stop api-facturas
+    ```
+
+    Recargue `http://localhost:8048/productos`: tiene que mostrar el menú y
+    un aviso de que no se pudo conectar, **y ni una sola fila**. Si siguiera
+    mostrando los productos, el front estaría leyendo de donde no debe — o no
+    maneja el caso de que la API no responda, que es el mismo problema visto
+    de otro lado.
+
+> **Una versión no está cerrada si la API responde y la pantalla no.** Los
+> criterios 7 a 10 pesan lo mismo que los seis de arriba.
+
 ## 6. Clarificaciones
 
 > **Qué es esta sección:** el registro de las ambigüedades detectadas ANTES

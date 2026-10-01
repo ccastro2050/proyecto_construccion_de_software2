@@ -49,6 +49,37 @@
         └── Programa.cs               # el servicio con un repositorio falso, sin BD
 ```
 
+### 2bis. El front, que es un proyecto APARTE
+
+```
+front_blazor/
+├── FrontFacturas.csproj          sin UN SOLO paquete de datos
+├── Program.cs                    registra ServicioProducto con su HttpClient
+├── Dockerfile                    SDK + dotnet watch, igual que la API
+├── appsettings.json              UrlApi (el compose la sobreescribe)
+├── Modelos/
+│   └── Producto.cs               la clase DEL FRONT, no la de la API
+├── Servicios/
+│   └── ServicioProducto.cs       el ÚNICO sitio que sabe de HTTP
+├── Components/
+│   ├── App.razor · Routes.razor · _Imports.razor
+│   ├── Layout/   MainLayout · NavMenu
+│   └── Pages/    Home · Productos
+└── wwwroot/
+    └── app.css                   escrito A MANO, sin CDN
+```
+
+**Que el front y la API estén los dos en C# no cambia nada**, y hay que
+cuidarlo: la tentación de compartir una clase existe aquí y no existiría con
+dos lenguajes distintos.
+
+| Regla | Por qué |
+|---|---|
+| **El front tiene SU propia clase `Producto`** | Se parece a la de la API porque el **contrato** es el mismo, no porque sea la misma. Una referencia de proyecto ataría los dos procesos |
+| **`FrontFacturas.csproj` no tiene Npgsql** | No es un olvido: es la comprobación de que este proceso **no puede** llegar a PostgreSQL ni queriendo |
+| **Un servicio POR RECURSO** | Hoy `ServicioProducto`. Con doce recursos, doce servicios — no un `ApiService` con la tabla como parámetro |
+| **Nada de Bootstrap por CDN** | El CSS va escrito a mano, en `wwwroot/app.css` |
+
 ## 3. Arquitectura en capas (flujo de una petición)
 
 ```

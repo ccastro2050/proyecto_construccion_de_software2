@@ -83,7 +83,47 @@ y `SELECT count(*) FROM producto` da **8**.
 con `errores[]`), y el contraste PUT vs PATCH con `{"stock": 99}` (422 vs
 200).
 
-## Fase 6 — Docker: un solo comando
+## Fase 6 — LA PANTALLA (la otra mitad de la versión)
+
+El front en **Blazor Server / .NET 10**, en `front_blazor/`, en su propio
+contenedor y en el puerto **8048**.
+
+| Qué se escribe | Dónde |
+|---|---|
+| El `.csproj` **sin un solo paquete de datos** | `FrontFacturas.csproj` |
+| La clase `Producto` **del front** | `Modelos/Producto.cs` |
+| `ServicioProducto`: el único sitio que sabe de HTTP | `Servicios/ServicioProducto.cs` |
+| El cascarón y el menú | `Components/App.razor` · `Routes.razor` · `Layout/` |
+| La pantalla del recurso | `Components/Pages/Productos.razor` |
+| El CSS **escrito a mano** | `wwwroot/app.css` |
+
+**Tres cosas que se van a querer hacer y no se deben:**
+
+| | Por qué no |
+|---|---|
+| **Compartir la clase `Producto`** con una referencia de proyecto | Están las dos en C#, así que *funcionaría*. Ata los dos procesos: un cambio interno de la API rompería el front sin que nadie tocara el contrato |
+| **Servir las páginas desde la misma API** | Son dos procesos, y eso hay que poder demostrarlo apagando uno |
+| **Meter Bootstrap por CDN** | El CSS va escrito a mano. Un front que necesita internet para verse bien no arranca en un salón sin red |
+
+**Verificación:** `http://localhost:8048/productos` lista los 8 productos, se
+crea uno desde la pantalla, y **los dos botones de guardar** hacen cosas
+distintas (criterios 7 a 9 de [2_spec.md](2_spec.md)).
+
+## Fase 7 — La prueba que separa los dos procesos
+
+```powershell
+docker compose stop api-facturas
+```
+
+Recargue `http://localhost:8048/productos`.
+
+**Verificación:** el menú sigue, hay un aviso de que no se pudo conectar, y
+**no hay ni una fila**. Es el criterio 10, y es el único que no se puede
+simular: o los dos procesos están separados, o no.
+
+Después, `docker compose start api-facturas` y la pantalla vuelve a listar.
+
+## Fase 8 — Docker: un solo comando
 - [ ] `api_facturas/Dockerfile`: imagen `dotnet/sdk:10.0`, `dotnet watch`,
       `ASPNETCORE_URLS` en 8043, `DOTNET_USE_POLLING_FILE_WATCHER`.
 - [ ] Agregar al `docker-compose.yml` el servicio `api-facturas`: `build:`,
@@ -96,7 +136,7 @@ con `errores[]`), y el contraste PUT vs PATCH con `{"stock": 99}` (422 vs
 — UN comando deja BD y API funcionando (criterio 1); editar un `.cs`,
 guardar, y verificar que recompila y reinicia solo.
 
-## Fase 7 — Cierre de la versión
+## Fase 9 — Cierre de la versión
 - [ ] Correr el smoke test completo de [7_quickstart.md](7_quickstart.md)
       §2 — equivale a los 6 criterios de aceptación de
       [2_spec.md](2_spec.md) §5.

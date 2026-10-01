@@ -3,7 +3,7 @@
 > **Versión 2** del desarrollo incremental ([mapa de versiones](../0_mapa_versiones.md)).
 > Rige la constitución del proyecto: [../../1_constitution.md](../../1_constitution.md).
 > **Las versiones son acumulativas:** la v2 contiene TODO lo de la v1
-> ([spec de la v1](../v1_producto_postgres/2_spec.md)) — el CRUD de
+> ([spec de la v1](../v1_producto/2_spec.md)) — el CRUD de
 > `producto` no se toca y sus contratos siguen vigentes tal cual.
 >
 > | Documento de esta versión | Contenido |
@@ -126,7 +126,7 @@ pie de la letra; solo cambia `"version": "v2"` en el diagnóstico.
 ## 5. Criterios de aceptación
 
 1. **Regresión:** `docker compose up -d --build` — un comando — y el smoke
-   test **de la v1** ([7_quickstart de v1](../v1_producto_postgres/7_quickstart.md) §2)
+   test **de la v1** ([7_quickstart de v1](../v1_producto/7_quickstart.md) §2)
    pasa completo sin cambios (salvo `"version":"v2"` en `/`).
 2. **El molde replicado:** ciclo completo de persona con los 5 verbos
    (crear P007 → reemplazar → parchar → confirmar → eliminar → segundo

@@ -2,7 +2,7 @@
 
 > **Versión 2** · Base: `http://localhost:8043` · Swagger: `/swagger`.
 > **Los 7 contratos de la v1 siguen vigentes sin cambios**
-> ([6_contracts de v1](../v1_producto_postgres/6_contracts.md)) — aquí
+> ([6_contracts de v1](../v1_producto/6_contracts.md)) — aquí
 > solo lo NUEVO. Convenciones idénticas: envoltura en listados, errores
 > `{estado, mensaje, detalle}`, 422 con `errores:[…]`.
 

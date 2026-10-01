@@ -1,0 +1,100 @@
+/* ==========================================================================
+   Estilos escritos A MANO. Sin Bootstrap, sin CDN.
+   Un front que necesita internet para verse bien no arranca en un salón sin
+   red — y esa es la razón, no una preferencia de gusto.
+   ========================================================================== */
+
+:root {
+    --tinta:      #1f2933;
+    --suave:      #f5f7fa;
+    --borde:      #d8dee6;
+    --primario:   #15607a;
+    --primario-2: #0f4a5e;
+    --error:      #9b2226;
+    --error-f:    #fdecec;
+    --bien:       #14532d;
+    --bien-f:     #eaf6ee;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--tinta);
+    background: #fff;
+    line-height: 1.5;
+}
+
+.pagina { max-width: 980px; margin: 0 auto; padding: 0 16px 48px; }
+
+/* --- el menú ------------------------------------------------------------- */
+.menu {
+    display: flex; align-items: center; gap: 20px;
+    padding: 14px 0; margin-bottom: 24px;
+    border-bottom: 2px solid var(--borde);
+}
+.menu .marca { font-weight: 700; font-size: 1.1rem; color: var(--primario); }
+.menu a { color: var(--tinta); text-decoration: none; padding: 4px 0; }
+.menu a:hover { color: var(--primario); }
+.menu a.active { color: var(--primario); border-bottom: 2px solid var(--primario); }
+
+h1 { font-size: 1.6rem; margin: 0 0 16px; }
+h2 { font-size: 1.1rem; margin: 0 0 12px; }
+
+/* --- avisos: SIEMPRE en pantalla, nunca en la consola -------------------- */
+.aviso {
+    padding: 12px 14px; border-radius: 6px; margin-bottom: 20px;
+    border-left: 4px solid;
+}
+.aviso-error { background: var(--error-f); border-color: var(--error); color: var(--error); }
+.aviso-bien  { background: var(--bien-f);  border-color: var(--bien);  color: var(--bien); }
+
+/* --- el formulario ------------------------------------------------------- */
+.tarjeta {
+    background: var(--suave); border: 1px solid var(--borde);
+    border-radius: 8px; padding: 18px; margin-bottom: 28px;
+}
+.campos { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+.campos label { display: flex; flex-direction: column; gap: 5px; font-size: .88rem; font-weight: 600; }
+.campos input {
+    padding: 8px 10px; border: 1px solid var(--borde); border-radius: 5px;
+    font-size: .95rem; font-weight: 400; font-family: inherit;
+}
+.campos input:focus { outline: 2px solid var(--primario); border-color: var(--primario); }
+.campos input:disabled { background: #e9edf2; color: #6b7280; }
+
+.botones { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+button {
+    padding: 8px 14px; border: 1px solid var(--borde); border-radius: 5px;
+    background: #fff; color: var(--tinta); font-size: .9rem; font-family: inherit;
+    cursor: pointer;
+}
+button:hover { background: var(--suave); }
+button.primario { background: var(--primario); border-color: var(--primario); color: #fff; }
+button.primario:hover { background: var(--primario-2); }
+button.peligro { color: var(--error); border-color: #e7bcbc; }
+button.peligro:hover { background: var(--error-f); }
+button.plano { border-color: transparent; }
+
+/* --- la tabla ------------------------------------------------------------ */
+table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--borde); }
+th { background: var(--suave); font-size: .82rem; text-transform: uppercase; letter-spacing: .04em; }
+td.acciones { display: flex; gap: 8px; }
+
+/* --- vacío NO es error --------------------------------------------------- */
+.vacio {
+    padding: 28px; text-align: center; color: #6b7280;
+    background: var(--suave); border: 1px dashed var(--borde); border-radius: 8px;
+}
+
+footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--borde);
+         font-size: .85rem; color: #6b7280; }
+
+/* --- en el teléfono ----------------------------------------------------- */
+@media (max-width: 560px) {
+    .menu { flex-wrap: wrap; gap: 14px; }
+    table { font-size: .85rem; }
+    td.acciones { flex-direction: column; }
+}

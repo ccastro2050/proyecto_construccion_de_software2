@@ -56,5 +56,24 @@ services:
         # ↑ la API arranca cuando la BD ya RESPONDE (y como el script se
         #   auto-ejecutó al nacer, ya existe con sus 12 tablas y datos).
 
+  # --- FRONT Blazor Server — la otra mitad de la versión ---
+  front-blazor:
+    build: ./front_blazor
+    container_name: facturas-front-v2
+    restart: unless-stopped
+    ports:
+      - "8048:8048"
+    volumes:
+      - ./front_blazor:/app
+      - /app/bin
+      - /app/obj
+    environment:
+      # El NOMBRE del servicio, no localhost: dentro del contenedor del front,
+      # localhost seria el front mismo.
+      - UrlApi=http://api-facturas:8043
+    depends_on:
+      - api-facturas
+      # NO depende de postgres: el front no tiene nada que hacer con la base.
+
 volumes:
   pgdata:      # declaración del volumen nombrado (la "memoria" de la BD)

@@ -44,13 +44,13 @@ contenido de cada uno en el mismo orden):
 | # | Archivo | Papel |
 |---|---|---|
 | 1 | `docs/spec_kit/1_constitution.md` | Las reglas permanentes (C#, capas, un comando) |
-| 2 | `docs/spec_kit/versiones/v1_producto_postgres/2_spec.md` | QUÉ construir y los criterios de aceptación |
-| 3 | `.../v1_producto_postgres/3_plan.md` | CÓMO: stack, carpetas, capas |
-| 4 | `.../v1_producto_postgres/4_research.md` | Decisiones y alternativas (el porqué del plan) |
-| 5 | `.../v1_producto_postgres/5_data_model.md` | La BD completa (dada) y la tabla producto |
-| 6 | `.../v1_producto_postgres/6_contracts.md` | Los 7 endpoints exactos |
-| 7 | `.../v1_producto_postgres/7_quickstart.md` | El smoke test de validación |
-| 8 | `.../v1_producto_postgres/8_tasks.md` | Las fases, en orden |
+| 2 | `docs/spec_kit/versiones/v1_producto/2_spec.md` | QUÉ construir y los criterios de aceptación |
+| 3 | `.../v1_producto/3_plan.md` | CÓMO: stack, carpetas, capas |
+| 4 | `.../v1_producto/4_research.md` | Decisiones y alternativas (el porqué del plan) |
+| 5 | `.../v1_producto/5_data_model.md` | La BD completa (dada) y la tabla producto |
+| 6 | `.../v1_producto/6_contracts.md` | Los 7 endpoints exactos |
+| 7 | `.../v1_producto/7_quickstart.md` | El smoke test de validación |
+| 8 | `.../v1_producto/8_tasks.md` | Las fases, en orden |
 
 Además de los 8 documentos, la versión trae **dos artefactos que NO se
 suben al chat ni los genera la IA**: `db/bdfacturas_postgres.sql` (el script
@@ -81,7 +81,7 @@ en un **proyecto propio, en una carpeta nueva y vacía**:
    integrada (*Terminal → New Terminal*, PowerShell), parado en su carpeta:
 
    ```powershell
-   mkdir docs\spec_kit\versiones\v1_producto_postgres, db, api_facturas\Modelos, api_facturas\Peticiones, api_facturas\Controllers, api_facturas\Servicios, api_facturas\Repositorios, api_facturas\Excepciones, api_facturas\pruebas
+   mkdir docs\spec_kit\versiones\v1_producto, db, api_facturas\Modelos, api_facturas\Peticiones, api_facturas\Controllers, api_facturas\Servicios, api_facturas\Repositorios, api_facturas\Excepciones, api_facturas\pruebas
    ```
 
 4. **Cree los ARCHIVOS VACÍOS** — **USTED los irá llenando** uno a uno,
@@ -102,13 +102,13 @@ en un **proyecto propio, en una carpeta nueva y vacía**:
    |---|---|
    | `db\bdfacturas_postgres.sql` | `db\` |
    | `docs\spec_kit\1_constitution.md` | `docs\spec_kit\` |
-   | Los 7 `.md` de `docs\spec_kit\versiones\v1_producto_postgres\` | `docs\spec_kit\versiones\v1_producto_postgres\` |
+   | Los 7 `.md` de `docs\spec_kit\versiones\v1_producto\` | `docs\spec_kit\versiones\v1_producto\` |
 
    (Estos 10 vienen dados — la IA no los genera: las specs se le SUBEN al
    chat, y los scripts de `db/` son la BD completa ya escrita.)
 
 **Antes de abrir el chat, verifique:** `docs\spec_kit\1_constitution.md`
-debe existir, `docs\spec_kit\versiones\v1_producto_postgres\` debe tener
+debe existir, `docs\spec_kit\versiones\v1_producto\` debe tener
 **7 archivos** (2_spec a 8_tasks), y `db\` debe tener `bdfacturas_postgres.sql`
 (con contenido, ~1.060 líneas). Si algo está vacío, falta el
 paso 5.
@@ -123,7 +123,7 @@ mi_v1_producto/                   ← SU carpeta
 │   └── spec_kit/                 ← las especificaciones, IGUAL que en el repo
 │       ├── 1_constitution.md
 │       └── versiones/
-│           └── v1_producto_postgres/  ← los 7 documentos de la v1
+│           └── v1_producto/  ← los 7 documentos de la v1
 ├── .gitignore                    ← Fase 6 (excluye bin/, obj/, *.session.sql)
 ├── docker-compose.yml            ← Fase 0 (postgres) y Fase 6 (api-facturas)
 ├── db/
@@ -320,7 +320,7 @@ es la referencia). El agente construye en SU proyecto:
 1. Cree una carpeta nueva y vacía para su proyecto (ej.: `mi_v1_producto/`)
    y copie dentro: los 8 documentos de la tabla A.1 en `docs\spec_kit\`
    replicando la estructura por versiones (`docs\spec_kit\1_constitution.md`
-   + `docs\spec_kit\versiones\v1_producto_postgres\` con los 7 de la
+   + `docs\spec_kit\versiones\v1_producto\` con los 7 de la
    versión), y el script `db\bdfacturas_postgres.sql` del
    repositorio (la BD viene dada — el agente no debe generarla).
 2. Abra SU carpeta en el IDE (en Antigravity: *Open Folder*; el agente verá
@@ -335,7 +335,7 @@ es la referencia). El agente construye en SU proyecto:
 Construye la VERSIÓN 1 de este proyecto, partiendo de cero.
 
 Primero lee, en este orden, los 8 documentos que están bajo docs/spec_kit/
-(1_constitution.md en la raíz; los demás en versiones/v1_producto_postgres/):
+(1_constitution.md en la raíz; los demás en versiones/v1_producto/):
 1_constitution, 2_spec, 3_plan, 4_research, 5_data_model, 6_contracts,
 7_quickstart y 8_tasks. Después resume en máximo 10 líneas qué vas a
 construir y espera mi confirmación antes de tocar nada. El código va en la

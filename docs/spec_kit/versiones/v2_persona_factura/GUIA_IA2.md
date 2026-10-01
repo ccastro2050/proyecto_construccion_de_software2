@@ -5,14 +5,14 @@
 > reescribe nada de producto). El método general — los dos caminos (chat
 > web / IDE agéntico), cómo pegar archivos, a qué carpeta va cada comando,
 > los hábitos de la conversación — es el MISMO de la
-> [guía de la v1](../v1_producto_postgres/GUIA_IA1.md): aquí está lo que cambia para la v2.
+> [guía de la v1](../v1_producto/GUIA_IA1.md): aquí está lo que cambia para la v2.
 
 ---
 
 ## 0. Punto de partida (verifíquelo ANTES de abrir la IA)
 
 Su proyecto `mi_v1_producto/` con la **v1 funcionando**: el smoke test de
-la v1 pasa ([7_quickstart de v1](../v1_producto_postgres/7_quickstart.md) §2,
+la v1 pasa ([7_quickstart de v1](../v1_producto/7_quickstart.md) §2,
 con sus puertos +100). Si la v1 no pasa, primero ciérrela — la v2 hereda
 sus cimientos, incluidos sus bugs.
 
@@ -92,7 +92,7 @@ api_facturas/
 ### A.3 El prompt de la v2 (cópielo tal cual como PRIMER mensaje)
 
 Los tres chequeos previos son los de siempre (adjuntos completos, modo
-razonamiento ON, búsqueda web OFF — [guía v1](../v1_producto_postgres/GUIA_IA1.md) A.3).
+razonamiento ON, búsqueda web OFF — [guía v1](../v1_producto/GUIA_IA1.md) A.3).
 
 ```
 Actúa como mi asistente de programación para construir la VERSIÓN 2 de un
@@ -156,7 +156,7 @@ Empieza: resume en máximo 10 líneas qué vamos a construir y sobre qué base
 
 ### A.4 El método (lo nuevo respecto a la v1)
 
-Los hábitos son los de la [guía v1](../v1_producto_postgres/GUIA_IA1.md) A.4 (pegar y "listo",
+Los hábitos son los de la [guía v1](../v1_producto/GUIA_IA1.md) A.4 (pegar y "listo",
 no atascarse en errores, reiniciar el chat si responde en otro lenguaje o
 pierde contexto). Además, para la v2:
 
@@ -173,7 +173,7 @@ pierde contexto). Además, para la v2:
 
 ## B. Camino del IDE agéntico
 
-Preparación como en la [guía v1](../v1_producto_postgres/GUIA_IA1.md) B.1, con una diferencia:
+Preparación como en la [guía v1](../v1_producto/GUIA_IA1.md) B.1, con una diferencia:
 abra el IDE **sobre su proyecto de la v1** (que ya tiene código) y copie
 antes la carpeta `v2_persona_factura` de specs (paso A.2.1).
 
@@ -202,7 +202,7 @@ REGLAS (no negociables):
    test de la v2 (7_quickstart.md §3), con evidencia de los 6 criterios.
 ```
 
-La supervisión es la de la [guía v1](../v1_producto_postgres/GUIA_IA1.md) B.3, más una alarma
+La supervisión es la de la [guía v1](../v1_producto/GUIA_IA1.md) B.3, más una alarma
 nueva: **si el diff toca archivos de producto** (distintos de `Program.cs`
 y `pruebas/Programa.cs`), recháselo — la v1 está cerrada.
 

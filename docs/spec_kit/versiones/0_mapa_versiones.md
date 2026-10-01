@@ -1,23 +1,103 @@
-# Mapa de versiones del curso
+# Mapa de versiones — Construcción de Software
 
-> La ruta completa del proyecto. Cada versión se especifica SOLO cuando la
-> anterior está cerrada (commit + tag). Este mapa da la dirección; las
-> specs de cada versión dan el detalle.
+> La ruta completa del proyecto. Cada versión se especifica **solo cuando la
+> anterior está cerrada** (commit + tag). Este mapa da la dirección; el spec
+> kit de cada versión da el detalle.
+>
+> **Y cada versión entrega su API Y SU PANTALLA.** No hay una versión «de
+> back» y otra «de front»: se construyen en paralelo, y una versión no está
+> cerrada si la API responde y la pantalla no.
+>
+> La ruta es la que define
+> [0_METODOLOGIA.md](../../../ProyectosDeAula/docs/0_METODOLOGIA.md) §2; aquí
+> no se inventa nada, se ordena.
 
-| Versión | Qué agrega | Estado |
+## La ruta — **cuatro versiones**
+
+| Versión | Qué agrega (acumulativo) | Estado |
 |---|---|---|
-| **v1** | `api_facturas` (C#/ASP.NET Core): CRUD completo de `producto` contra **PostgreSQL** — capas + interfaces + peticiones por verbo | **En curso** ([spec](v1_producto_postgres/2_spec.md)) |
-| v2 | Más entidades (persona, factura maestro-detalle…) aprovechando los triggers y SPs de la BD | Sin especificar |
-| v3 | **El resto de las entidades** contra PostgreSQL: empresa, cliente, vendedor, usuario (contraseña con **BCrypt** + verificar-contrasena), rol, ruta y las tablas puente — TODA la bdfacturas cubierta con UN motor antes de cambiar de motor | Sin especificar |
-| v4 | Segundo motor (**SQL Server**) — nace la fábrica de repositorios real | Sin especificar |
-| v5 | Tercer motor (**MariaDB**) + compose completo | Sin especificar |
-| v6 | Frontend **Flask + Jinja2**: CRUD de las 12 entidades (una página por tabla), **login y control de acceso con JWT**, selects de llaves foráneas, y la **facturación maestro-detalle** usando los procedimientos almacenados | Sin especificar |
+| v1 | CRUD completo de las **tablas sin clave foránea** — **API y pantallas** | **Cerrada** · tag `v1` |
+| **v2** | CRUD de las **tablas con clave foránea** y las puente: las FK como **listas desplegables cargadas desde la API**, y la facturación maestro-detalle — **API y pantallas** | **En curso** ([spec](v2_persona_factura/2_spec.md)) |
+| v3 | **JWT**, sesiones y control de acceso por roles; CRUD de `usuario`, `rol`, `rol_usuario`, `ruta` y `rutarol` solo para administradores | Sin especificar |
+| v4 | **10 consultas multitabla** (4+ tablas cada una), dashboard con gráficos, **imagen corporativa con su manual de marca**, páginas corporativas, responsive/PWA y **publicación** en un servidor | Sin especificar |
 
-> **El destino del curso:** la v5 deja la API específica COMPLETA y
-> multi-motor (toda la bdfacturas, tres motores por configuración). La
-> v6 le pone encima un front Flask (Jinja2) completo, con login y
-> control de acceso. Cada versión intermedia es un paso deliberado de ese camino.
+> **Son cuatro, y no más.** Si aparece una quinta, es que algo de las cuatro
+> se dejó a medias y se está aplazando.
+>
+> **Este repositorio está en la v2**, y trae **todas las anteriores
+> funcionando**: la regresión es obligatoria.
 
-**Reglas del mapa** (constitución, Artículo 1): no se anticipa nada de una
-versión futura; una versión cerrada no se reabre (los ajustes van en la
-siguiente); el repositorio siempre muestra la versión en curso funcionando.
+## La estrategia: back y front EN PARALELO
+
+**Cada versión entrega su parte de la API *y* su parte del front.** Conviene
+decir por qué, porque la alternativa —construir toda la API y meter el front
+al final— es la que uno hace por inercia.
+
+| | |
+|---|---|
+| **Lo terminado se le puede mostrar a alguien** | Una versión que solo trae endpoints se sustenta con Swagger. Una que trae pantallas se le muestra a quien la pidió |
+| **El contrato se ejercita de inmediato** | Uno descubre que el JSON es incómodo **cuando le toca pintarlo**. Si el front llega tres versiones después, el contrato lleva tres versiones equivocado |
+| **No hay front de golpe al final** | Es el error que se paga caro: doce entidades de API esperando un front que nace con una sola |
+| **Es lo que pide el curso** | `0_METODOLOGIA.md` §2, textual: *«v1 — CRUD de las tablas sin FK del módulo — **API REST + Frontend funcionando**»* |
+
+> **La regla operativa:** una versión **no está cerrada** si la API responde y
+> la pantalla no. **Media versión no es una versión.**
+
+### El stack del front
+
+**Blazor Server sobre .NET 10**, en un tercer contenedor, en el puerto
+**8048**. Habla con la API **solo por HTTP**: no tiene cadena de conexión, ni
+driver de base de datos, ni el servicio `postgres` en su `depends_on`.
+
+Que el front y la API estén los dos en C# **no cambia nada de eso**, y hay que
+cuidarlo: la tentación de compartir una clase entre los dos proyectos existe
+aquí y no existiría con dos lenguajes distintos. **No se comparte nada.**
+
+## Qué tabla entra en qué versión
+
+Las 12 tablas de `bdfacturas`, repartidas:
+
+| Versión | Tablas |
+|---|---|
+| **v1** | `producto` · `empresa` · `persona` |
+| v2 | `cliente` · `vendedor` · `factura` · `productosporfactura` |
+| v3 | `rol` · `usuario` · `rol_usuario` · `ruta` · `rutarol` |
+
+> **Ojo:** las 12 tablas **existen en la base desde la v1** (Artículo 5 de la
+> [constitución](../1_constitution.md)). Lo que reparte esta tabla es qué
+> puede **nombrar el código** de cada versión, no qué existe en el motor.
+>
+> **Y fíjese en `usuario`:** no tiene clave foránea, así que «cabría» en la
+> v1. No entra, porque es la tabla del control de acceso y eso es la v3. El
+> criterio de la v1 no es solo técnico — es también de alcance.
+
+## Lo que este mapa dejó por fuera, y por qué
+
+Una versión anterior de este mapa tenía **seis versiones** y repartía el
+trabajo **por motor de base de datos**: la v4 era SQL Server, la v5 MariaDB, y
+el front quedaba en la **v6**.
+
+**Se cambió, y conviene saber qué se perdió y qué se ganó:**
+
+| | |
+|---|---|
+| **El front en la v6** | Era el error que el método existe para evitar. Doce entidades de API esperando un front que nace al final, con el contrato ya equivocado tres versiones atrás |
+| **Una versión por motor** | Cambiar de motor **no agrega funcionalidad**: agrega una implementación de la misma interfaz. Es un ejercicio legítimo, pero no es una versión del producto — es una variante del repositorio |
+| **Seis versiones** | `0_METODOLOGIA.md` fija **cuatro**, y el calendario del semestre está armado sobre esas cuatro |
+
+> **El multi-motor no desapareció del curso: cambió de lugar.** La fábrica de
+> repositorios y la segunda implementación son un ejercicio **dentro** de la
+> versión que corresponda, cuando el patrón ya esté sostenido — no una versión
+> aparte. Una interfaz con dos implementaciones se demuestra en una tarde; un
+> front no.
+
+## Reglas del mapa
+
+1. **No se anticipa nada de una versión futura** (Artículo 1 de la
+   constitución).
+2. **Una versión cerrada no se reabre**: los ajustes van en la siguiente.
+3. **Regresión obligatoria**: al cerrar la vN, los criterios de todas las
+   versiones anteriores deben seguir pasando — **incluidos los de sus
+   pantallas**.
+4. El repositorio siempre muestra la **versión en curso, funcionando** — con
+   su API **y su pantalla**.

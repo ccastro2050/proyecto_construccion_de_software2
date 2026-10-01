@@ -22,7 +22,7 @@
 ## 1. `GET /` — Diagnóstico
 
 ```
-→ 200 {"mensaje":"API Facturas funcionando","version":"v1","contratos":"docs/spec_kit/versiones/v1_producto_postgres/6_contracts.md"}
+→ 200 {"mensaje":"API Facturas funcionando","version":"v1","contratos":"docs/spec_kit/versiones/v1_producto/6_contracts.md"}
 ```
 
 Además: `GET /swagger` abre la **documentación interactiva** (Swagger UI) —
