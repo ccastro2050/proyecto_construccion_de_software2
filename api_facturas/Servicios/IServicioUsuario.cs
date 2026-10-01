@@ -18,7 +18,7 @@ public interface IServicioUsuario
 
     Task<Usuario> ObtenerAsync(string email);
 
-    Task CrearAsync(Usuario entidad);
+    Task CrearAsync(string email, string contrasena);
 
     Task<int> ActualizarAsync(string email, Dictionary<string, object> datos);
 

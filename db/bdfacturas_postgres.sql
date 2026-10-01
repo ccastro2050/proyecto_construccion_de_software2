@@ -196,15 +196,45 @@ INSERT INTO ruta (ruta, descripcion) VALUES
 ('ruta.eliminar', 'Eliminar ruta (POST)');
 
 -- Usuarios
+-- ============================================================
+-- LAS CONTRASENAS ESTAN EN TEXTO PLANO, Y ES A PROPOSITO
+--
+-- Esto esta MAL, y esta mal a proposito. Conviene leer por que antes de
+-- copiarlo a cualquier otro sitio.
+--
+-- EN ESTA VERSION NO HAY HASH. Ni en el csproj -no esta BCrypt- ni en una sola
+-- linea de codigo. El hash de la contrasena es la primera de las tres cosas
+-- que llega con LA VERSION 3, y ponerlo aqui seria anticipar: la constitucion
+-- lo prohibe, y ademas le quitaria a la v3 su primera leccion. El estudiante
+-- no veria POR QUE hay que arreglarlo si ya estuviera arreglado.
+--
+-- LO QUE LA v3 HACE CON ESTO, y vale la pena saberlo desde ahora:
+--
+--   * Vuelve a sembrar las ocho filas con BCRYPT COSTO 12. Y lo hace EN EL
+--     SCRIPT, no a mano: el siguiente `docker compose down -v` vuelve a
+--     sembrar, y un cambio hecho a mano se perderia.
+--
+--   * Deja las contrasenas en claro escritas en su 7_quickstart.md, porque del
+--     hash NO SE PUEDE volver a la clave -eso es lo que lo hace un hash- y sin
+--     saberlas no hay forma de iniciar sesion.
+--
+--   * Y la columna ya esta lista para recibirlo: es VARCHAR(200) y no 20,
+--     porque un hash de bcrypt ocupa 60 caracteres.
+--
+-- LO QUE SI ESTA BIEN DESDE ESTA VERSION: la API nunca devuelve la contrasena.
+-- El modelo `Usuario` tiene SOLO el email, asi que ni la clave ni su hash
+-- pueden viajar en una respuesta. Eso no es anticipar la v3: una respuesta no
+-- debe traer un secreto que nadie pidio, y eso vale en cualquier version.
+-- ============================================================
 INSERT INTO usuario (email, contrasena) VALUES
-('admin@correo.com', '$2a$12$3UgI.Eof.FhzsYUWESI9n.qFaqkV2JPhvW3L/1GTKowNJnGaD8F.G'),
-('vendedor1@correo.com', '$2a$12$Dgog4VaHqMzhliPVJy1BcOMd6.izEGNeRDtZ.O7SPmBLc6UVthVTG'),
+('admin@correo.com', 'admin123'),
+('vendedor1@correo.com', 'vendedor123'),
 ('jefe@correo.com', 'jefe123'),
-('cliente1@correo.com', 'cli123'),
-('test_encript@correo.com', '$2a$11$Ci0J2yBltDgQHfjadgkl0OtbcF5pUf97vTq/4Xr0KEU/86l8ybjBe'),
-('nuevo@correo.com', '$2a$11$cmtGBxllwc7MCzpnKVSWuumiOgCaG6PaKWcN1z9N0bjjnkobbFDzO'),
-('carlos.castro@usbmed.edu.co', '$2a$10$YYl6bHCflCnk8suUrms3ie.rnpLvfD9nHJtehZwhcSkINelGwt6iC'),
-('carloscastro5033@correo.itm.edu.co', '$2a$10$YYl6bHCflCnk8suUrms3ie.rnpLvfD9nHJtehZwhcSkINelGwt6iC');
+('cliente1@correo.com', 'cliente123'),
+('test_encript@correo.com', 'test123'),
+('nuevo@correo.com', 'nuevo123'),
+('carlos.castro@usbmed.edu.co', 'carlos123'),
+('carloscastro5033@correo.itm.edu.co', 'carlos123');
 
 -- Clientes
 INSERT INTO cliente (id, credito, fkcodpersona, fkcodempresa) VALUES

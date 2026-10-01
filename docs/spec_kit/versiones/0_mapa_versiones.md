@@ -90,7 +90,7 @@ Las 12 tablas de `bdfacturas`, repartidas:
 |---|---|---|
 | **v1** | `producto` · `empresa` · `persona` · `rol` · `ruta` · `usuario` | **Las SEIS sin clave foránea.** Se pueden llenar sin que exista nada más |
 | **v2** | `cliente` · `vendedor` · `factura` · `productosporfactura` · `rol_usuario` · `rutarol` · `usuario_con_roles` | **Las SEIS con clave foránea**, incluidas las puente. Con la v2, las **12** están |
-| **v3** | — | **No agrega tablas.** El CRUD de `usuario`, `rol` y `ruta` es de la v1; el de `rol_usuario` y `rutarol`, de la v2. La v3 agrega **la puerta** |
+| **v3** | `sesion` · `permisos` — **y ninguna de las dos es una tabla** | **No agrega tablas.** El CRUD de `usuario`, `rol` y `ruta` es de la v1; el de `rol_usuario` y `rutarol`, de la v2. La v3 agrega **la puerta** |
 | **v4** | — | No agrega tablas: **consultas, dashboard, marca y publicación** |
 
 > **`usuario_con_roles` no es una tabla**, y por eso aparece en la lista con una
@@ -103,6 +103,22 @@ Las 12 tablas de `bdfacturas`, repartidas:
 > usuario y después asignarle los roles son **dos** operaciones, y si falla la
 > segunda queda un usuario sin ningún rol. `crear_usuario_con_roles` lo hace en
 > **una** transacción.
+
+> **`sesion` y `permisos` no son tablas, y aparecen en el reparto a
+> propósito.** Son los dos **recursos** que la v3 agrega:
+>
+> | | |
+> |---|---|
+> | `api/sesion` | Recibe las credenciales y devuelve el token. **La puerta** |
+> | `api/permisos` | «¿A qué puedo entrar yo?» — para que el menú se arme. **No decide nada**: la decisión la toma `verificar_acceso_ruta` en cada operación |
+>
+> Están aquí porque tienen controlador y servicio propios, y **lo que no se
+> reparte no se audita**. Pero no agregan ni una fila a la base: operan las
+> cinco tablas del acceso que ya existían.
+>
+> **Y `api/permisos` no tiene una interfaz gráfica propia**, a diferencia de
+> todos los demás recursos: lo consume el **menú**, que no es una interfaz
+> sino parte del layout.
 
 > **Ojo:** las 12 tablas **existen en la base desde la v1** (Artículo 5 de la
 > [constitución](../1_constitution.md)). Lo que reparte esta tabla es qué

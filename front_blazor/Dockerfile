@@ -26,4 +26,10 @@ ENV DOTNET_USE_POLLING_FILE_WATCHER=true \
 EXPOSE 8048
 
 # --no-launch-profile ignora launchSettings.json y respeta ASPNETCORE_URLS.
-CMD ["dotnet", "watch", "--project", "FrontFacturas.csproj", "run", "--no-launch-profile"]
+# --non-interactive: cuando un cambio NO se puede aplicar en caliente
+# -agregar una interfaz a un componente, por ejemplo- dotnet watch
+# REINICIA en vez de preguntar. Sin este argumento se queda esperando
+# una respuesta en una consola que nadie esta mirando, el puerto deja
+# de responder, y parece que el contenedor se cayo. El Dockerfile de la
+# API ya lo tenia; este no, y costo encontrarlo.
+CMD ["dotnet", "watch", "--project", "FrontFacturas.csproj", "run", "--non-interactive", "--no-launch-profile"]

@@ -14,7 +14,26 @@
 </head>
 
 <body>
-    <Routes />
+    <!-- ============================================================
+         EL MODO DE RENDERIZADO, DECLARADO UNA VEZ PARA TODO EL ARBOL.
+
+         `InteractiveServer` = Blazor Server: el componente corre EN EL
+         SERVIDOR y el navegador recibe el HTML ya armado, manteniendo una
+         conexion -un «circuito»- para los eventos.
+
+         POR QUE AQUI Y NO EN CADA INTERFAZ: porque asi tambien es interactivo
+         el LAYOUT, y con el el menu. Con el modo declarado interfaz por
+         interfaz, el layout se queda estatico — y un componente estatico corre
+         en el scope de la peticion HTTP, no en el del circuito. Mientras el
+         layout solo tenga enlaces fijos da igual; el dia que dependa de algo
+         que viva en el circuito, deja de funcionar sin dar ningun error.
+
+         EL DIBUJO PREVIO (prerender) QUEDA ENCENDIDO, que es lo que viene por
+         defecto: Blazor dibuja la pagina una vez en el servidor antes de que
+         el circuito conecte, para que algo aparezca de inmediato. Aqui
+         conviene, porque no hay nada que dependa del circuito.
+         ============================================================ -->
+    <Routes @rendermode="InteractiveServer" />
     <script src="_framework/blazor.web.js"></script>
 </body>
 

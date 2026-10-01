@@ -16,7 +16,7 @@ public interface IRepositorioUsuario
 
     Task<Usuario?> ObtenerPorClaveAsync(string email);
 
-    Task CrearAsync(Usuario entidad);
+    Task CrearAsync(string email, string contrasena);
 
     /// <summary>Escribe los campos del diccionario (los usan PUT y PATCH).
     /// Devuelve filas afectadas (0 = no existe).</summary>

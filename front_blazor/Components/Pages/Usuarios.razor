@@ -1,6 +1,5 @@
 @page "/usuarios"
 @inject ServicioUsuario Servicio
-@rendermode InteractiveServer
 
 <h1>Usuarios</h1>
 
@@ -21,6 +20,10 @@
         </label>
         <label>
             Contrasena
+            @* type="password": no se ve en pantalla. Y la tabla de abajo NO
+               tiene columna de contrasena, a proposito: la API no la devuelve
+               -ni la clave ni su hash- porque una respuesta no debe traer un
+               secreto que nadie pidio. Al editar, vacio = «no la cambie». *@
             <input type="password" @bind="enEdicion.Contrasena" placeholder="" />
         </label>
     </div>
@@ -56,12 +59,12 @@ else if (lista.Count == 0)
 else
 {
     <table>
-        <thead><tr><th>Email</th><th>Contrasena</th><th></th></tr></thead>
+        <thead><tr><th>Email</th><th></th></tr></thead>
         <tbody>
             @foreach (var e in lista)
             {
                 <tr>
-                    <td>@e.Email</td><td>@e.Contrasena</td>
+                    <td>@e.Email</td>
                     <td class="acciones">
                         <button @onclick="() => Editar(e)">Editar</button>
                         <button class="peligro" @onclick="() => Quitar(e.Email)">Quitar</button>
@@ -131,7 +134,10 @@ else
 
     private void Editar(Usuario e)
     {
-        enEdicion = new Usuario { Email = e.Email, Contrasena = e.Contrasena };
+        // La contrasena NO se copia: la API ya no la devuelve, y aunque la
+        // devolviera no habria que mostrarla. El campo queda VACIO, y vacio
+        // significa «dejela como esta».
+        enEdicion = new Usuario { Email = e.Email, Contrasena = "" };
         editando = true;
         aviso = null;
     }

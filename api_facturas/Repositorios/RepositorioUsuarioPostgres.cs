@@ -25,7 +25,9 @@ public class RepositorioUsuarioPostgres : IRepositorioUsuario
 
     public async Task<List<Usuario>> ObtenerTodosAsync(int limite)
     {
-        const string sql = @"SELECT email, contrasena
+        // NO proyecta `contrasena`, y es deliberado: lo que no se lee
+        // no se puede devolver por accidente.
+        const string sql = @"SELECT email
                              FROM usuario ORDER BY email LIMIT @limite";
         await using var conexion = CrearConexion();
         var filas = await conexion.QueryAsync<Usuario>(sql, new { limite });
@@ -34,7 +36,7 @@ public class RepositorioUsuarioPostgres : IRepositorioUsuario
 
     public async Task<Usuario?> ObtenerPorClaveAsync(string email)
     {
-        const string sql = @"SELECT email, contrasena
+        const string sql = @"SELECT email
                              FROM usuario WHERE email = @email";
         await using var conexion = CrearConexion();
         // Cero filas -> null. El SERVICIO decide que significa ese null:
@@ -42,13 +44,16 @@ public class RepositorioUsuarioPostgres : IRepositorioUsuario
         return await conexion.QueryFirstOrDefaultAsync<Usuario>(sql, new { email });
     }
 
-    public async Task CrearAsync(Usuario entidad)
+    /// <summary>Recibe los dos valores SUELTOS y no el modelo, porque el
+    /// modelo ya no tiene contrasena. La firma dice la verdad: para crear
+    /// hacen falta las dos cosas; para leer, solo vuelve una.</summary>
+    public async Task CrearAsync(string email, string contrasena)
     {
         const string sql = @"INSERT INTO usuario (email, contrasena)
                              VALUES (@Email, @Contrasena)";
         await using var conexion = CrearConexion();
         await ErroresPostgres.TraducirAsync(
-            () => conexion.ExecuteAsync(sql, entidad));
+            () => conexion.ExecuteAsync(sql, new { email, contrasena }));
     }
 
     public async Task<int> ActualizarAsync(string email, Dictionary<string, object> datos)

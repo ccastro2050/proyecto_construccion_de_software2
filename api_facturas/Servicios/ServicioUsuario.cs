@@ -55,12 +55,12 @@ public class ServicioUsuario : IServicioUsuario
         return entidad;
     }
 
-    public async Task CrearAsync(Usuario entidad)
+    public async Task CrearAsync(string email, string contrasena)
     {
         // El body ya paso por la peticion (tipos y rangos): aqui solo se
         // delega. Si la base rechaza —clave duplicada—, la excepcion sube
         // tal cual y el controlador la convierte en 500.
-        await _repositorio.CrearAsync(entidad);
+        await _repositorio.CrearAsync(email, contrasena);
     }
 
     public async Task<int> ActualizarAsync(string email, Dictionary<string, object> datos)

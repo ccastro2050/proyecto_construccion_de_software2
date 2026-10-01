@@ -95,12 +95,10 @@ public class UsuarioController : ControllerBase
     {
         try
         {
-            var entidad = new Usuario
-            {
-                Email = body.Email!,
-                Contrasena = body.Contrasena!,
-            };
-            await _servicio.CrearAsync(entidad);
+            // Los dos valores sueltos: el modelo Usuario ya no tiene
+            // contrasena, justamente para que no pueda volver en una
+            // respuesta.
+            await _servicio.CrearAsync(body.Email!, body.Contrasena!);
             return Ok(new { estado = 200, mensaje = "Usuario creado exitosamente." });
         }
         catch (ConflictoExcepcion e)
