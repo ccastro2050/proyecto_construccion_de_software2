@@ -3,7 +3,7 @@
 > **Versión 2** del desarrollo incremental ([mapa de versiones](../0_mapa_versiones.md)).
 > Rige la constitución del proyecto: [../../1_constitution.md](../../1_constitution.md).
 > **Las versiones son acumulativas:** la v2 contiene TODO lo de la v1
-> ([spec de la v1](../v1_producto/2_spec.md)) — el CRUD de
+> ([spec de la v1](../v1_sin_fk/2_spec.md)) — el CRUD de
 > `producto` no se toca y sus contratos siguen vigentes tal cual.
 >
 > | Documento de esta versión | Contenido |
@@ -37,7 +37,7 @@ Dos lecciones nuevas, una por rebanada:
 
 ```
 ┌─────────────────────────── el sistema completo ───────────────────────────┐
-│  CONTROLLER  │ producto █ │ persona █ │ factura █ │ ...las demás (v5)     │
+│  CONTROLLER  │ producto █ │ persona █ │ factura █ │ ...las demás (v2)     │
 │  SERVICIO    │ producto █ │ persona █ │ factura █ │ ...                   │
 │  REPOSITORIO │ producto █ │ persona █ │ factura █ │ ...                   │
 │  BD          │ producto █ │ persona █ │ factura █ + SPs + triggers        │
@@ -66,7 +66,7 @@ Dos lecciones nuevas, una por rebanada:
 - Editar (PUT/PATCH) o borrar físicamente facturas: `sp_actualizar_…` y
   `sp_borrar_…` existen en la BD pero la v2 no los expone — anular ES la
   operación de negocio; el borrado físico queda para el administrador.
-- Usuarios y roles (v3) · otros motores (v4/v5) · JWT y frontend (v6).
+- Usuarios y roles (v3) · el aplicativo completo (v4) · JWT y control de acceso (v3). El frontend es de CADA version, desde la v1.
 
 ## 3. Requisitos funcionales
 
@@ -126,7 +126,7 @@ pie de la letra; solo cambia `"version": "v2"` en el diagnóstico.
 ## 5. Criterios de aceptación
 
 1. **Regresión:** `docker compose up -d --build` — un comando — y el smoke
-   test **de la v1** ([7_quickstart de v1](../v1_producto/7_quickstart.md) §2)
+   test **de la v1** ([7_quickstart de v1](../v1_sin_fk/7_quickstart.md) §2)
    pasa completo sin cambios (salvo `"version":"v2"` en `/`).
 2. **El molde replicado:** ciclo completo de persona con los 5 verbos
    (crear P007 → reemplazar → parchar → confirmar → eliminar → segundo

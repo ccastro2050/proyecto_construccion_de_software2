@@ -14,7 +14,7 @@
 
 ## Fase 0 — Punto de partida verificado
 - [ ] Estar parado sobre la v1 cerrada: `git tag` muestra `v1` y el smoke
-      test de la v1 pasa ([7_quickstart de v1](../v1_producto/7_quickstart.md) §2).
+      test de la v1 pasa ([7_quickstart de v1](../v1_sin_fk/7_quickstart.md) §2).
 - [ ] `docker compose up -d` (la BD ya tiene TODO lo que la v2 necesita:
       tablas, SPs y triggers están en `db/bdfacturas_postgres.sql` desde la v1).
 

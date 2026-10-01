@@ -11,7 +11,7 @@
 > **Versión 2** · CÓMO construir lo especificado en [2_spec.md](2_spec.md).
 > El porqué de cada decisión: [4_research.md](4_research.md) · contratos
 > exactos: [6_contracts.md](6_contracts.md) · orden: [8_tasks.md](8_tasks.md).
-> El stack NO cambia (es el de la [v1](../v1_producto/3_plan.md) §1:
+> El stack NO cambia (es el de la [v1](../v1_sin_fk/3_plan.md) §1:
 > .NET 10 + ADO.NET + PostgreSQL, sin ORM).
 
 ---

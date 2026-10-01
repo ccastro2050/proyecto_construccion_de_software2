@@ -16,8 +16,8 @@
 
 | Versión | Qué agrega (acumulativo) | Estado |
 |---|---|---|
-| v1 | CRUD completo de las **tablas sin clave foránea** — **API y pantallas** | **Cerrada** · tag `v1` |
-| **v2** | CRUD de las **tablas con clave foránea** y las puente: las FK como **listas desplegables cargadas desde la API**, y la facturación maestro-detalle — **API y pantallas** | **En curso** ([spec](v2_persona_factura/2_spec.md)) |
+| v1 | CRUD completo de **las seis tablas sin clave foránea** — **API y pantallas** | **Cerrada** · tag `v1` |
+| **v2** | CRUD de **TODAS las tablas** — con la v2 están las 12: las FK como **listas desplegables cargadas desde la API**, las puente, y la facturación maestro-detalle — **API y pantallas** | **En curso** ([spec](v2_persona_factura/2_spec.md)) |
 | v3 | **JWT**, sesiones y control de acceso por roles; CRUD de `usuario`, `rol`, `rol_usuario`, `ruta` y `rutarol` solo para administradores | Sin especificar |
 | v4 | **10 consultas multitabla** (4+ tablas cada una), dashboard con gráficos, **imagen corporativa con su manual de marca**, páginas corporativas, responsive/PWA y **publicación** en un servidor | Sin especificar |
 
@@ -57,19 +57,25 @@ aquí y no existiría con dos lenguajes distintos. **No se comparte nada.**
 
 Las 12 tablas de `bdfacturas`, repartidas:
 
-| Versión | Tablas |
-|---|---|
-| **v1** | `producto` · `empresa` · `persona` |
-| v2 | `cliente` · `vendedor` · `factura` · `productosporfactura` |
-| v3 | `rol` · `usuario` · `rol_usuario` · `ruta` · `rutarol` |
+| Versión | Tablas | Criterio |
+|---|---|---|
+| **v1** | `producto` · `empresa` · `persona` · `rol` · `ruta` · `usuario` | **Las SEIS sin clave foránea.** Se pueden llenar sin que exista nada más |
+| **v2** | `cliente` · `vendedor` · `factura` · `productosporfactura` · `rol_usuario` · `rutarol` | **Las SEIS con clave foránea**, incluidas las puente. Con la v2, las **12** están |
+| **v3** | — | No agrega tablas: le pone **JWT y control de acceso por rol** a lo que ya existe |
+| **v4** | — | No agrega tablas: **consultas, dashboard, marca y publicación** |
 
 > **Ojo:** las 12 tablas **existen en la base desde la v1** (Artículo 5 de la
 > [constitución](../1_constitution.md)). Lo que reparte esta tabla es qué
 > puede **nombrar el código** de cada versión, no qué existe en el motor.
 >
-> **Y fíjese en `usuario`:** no tiene clave foránea, así que «cabría» en la
-> v1. No entra, porque es la tabla del control de acceso y eso es la v3. El
-> criterio de la v1 no es solo técnico — es también de alcance.
+> **`usuario` y `rol` SÍ entran en la v1**, aunque sean del control de acceso:
+> el criterio de la v1 es **no tener clave foránea**, y no la tienen. Lo que
+> llega en la v3 **no es su CRUD** —ese ya está— sino **JWT, la sesión y que
+> solo un administrador pueda usarlo**.
+>
+> **La v3 no agrega tablas: agrega la puerta.** Y la v2 cierra el modelo: con
+> ella las **12** tablas están, así que de la v3 en adelante **no se crea
+> ninguna tabla nueva.**
 
 ## Lo que este mapa dejó por fuera, y por qué
 

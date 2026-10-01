@@ -1,4 +1,4 @@
-# Modelo de datos — Versión 1: la BD completa (dada) y la tabla producto
+# Modelo de datos — Versión 1: la BD completa (dada) y las SEIS tablas sin FK
 
 > **Versión 1** · La base de datos NO se diseña en esta versión: **viene
 > dada** ([4_research.md](4_research.md) D4). Este documento describe lo que
@@ -63,8 +63,12 @@ public class Producto
 
 ## 4. Reglas de esta versión
 
-- El código de la v1 **solo puede nombrar `producto`** — las otras 11
-  tablas existen pero son territorio de la v2 en adelante.
+- El código de la v1 **solo puede nombrar las SEIS tablas sin clave
+  foránea** —`producto`, `empresa`, `persona`, `rol`, `ruta`, `usuario`—. Las
+  otras seis existen en la base pero son territorio de la v2.
+- **`usuario` y `rol` SÍ son de esta versión**, aunque sean del control de
+  acceso: el criterio es no tener clave foránea, y no la tienen. Lo que llega
+  en la v3 **no es su CRUD** —ese es este— sino la sesión y el permiso.
 - La BD **no se modifica**: ni columnas nuevas, ni índices, ni datos
   semilla distintos. Si algo parece faltar, es de otra versión.
 - El reset completo es de Docker, no de SQL:

@@ -1,4 +1,4 @@
-# Plan técnico — Versión 1: producto + PostgreSQL (C#/ASP.NET Core)
+# Plan técnico — Versión 1: las seis tablas sin FK (C#/ASP.NET Core + Blazor)
 
 > **Versión 1** · CÓMO construir lo especificado en [2_spec.md](2_spec.md).
 > El porqué de cada decisión: [4_research.md](4_research.md) · contratos
@@ -26,8 +26,8 @@
 └── api_facturas/
     ├── ApiFacturas.csproj            # el proyecto .NET (paquetes: Npgsql y Swashbuckle)
     ├── Program.cs                    # punto de entrada: ENSAMBLADOR (DI) + 422 + rutas
-    ├── appsettings.json              # cadena de conexión (default localhost:15443)
-    ├── Dockerfile                    # sdk:10.0 + dotnet watch (puerto 8043)
+    ├── appsettings.json              # cadena de conexión (default localhost:15442)
+    ├── Dockerfile                    # sdk:10.0 + dotnet watch (puerto 8042)
     ├── Modelos/
     │   └── Producto.cs               # el MODELO = la ENTIDAD: 4 propiedades tipadas
     ├── Peticiones/
@@ -184,8 +184,8 @@ contenedor inicializador: esa lección llegará con el segundo motor.)
 ## 5. Docker: un solo comando desde v1
 
 La constitución (Artículo 4) manda: `docker compose up -d --build` deja TODO
-funcionando. En v1 eso son **dos servicios**: `postgres` (15443 al host,
-se siembra solo) y `api-facturas` (8043, código montado +
+funcionando. En v1 eso son **dos servicios**: `postgres` (15442 al host,
+se siembra solo) y `api-facturas` (8042, código montado +
 `dotnet watch`, `bin/` y `obj/` en volúmenes anónimos para no mezclar
 compilados de Linux con los de Windows). El detalle línea por línea está en
 el `docker-compose.yml` de la raíz, comentado.

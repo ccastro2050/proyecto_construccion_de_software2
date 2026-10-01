@@ -237,14 +237,21 @@ más carpetas de componentes (y el compose crecerá con ellas).
 ## 3. La ruta de versiones
 
 ```
-v1  api_facturas (C#/ASP.NET Core): CRUD de producto, solo PostgreSQL   (cerrada: tag v1)
-v2  persona (el molde replicado) + factura maestro-detalle con SPs   ← USTED ESTÁ AQUÍ (cerrada: tag v2)
-v3  el RESTO de las entidades: toda la bdfacturas cubierta con
-    UN motor (usuario con BCrypt, tablas puente)
-v4  segundo motor (SQL Server) — nace la fábrica de repositorios
-v5  tercer motor (MariaDB) + compose completo
-v6  frontend FLASK (Jinja2): CRUD de las 12 entidades + login + facturación
+v1  CRUD de las SEIS tablas sin clave foranea (producto, empresa,
+    persona, rol, ruta, usuario) — API Y PANTALLA
+v2  CRUD de las SEIS con clave foranea: las FK como listas
+    desplegables, las puente, y la factura maestro-detalle — API Y PANTALLA   <- USTED ESTA AQUI
+v3  control de acceso: JWT, sesiones y permisos por rol
+v4  el resto: 10 consultas multitabla, dashboard, manual de marca,
+    responsive/PWA y publicacion
 ```
+
+> **Son CUATRO versiones.** No hay v5 ni v6: lo que antes eran «un
+> motor por version» y «el front al final» cambio de lugar — ver
+> [el mapa](docs/spec_kit/versiones/0_mapa_versiones.md).
+>
+> **Y cada version entrega su API y su PANTALLA**, en Blazor Server,
+> en su propio contenedor. Media version no es una version.
 
 La regla del juego: la **constitución** es permanente, cada versión tiene
 su propia spec, y una versión está TERMINADA solo cuando pasa sus criterios

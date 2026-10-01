@@ -93,3 +93,29 @@
 > Si el veredicto es rojo, anote aquí qué documento hay que corregir y por
 > qué. Esa nota es la que evita repetir el mismo error en la versión
 > siguiente.
+
+## Los SEIS recursos, uno por uno
+
+**La v1 no está cerrada con uno funcionando.** Marque los seis:
+
+| Recurso | `GET` lista | `GET` uno | `POST` | `PUT` | `PATCH` | `DELETE` | Pantalla |
+|---|---|---|---|---|---|---|---|
+| `producto` | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
+| `empresa` | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
+| `persona` | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
+| `rol` | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
+| `ruta` | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
+| `usuario` | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
+
+**Y las dos comprobaciones que no son por recurso:**
+
+| | |
+|---|---|
+| ☐ | **El `PUT` sin un campo da 422 y el MISMO body en `PATCH` da 200** — en al menos un recurso, y se entiende por qué |
+| ☐ | **El `PATCH` con body vacío da 400**, no 422: es regla de negocio, no de forma |
+| ☐ | **En `rol` y `ruta` el `POST` va SIN `id`** y la base lo asigna |
+| ☐ | **Con la API apagada, la pantalla sigue en pie**, con su aviso y sin una sola fila |
+| ☐ | `docker compose up -d --build` desde cero levanta los **tres** servicios |
+
+> **Si una fila de la tabla queda sin marcar, la versión no está cerrada.** No
+> importa que las otras cinco estén perfectas: la v1 son las seis.

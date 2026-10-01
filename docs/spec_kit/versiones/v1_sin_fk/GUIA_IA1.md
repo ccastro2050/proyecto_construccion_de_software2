@@ -44,13 +44,13 @@ contenido de cada uno en el mismo orden):
 | # | Archivo | Papel |
 |---|---|---|
 | 1 | `docs/spec_kit/1_constitution.md` | Las reglas permanentes (C#, capas, un comando) |
-| 2 | `docs/spec_kit/versiones/v1_producto/2_spec.md` | QUÉ construir y los criterios de aceptación |
-| 3 | `.../v1_producto/3_plan.md` | CÓMO: stack, carpetas, capas |
-| 4 | `.../v1_producto/4_research.md` | Decisiones y alternativas (el porqué del plan) |
-| 5 | `.../v1_producto/5_data_model.md` | La BD completa (dada) y la tabla producto |
-| 6 | `.../v1_producto/6_contracts.md` | Los 7 endpoints exactos |
-| 7 | `.../v1_producto/7_quickstart.md` | El smoke test de validación |
-| 8 | `.../v1_producto/8_tasks.md` | Las fases, en orden |
+| 2 | `docs/spec_kit/versiones/v1_sin_fk/2_spec.md` | QUÉ construir y los criterios de aceptación |
+| 3 | `.../v1_sin_fk/3_plan.md` | CÓMO: stack, carpetas, capas |
+| 4 | `.../v1_sin_fk/4_research.md` | Decisiones y alternativas (el porqué del plan) |
+| 5 | `.../v1_sin_fk/5_data_model.md` | La BD completa (dada) y la tabla producto |
+| 6 | `.../v1_sin_fk/6_contracts.md` | Los 7 endpoints exactos |
+| 7 | `.../v1_sin_fk/7_quickstart.md` | El smoke test de validación |
+| 8 | `.../v1_sin_fk/8_tasks.md` | Las fases, en orden |
 
 Además de los 8 documentos, la versión trae **dos artefactos que NO se
 suben al chat ni los genera la IA**: `db/bdfacturas_postgres.sql` (el script
@@ -74,14 +74,14 @@ la IA lo que viene — la regla es que la v1 no anticipa).
 clonado es el **material de referencia**. Su trabajo de reconstrucción va
 en un **proyecto propio, en una carpeta nueva y vacía**:
 
-1. Cree una carpeta para su proyecto (ej.: `mi_v1_producto/`) donde usted
+1. Cree una carpeta para su proyecto (ej.: `mi_v1_sin_fk/`) donde usted
    guarda sus trabajos — fuera de la carpeta clonada.
 2. Ábrala en VS Code (*File → Open Folder*).
 3. **Cree las CARPETAS** (el chat no puede tocar su disco). En la terminal
    integrada (*Terminal → New Terminal*, PowerShell), parado en su carpeta:
 
    ```powershell
-   mkdir docs\spec_kit\versiones\v1_producto, db, api_facturas\Modelos, api_facturas\Peticiones, api_facturas\Controllers, api_facturas\Servicios, api_facturas\Repositorios, api_facturas\Excepciones, api_facturas\pruebas
+   mkdir docs\spec_kit\versiones\v1_sin_fk, db, api_facturas\Modelos, api_facturas\Peticiones, api_facturas\Controllers, api_facturas\Servicios, api_facturas\Repositorios, api_facturas\Excepciones, api_facturas\pruebas
    ```
 
 4. **Cree los ARCHIVOS VACÍOS** — **USTED los irá llenando** uno a uno,
@@ -102,13 +102,13 @@ en un **proyecto propio, en una carpeta nueva y vacía**:
    |---|---|
    | `db\bdfacturas_postgres.sql` | `db\` |
    | `docs\spec_kit\1_constitution.md` | `docs\spec_kit\` |
-   | Los 7 `.md` de `docs\spec_kit\versiones\v1_producto\` | `docs\spec_kit\versiones\v1_producto\` |
+   | Los 7 `.md` de `docs\spec_kit\versiones\v1_sin_fk\` | `docs\spec_kit\versiones\v1_sin_fk\` |
 
    (Estos 10 vienen dados — la IA no los genera: las specs se le SUBEN al
    chat, y los scripts de `db/` son la BD completa ya escrita.)
 
 **Antes de abrir el chat, verifique:** `docs\spec_kit\1_constitution.md`
-debe existir, `docs\spec_kit\versiones\v1_producto\` debe tener
+debe existir, `docs\spec_kit\versiones\v1_sin_fk\` debe tener
 **7 archivos** (2_spec a 8_tasks), y `db\` debe tener `bdfacturas_postgres.sql`
 (con contenido, ~1.060 líneas). Si algo está vacío, falta el
 paso 5.
@@ -118,12 +118,12 @@ La estructura queda lista ANTES de hablar con la IA (es la de `3_plan.md`
 archivo para que USTED lo pegue:
 
 ```
-mi_v1_producto/                   ← SU carpeta
+mi_v1_sin_fk/                   ← SU carpeta
 ├── docs/
 │   └── spec_kit/                 ← las especificaciones, IGUAL que en el repo
 │       ├── 1_constitution.md
 │       └── versiones/
-│           └── v1_producto/  ← los 7 documentos de la v1
+│           └── v1_sin_fk/  ← los 7 documentos de la v1
 ├── .gitignore                    ← Fase 6 (excluye bin/, obj/, *.session.sql)
 ├── docker-compose.yml            ← Fase 0 (postgres) y Fase 6 (api-facturas)
 ├── db/
@@ -257,15 +257,15 @@ REGLAS DE TRABAJO (no negociables):
 8. En mi máquina TAMBIÉN corre el proyecto clonado del curso con sus
    puertos originales. Para que ambos convivan, MI proyecto:
    a. Publica los puertos del host con +100: en el docker-compose.yml la
-      API va "8143:8043" y PostgreSQL va "15543:1433" (adentro de los
+      API va "8142:8042" y PostgreSQL va "15542:1433" (adentro de los
       contenedores todo queda igual que en los documentos).
-   b. El docker-compose.yml empieza con la línea `name: mi_v1_producto`
+   b. El docker-compose.yml empieza con la línea `name: mi_v1_sin_fk`
       (antes de services:) — así Docker lo trata como un proyecto
       distinto al del curso, con sus propios contenedores y volúmenes,
       aunque las carpetas se llamen parecido.
    La cadena de conexión por defecto de appsettings.json (para correr sin
-   Docker) apunta a localhost,15543. Cuando me des URLs o comandos de
-   prueba, usa localhost:8143 (API) y localhost,15543 (BD).
+   Docker) apunta a localhost,15542. Cuando me des URLs o comandos de
+   prueba, usa localhost:8142 (API) y localhost,15542 (BD).
 
 Al final, la versión 1 está TERMINADA solo cuando pasan los 6 criterios de
 aceptación de 2_spec.md, verificados con el smoke test de 7_quickstart.md.
@@ -289,8 +289,8 @@ que entendiste el alcance) y luego arranca con la Fase 0.
    en el chat CADA error tal cual salga (completo). La IA le entrega el
    archivo corregido, usted lo pega y repite hasta que los 6 criterios
    estén en verde. **Ojo con los puertos**: SU proyecto corre con +100
-   (regla 8 del prompt) — donde el quickstart diga `localhost:8043` use
-   `localhost:8143`, y donde diga `15443` use `15543`.
+   (regla 8 del prompt) — donde el quickstart diga `localhost:8042` use
+   `localhost:8142`, y donde diga `15442` use `15542`.
 4. **Si la IA se acelera** y entrega varios archivos de un tirón,
    recuérdele la regla 2b: "de a uno, espera mi listo".
 5. **Si la primera respuesta llega en OTRO lenguaje** (Python, Java, Node,
@@ -317,10 +317,10 @@ en la terminal (pidiendo permiso). Usted pasa de operador a **supervisor**.
 **Igual que en el chat: NO se trabaja dentro de la carpeta clonada** (esa
 es la referencia). El agente construye en SU proyecto:
 
-1. Cree una carpeta nueva y vacía para su proyecto (ej.: `mi_v1_producto/`)
+1. Cree una carpeta nueva y vacía para su proyecto (ej.: `mi_v1_sin_fk/`)
    y copie dentro: los 8 documentos de la tabla A.1 en `docs\spec_kit\`
    replicando la estructura por versiones (`docs\spec_kit\1_constitution.md`
-   + `docs\spec_kit\versiones\v1_producto\` con los 7 de la
+   + `docs\spec_kit\versiones\v1_sin_fk\` con los 7 de la
    versión), y el script `db\bdfacturas_postgres.sql` del
    repositorio (la BD viene dada — el agente no debe generarla).
 2. Abra SU carpeta en el IDE (en Antigravity: *Open Folder*; el agente verá
@@ -335,7 +335,7 @@ es la referencia). El agente construye en SU proyecto:
 Construye la VERSIÓN 1 de este proyecto, partiendo de cero.
 
 Primero lee, en este orden, los 8 documentos que están bajo docs/spec_kit/
-(1_constitution.md en la raíz; los demás en versiones/v1_producto/):
+(1_constitution.md en la raíz; los demás en versiones/v1_sin_fk/):
 1_constitution, 2_spec, 3_plan, 4_research, 5_data_model, 6_contracts,
 7_quickstart y 8_tasks. Después resume en máximo 10 líneas qué vas a
 construir y espera mi confirmación antes de tocar nada. El código va en la
@@ -361,10 +361,10 @@ REGLAS (no negociables):
 4. Todo en español, C# sobre ASP.NET Core (.NET 10), con los comentarios
    didácticos que exige la constitución.
 5. En esta máquina TAMBIÉN corre el proyecto clonado del curso. MI proyecto
-   publica los puertos del host con +100 (API "8143:8043", PostgreSQL
-   "15543:1433") y su docker-compose.yml empieza con `name: mi_v1_producto`.
+   publica los puertos del host con +100 (API "8142:8042", PostgreSQL
+   "15542:1433") y su docker-compose.yml empieza con `name: mi_v1_sin_fk`.
 6. Al final, corre el smoke test completo de 7_quickstart.md §2 (con mis
-   puertos: localhost:8143) y muéstrame la evidencia de los 6 criterios de
+   puertos: localhost:8142) y muéstrame la evidencia de los 6 criterios de
    aceptación de 2_spec.md. La versión no está terminada hasta que los 6
    estén en verde.
 ```

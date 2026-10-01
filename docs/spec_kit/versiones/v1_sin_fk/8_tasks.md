@@ -1,4 +1,4 @@
-# Tareas — Versión 1: api_facturas con producto + PostgreSQL (C#/ASP.NET Core)
+# Tareas — Versión 1: las seis tablas sin FK, con su pantalla
 
 > **Versión 1** · El orden de construcción, partiendo de CERO. Cada fase
 > termina en algo **verificable**. Requisitos: [2_spec.md](2_spec.md) ·
@@ -12,21 +12,21 @@
       `bdfacturas_postgres.sql` (la BD completa en dialecto PostgreSQL —
       no se escribe ni se genera con IA; ver [3_plan.md](3_plan.md) §4.6).
 - [ ] Crear el `docker-compose.yml` con el servicio `postgres` (imagen
-      16-alpine, volumen `pgdata`, puerto 15443, healthcheck con
+      16-alpine, volumen `pgdata`, puerto 15442, healthcheck con
       pg_isready, y el script montado en `/docker-entrypoint-initdb.d/`)
       — ver [3_plan.md](3_plan.md) §5. Levantar: `docker compose up -d`.
 - [ ] Crear `api_facturas/` con subcarpetas `Modelos/`, `Peticiones/`, `Controllers/`,
       `Servicios/`, `Repositorios/`, `Excepciones/` y `pruebas/`.
 
 **Verificar:** `docker compose ps` muestra `postgres (healthy)`; un
-cliente SQL a `localhost:15443` (usuario `postgres`) ve las **12 tablas**
+cliente SQL a `localhost:15442` (usuario `postgres`) ve las **12 tablas**
 y `SELECT count(*) FROM producto` da **8**.
 
 ## Fase 1 — El proyecto .NET y el modelo Producto (la clase entidad)
 - [ ] `ApiFacturas.csproj`: proyecto Web de .NET 10, paquete
       `Npgsql`, y la exclusión de `pruebas/**`.
 - [ ] `appsettings.json` con la cadena de conexión (default
-      `localhost:15443` para correr sin Docker).
+      `localhost:15442` para correr sin Docker).
 - [ ] `Modelos/Producto.cs`: la clase entidad con las 4 propiedades
       tipadas `{ get; set; }` (`Codigo` string, `Nombre` string, `Stock`
       int, `Valorunitario` decimal). En C#, las propiedades SON los
@@ -86,7 +86,7 @@ con `errores[]`), y el contraste PUT vs PATCH con `{"stock": 99}` (422 vs
 ## Fase 6 — LA PANTALLA (la otra mitad de la versión)
 
 El front en **Blazor Server / .NET 10**, en `front_blazor/`, en su propio
-contenedor y en el puerto **8048**.
+contenedor y en el puerto **8041**.
 
 | Qué se escribe | Dónde |
 |---|---|
@@ -105,7 +105,7 @@ contenedor y en el puerto **8048**.
 | **Servir las páginas desde la misma API** | Son dos procesos, y eso hay que poder demostrarlo apagando uno |
 | **Meter Bootstrap por CDN** | El CSS va escrito a mano. Un front que necesita internet para verse bien no arranca en un salón sin red |
 
-**Verificación:** `http://localhost:8048/productos` lista los 8 productos, se
+**Verificación:** `http://localhost:8041/productos` lista los 8 productos, se
 crea uno desde la pantalla, y **los dos botones de guardar** hacen cosas
 distintas (criterios 7 a 9 de [2_spec.md](2_spec.md)).
 
@@ -115,7 +115,7 @@ distintas (criterios 7 a 9 de [2_spec.md](2_spec.md)).
 docker compose stop api-facturas
 ```
 
-Recargue `http://localhost:8048/productos`.
+Recargue `http://localhost:8041/productos`.
 
 **Verificación:** el menú sigue, hay un aviso de que no se pudo conectar, y
 **no hay ni una fila**. Es el criterio 10, y es el único que no se puede
@@ -125,9 +125,9 @@ Después, `docker compose start api-facturas` y la pantalla vuelve a listar.
 
 ## Fase 8 — Docker: un solo comando
 - [ ] `api_facturas/Dockerfile`: imagen `dotnet/sdk:10.0`, `dotnet watch`,
-      `ASPNETCORE_URLS` en 8043, `DOTNET_USE_POLLING_FILE_WATCHER`.
+      `ASPNETCORE_URLS` en 8042, `DOTNET_USE_POLLING_FILE_WATCHER`.
 - [ ] Agregar al `docker-compose.yml` el servicio `api-facturas`: `build:`,
-      código montado + `bin/` y `obj/` en volúmenes anónimos, puerto 8043,
+      código montado + `bin/` y `obj/` en volúmenes anónimos, puerto 8042,
       variable `ConnectionStrings__Postgres` con el host interno
       `postgres:5432`, y `depends_on` de `postgres` con
       `condition: service_healthy`.

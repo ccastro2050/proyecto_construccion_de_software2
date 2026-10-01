@@ -2,7 +2,7 @@
 
 > **Versión 2** · Base: `http://localhost:8043` · Swagger: `/swagger`.
 > **Los 7 contratos de la v1 siguen vigentes sin cambios**
-> ([6_contracts de v1](../v1_producto/6_contracts.md)) — aquí
+> ([6_contracts de v1](../v1_sin_fk/6_contracts.md)) — aquí
 > solo lo NUEVO. Convenciones idénticas: envoltura en listados, errores
 > `{estado, mensaje, detalle}`, 422 con `errores:[…]`.
 
@@ -131,6 +131,6 @@ GET /  → 200 {"mensaje":"API Facturas funcionando","version":"v2","contratos":
 
 ## E. Estabilidad
 
-Estos contratos se congelan al cerrar la v2 (tag `v2`): las versiones de motor (v4/v5)
+Estos contratos se congelan al cerrar la v2 (tag `v2`): el anexo multimotor
 cambian el MOTOR por configuración — si estos endpoints respondieran
 distinto contra PostgreSQL, esas versiones están mal.

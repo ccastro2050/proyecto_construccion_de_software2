@@ -1,4 +1,4 @@
-# Investigación y decisiones — Versión 1: producto + PostgreSQL (C#/ASP.NET Core)
+# Investigación y decisiones — Versión 1: las seis tablas sin clave foránea
 
 > **Versión 1** · **Lectura opcional** (el porqué de las decisiones del plan,
 > con las alternativas que se evaluaron y descartaron). Complementa a
@@ -130,7 +130,7 @@ estudiante).
 **Decisión:** `docker-compose.yml` con `postgres` + `api-facturas` desde
 v1 — `docker compose up -d --build` deja todo funcionando.
 **Por qué:** el Artículo 4 de la constitución ("un solo comando") es
-permanente — y la constitución gana. El compose de v1 **crece por
-versiones** (más adelante los otros motores y el front
-Flask con Jinja2): la infraestructura también se construye por
-incrementos.
+permanente — y la constitución gana. El compose de v1 ya trae **sus tres
+servicios** —la base, la API y la pantalla— y **crece por versiones**: la
+infraestructura también se construye por incrementos, pero ninguna versión
+nace sin su front.

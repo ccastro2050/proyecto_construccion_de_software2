@@ -17,7 +17,7 @@ Mismos 3 servicios: `postgres` (healthy), `postgres-init` (Exited 0) y
 ## 2. Regresión: la v1 sigue intacta (criterio 1)
 
 Correr el smoke test COMPLETO de la v1
-([7_quickstart de v1](../v1_producto/7_quickstart.md) §2).
+([7_quickstart de v1](../v1_sin_fk/7_quickstart.md) §2).
 Única diferencia esperada: el diagnóstico dice `"version":"v2"`.
 Si algo de producto cambió, la v2 está mal — las versiones son acumulativas.
 
@@ -83,7 +83,7 @@ nuevos aparecen bajo Persona y Factura).
 
 | Síntoma | Causa probable |
 |---|---|
-| Los de la v1 ([7_quickstart v1](../v1_producto/7_quickstart.md) §3) | Aplican todos igual |
+| Los de la v1 ([7_quickstart v1](../v1_sin_fk/7_quickstart.md) §3) | Aplican todos igual |
 | POST de factura da 500 con error de FK | `fkidcliente`/`fkidvendedor` no existen — use los semilla (clientes 1, 2, 3, 5 · vendedores 1, 2, 3) |
 | GET /api/factura devuelve 500 "Could not find stored procedure" | La BD es vieja (¿de antes de la v1?) — `docker compose down -v && up -d` para re-crear con los SPs |
 | El total de la factura no cuadra | No es la API (no calcula nada): revise los triggers en la BD |
