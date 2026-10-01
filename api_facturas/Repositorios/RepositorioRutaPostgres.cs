@@ -23,9 +23,20 @@ public class RepositorioRutaPostgres : IRepositorioRuta
 
     private NpgsqlConnection CrearConexion() => new(_cadenaConexion);
 
+    // OJO CON EL ALIAS `ruta AS RutaTexto` DE LOS SELECT.
+    //
+    // La columna se llama `ruta` y la propiedad RutaTexto, porque `Ruta` ya
+    // es el nombre de la CLASE y C# no permite una propiedad con el mismo
+    // nombre que su tipo contenedor.
+    //
+    // Dapper mapea columna -> propiedad POR NOMBRE. Sin el alias, RutaTexto
+    // llega null —y llega null EN SILENCIO: la API responde 200 con el campo
+    // vacio, y la pantalla sale con una columna en blanco sin un solo error—.
+    // Se descubrio mirando la pantalla, no leyendo el codigo.
+
     public async Task<List<Ruta>> ObtenerTodosAsync(int limite)
     {
-        const string sql = @"SELECT id, ruta, descripcion
+        const string sql = @"SELECT id, ruta AS RutaTexto, descripcion
                              FROM ruta ORDER BY id LIMIT @limite";
         await using var conexion = CrearConexion();
         var filas = await conexion.QueryAsync<Ruta>(sql, new { limite });
@@ -34,7 +45,7 @@ public class RepositorioRutaPostgres : IRepositorioRuta
 
     public async Task<Ruta?> ObtenerPorClaveAsync(int id)
     {
-        const string sql = @"SELECT id, ruta, descripcion
+        const string sql = @"SELECT id, ruta AS RutaTexto, descripcion
                              FROM ruta WHERE id = @id";
         await using var conexion = CrearConexion();
         // Cero filas -> null. El SERVICIO decide que significa ese null:
