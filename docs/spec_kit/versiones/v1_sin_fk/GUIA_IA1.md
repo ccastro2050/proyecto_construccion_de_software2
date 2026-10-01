@@ -212,7 +212,44 @@ constitución (reglas permanentes) y el spec kit de la versión 1 (spec, plan,
 research con las decisiones, modelo de datos, contratos, quickstart y tareas).
 
 El proyecto es C# sobre ASP.NET Core (.NET 10) + PostgreSQL — así lo fija
-3_plan.md. Si en tu respuesta aparece OTRO lenguaje o framework (Python,
+3_plan.md.
+
+LO QUE HAY QUE CONSTRUIR, Y SON SEIS RECURSOS — NO UNO:
+
+La v1 es el CRUD de las SEIS tablas que NO tienen clave foranea, cada una
+con su pantalla:
+
+   producto   codigo (texto, PK) · nombre · stock · valorunitario
+   empresa    codigo (texto, PK) · nombre
+   persona    codigo (texto, PK) · nombre · email · telefono
+   rol        id (SERIAL)        · nombre
+   ruta       id (SERIAL)        · ruta · descripcion
+   usuario    email (texto, PK)  · contrasena
+
+Son SEIS REBANADAS VERTICALES IDENTICAS salvo los campos: modelo, tres
+peticiones por verbo, interfaz + repositorio, interfaz + servicio,
+controlador, y su pantalla. Que se repitan es el punto del ejercicio.
+
+DOS COSAS QUE CAMBIAN SEGUN LA TABLA, y no se pueden calcar:
+
+  · `rol` y `ruta` tienen llave SERIAL: el POST NO manda el id —lo genera
+    la base—, asi que su peticion de creacion no lo lleva, y su modelo NO
+    marca el Id como `required`. Si lo exige, el POST tendria que
+    inventarle una llave.
+  · En `ruta`, la COLUMNA se llama `ruta` y la PROPIEDAD tiene que
+    llamarse distinto (RutaTexto), porque C# no permite una propiedad con
+    el mismo nombre que su clase. El SELECT necesita el alias
+    `ruta AS RutaTexto`: sin el, Dapper mapea por nombre, no encuentra la
+    columna, y el campo llega NULL EN SILENCIO —la API responde 200 con el
+    campo vacio—.
+
+Y LA VERSION INCLUYE SU PANTALLA: seis pantallas en Blazor Server, una por
+recurso, con direccion propia (/productos, /empresas, /personas, /roles,
+/rutas, /usuarios) y UN SERVICIO POR RECURSO —nunca un ApiService generico
+con la tabla como parametro—. La pantalla no le habla al usuario en jerga:
+ni PUT, ni PATCH, ni 422. Los dos botones de guardar se llaman "Guardar la
+ficha completa" y "Guardar solo lo que cambie".
+ Si en tu respuesta aparece OTRO lenguaje o framework (Python,
 Java, Node, PHP…), significa que no leíste los documentos adjuntos: detente
 y dímelo en vez de continuar.
 
@@ -343,6 +380,42 @@ raíz de este proyecto según la estructura de 3_plan.md (docs/spec_kit/ es
 solo lectura: no la modifiques). La base de datos YA VIENE DADA en
 db/bdfacturas_postgres.sql — úsalo tal cual para montar PostgreSQL;
 no escribas ni modifiques SQL de creación de tablas.
+
+LO QUE HAY QUE CONSTRUIR, Y SON SEIS RECURSOS — NO UNO:
+
+La v1 es el CRUD de las SEIS tablas que NO tienen clave foranea, cada una
+con su pantalla:
+
+   producto   codigo (texto, PK) · nombre · stock · valorunitario
+   empresa    codigo (texto, PK) · nombre
+   persona    codigo (texto, PK) · nombre · email · telefono
+   rol        id (SERIAL)        · nombre
+   ruta       id (SERIAL)        · ruta · descripcion
+   usuario    email (texto, PK)  · contrasena
+
+Son SEIS REBANADAS VERTICALES IDENTICAS salvo los campos: modelo, tres
+peticiones por verbo, interfaz + repositorio, interfaz + servicio,
+controlador, y su pantalla. Que se repitan es el punto del ejercicio.
+
+DOS COSAS QUE CAMBIAN SEGUN LA TABLA, y no se pueden calcar:
+
+  · `rol` y `ruta` tienen llave SERIAL: el POST NO manda el id —lo genera
+    la base—, asi que su peticion de creacion no lo lleva, y su modelo NO
+    marca el Id como `required`. Si lo exige, el POST tendria que
+    inventarle una llave.
+  · En `ruta`, la COLUMNA se llama `ruta` y la PROPIEDAD tiene que
+    llamarse distinto (RutaTexto), porque C# no permite una propiedad con
+    el mismo nombre que su clase. El SELECT necesita el alias
+    `ruta AS RutaTexto`: sin el, Dapper mapea por nombre, no encuentra la
+    columna, y el campo llega NULL EN SILENCIO —la API responde 200 con el
+    campo vacio—.
+
+Y LA VERSION INCLUYE SU PANTALLA: seis pantallas en Blazor Server, una por
+recurso, con direccion propia (/productos, /empresas, /personas, /roles,
+/rutas, /usuarios) y UN SERVICIO POR RECURSO —nunca un ApiService generico
+con la tabla como parametro—. La pantalla no le habla al usuario en jerga:
+ni PUT, ni PATCH, ni 422. Los dos botones de guardar se llaman "Guardar la
+ficha completa" y "Guardar solo lo que cambie".
 
 REGLAS (no negociables):
 
