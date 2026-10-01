@@ -1,4 +1,4 @@
-# Especificación — Versión 2: persona y factura maestro-detalle (SPs y triggers)
+# Especificación — Versión 2: las SEIS tablas con clave foránea (con la v2 están las 12)
 
 > **Versión 2** del desarrollo incremental ([mapa de versiones](../0_mapa_versiones.md)).
 > Rige la constitución del proyecto: [../../1_constitution.md](../../1_constitution.md).
@@ -47,8 +47,20 @@ Dos lecciones nuevas, una por rebanada:
 
 ## 2. Alcance
 
+> **Qué define la v2:** **las tablas que SÍ tienen clave foránea**, y con
+> ellas el modelo queda completo: con la v2 están **las 12**.
+>
+> Son seis: `cliente`, `vendedor`, `factura`, `productosporfactura`,
+> `rol_usuario` y `rutarol`. Las cuatro primeras son del negocio; las dos
+> últimas son **tablas puente**.
+>
+> **`persona` NO es de esta versión: es de la v1**, porque no tiene clave
+> foránea. Si aparece aquí, es que la v1 quedó incompleta.
+
 **Incluye:**
-- CRUD completo de `persona` (los 5 verbos, patrón idéntico a producto).
+- **CRUD de los SEIS recursos con clave foránea.** Cada uno con **su
+  desplegable** para la FK, cargado de la API — no un campo de texto donde el
+  usuario digite el código.
 - `factura` de solo-SPs: listar, consultar una (maestro + detalle con
   nombres de cliente y vendedor), **crear** (encabezado + renglones en una
   transacción del SP; el trigger calcula subtotal/total y descuenta stock)
@@ -60,9 +72,11 @@ Dos lecciones nuevas, una por rebanada:
 - El endpoint `/` de diagnóstico pasa a reportar `"version": "v2"`.
 
 **No incluye (deliberado — [mapa](../0_mapa_versiones.md)):**
-- CRUD de `cliente`, `vendedor` ni las demás tablas: la factura los
-  referencia **por id** usando los datos semilla (clientes 1–3, vendedores
-  1–3). Su gestión llega en la v3 (el resto de las entidades).
+- **JWT, sesiones y control de acceso por rol**: es la **v3**. Ojo con la
+  confusión: el **CRUD** de `rol_usuario` y `rutarol` **sí es de esta
+  versión** —tienen clave foránea—. Lo que llega en la v3 **no es su CRUD:
+  es la puerta**. Administrar la tabla de permisos y *hacerlos valer* son dos
+  cosas distintas, y están en dos versiones distintas.
 - Editar (PUT/PATCH) o borrar físicamente facturas: `sp_actualizar_…` y
   `sp_borrar_…` existen en la BD pero la v2 no los expone — anular ES la
   operación de negocio; el borrado físico queda para el administrador.

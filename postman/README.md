@@ -34,7 +34,7 @@ la pestaña de descripción.
 
 La colección usa la variable `base` = `http://localhost:8043` (el proyecto
 del curso). Si está probando **SU reconstrucción** (la de la
-[GUIA_IA](../docs/spec_kit/versiones/v2_persona_factura/GUIA_IA2.md), que corre en el puerto 8143): clic en la
+[GUIA_IA](../docs/spec_kit/versiones/v2_con_fk/GUIA_IA2.md), que corre en el puerto 8143): clic en la
 colección → pestaña **Variables** → cambie `base` a
 `http://localhost:8143`. Una sola edición y las 25 peticiones apuntan a su
 proyecto.

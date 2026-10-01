@@ -116,7 +116,7 @@ semántica exacta de `409 Conflict`.
 ## C. Diagnóstico (cambia UNA clave)
 
 ```
-GET /  → 200 {"mensaje":"API Facturas funcionando","version":"v2","contratos":"docs/spec_kit/versiones/v2_persona_factura/6_contracts.md"}
+GET /  → 200 {"mensaje":"API Facturas funcionando","version":"v2","contratos":"docs/spec_kit/versiones/v2_con_fk/6_contracts.md"}
 ```
 
 ## D. Tabla resumen de traducción de errores (acumulada)

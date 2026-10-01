@@ -27,13 +27,13 @@ La BD **no cambia**: los SPs y triggers que la v2 estrena están en su
 | # | Archivo | Papel |
 |---|---|---|
 | 1 | `docs/spec_kit/1_constitution.md` | Las reglas permanentes (las mismas de la v1) |
-| 2 | `docs/spec_kit/versiones/v2_persona_factura/2_spec.md` | QUÉ agrega la v2 y sus criterios |
-| 3 | `.../v2_persona_factura/3_plan.md` | CÓMO: los archivos nuevos y el diseño |
-| 4 | `.../v2_persona_factura/4_research.md` | Decisiones y alternativas |
-| 5 | `.../v2_persona_factura/5_data_model.md` | Las tablas nuevas + los SPs y triggers |
-| 6 | `.../v2_persona_factura/6_contracts.md` | Los 10 endpoints nuevos exactos |
-| 7 | `.../v2_persona_factura/7_quickstart.md` | Regresión v1 + smoke test v2 |
-| 8 | `.../v2_persona_factura/8_tasks.md` | Las fases, en orden |
+| 2 | `docs/spec_kit/versiones/v2_con_fk/2_spec.md` | QUÉ agrega la v2 y sus criterios |
+| 3 | `.../v2_con_fk/3_plan.md` | CÓMO: los archivos nuevos y el diseño |
+| 4 | `.../v2_con_fk/4_research.md` | Decisiones y alternativas |
+| 5 | `.../v2_con_fk/5_data_model.md` | Las tablas nuevas + los SPs y triggers |
+| 6 | `.../v2_con_fk/6_contracts.md` | Los 10 endpoints nuevos exactos |
+| 7 | `.../v2_con_fk/7_quickstart.md` | Regresión v1 + smoke test v2 |
+| 8 | `.../v2_con_fk/8_tasks.md` | Las fases, en orden |
 
 **No suba los documentos de la v1** (la IA no los necesita: lo que importa
 del pasado es su CÓDIGO, y ese se lo pega usted cuando lo pida). Tampoco el
@@ -48,14 +48,14 @@ Todos los comandos van en la terminal integrada de VS Code (PowerShell),
    carpetas de código ya existen todas desde la v1):
 
    ```powershell
-   mkdir docs\spec_kit\versiones\v2_persona_factura
+   mkdir docs\spec_kit\versiones\v2_con_fk
    ```
 
 2. **Copie las specs de la v2** desde el clon del curso (los 7 `.md` +
    esta guía) — ajuste la primera ruta a donde tenga el clon:
 
    ```powershell
-   Copy-Item ..\proyecto_construccion_de_software2\docs\spec_kit\versiones\v2_persona_factura\* docs\spec_kit\versiones\v2_persona_factura\
+   Copy-Item ..\proyecto_construccion_de_software2\docs\spec_kit\versiones\v2_con_fk\* docs\spec_kit\versiones\v2_con_fk\
    ```
 
    (También sirve el explorador de Windows: Ctrl+C, Ctrl+V de la carpeta
@@ -175,7 +175,7 @@ pierde contexto). Además, para la v2:
 
 Preparación como en la [guía v1](../v1_sin_fk/GUIA_IA1.md) B.1, con una diferencia:
 abra el IDE **sobre su proyecto de la v1** (que ya tiene código) y copie
-antes la carpeta `v2_persona_factura` de specs (paso A.2.1).
+antes la carpeta `v2_con_fk` de specs (paso A.2.1).
 
 ```
 Construye la VERSIÓN 2 de este proyecto. Las versiones son acumulativas:
@@ -183,7 +183,7 @@ este proyecto YA TIENE la v1 construida y funcionando (CRUD de producto);
 NO la modifiques — solo Program.cs y pruebas/Programa.cs crecen.
 
 Primero lee, en este orden: docs/spec_kit/1_constitution.md y los 7
-documentos de docs/spec_kit/versiones/v2_persona_factura/ (2_spec a
+documentos de docs/spec_kit/versiones/v2_con_fk/ (2_spec a
 8_tasks). Puedes leer el código v1 existente para calcar su estilo.
 Después resume en máximo 10 líneas qué vas a construir y sobre qué base, y
 espera mi confirmación antes de tocar nada. docs/spec_kit/ es solo lectura.

@@ -17,7 +17,7 @@
 | Versión | Qué agrega (acumulativo) | Estado |
 |---|---|---|
 | v1 | CRUD completo de **las seis tablas sin clave foránea** — **API y pantallas** | **Cerrada** · tag `v1` |
-| **v2** | CRUD de **TODAS las tablas** — con la v2 están las 12: las FK como **listas desplegables cargadas desde la API**, las puente, y la facturación maestro-detalle — **API y pantallas** | **En curso** ([spec](v2_persona_factura/2_spec.md)) |
+| **v2** | CRUD de **TODAS las tablas** — con la v2 están las 12: las FK como **listas desplegables cargadas desde la API**, las puente, y la facturación maestro-detalle — **API y pantallas** | **En curso** ([spec](v2_con_fk/2_spec.md)) |
 | v3 | **JWT**, sesiones y control de acceso por roles; CRUD de `usuario`, `rol`, `rol_usuario`, `ruta` y `rutarol` solo para administradores | Sin especificar |
 | v4 | **10 consultas multitabla** (4+ tablas cada una), dashboard con gráficos, **imagen corporativa con su manual de marca**, páginas corporativas, responsive/PWA y **publicación** en un servidor | Sin especificar |
 

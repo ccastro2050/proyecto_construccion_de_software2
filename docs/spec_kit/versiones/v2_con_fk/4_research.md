@@ -11,8 +11,19 @@ molde de la v1 **se replica sin pensar** (si costó trabajo, la arquitectura
 estaba mal); factura demuestra que no todo es CRUD — hay lógica que
 **pertenece a la BD**. Una versión solo-persona sería trivial; una
 solo-factura dejaría sin practicar la replicación.
-**Alternativa descartada:** agregar también cliente/vendedor/empresa — puro
-volumen sin lección nueva; su gestión llega en la v3 (el resto de las entidades).
+**Esta decisión se REVISÓ, y conviene dejar escrito por qué.** Decía:
+*«alternativa descartada: agregar también cliente/vendedor/empresa — puro
+volumen sin lección nueva»*.
+
+| | |
+|---|---|
+| **Qué tenía de cierto** | `cliente` y `vendedor` son el mismo molde de la v1. Como ejercicio de replicación, no enseñan nada nuevo |
+| **Por qué se revisó igual** | El criterio de la versión **no es la lección nueva: es el modelo**. La v2 son **las tablas con clave foránea**, y dejar dos por fuera deja el modelo a medias — y la pantalla de factura sin los desplegables de los que depende |
+| **Qué sí era volumen y se quitó** | `empresa` y `persona`, que **no tienen clave foránea**: son de la **v1**. Estaban aquí por error, no por decisión |
+
+> **La lección de `cliente` y `vendedor` no es el CRUD: es el desplegable.** En
+> la v1 ninguna tabla tenía clave foránea, así que no había nada que elegir en
+> una pantalla. Aquí aparece, y aparece seis veces.
 
 ## D2 — Factura SOLO por procedimientos almacenados
 **Decisión:** el repositorio de factura no escribe SQL de tablas: llama 4
