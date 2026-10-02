@@ -95,7 +95,8 @@ contenedor y en el puerto **8041**.
 | `ServicioProducto`: el único sitio que sabe de HTTP | `Servicios/ServicioProducto.cs` |
 | El cascarón y el menú | `Components/App.razor` · `Routes.razor` · `Layout/` |
 | La interfaz gráfica del recurso | `Components/Pages/Productos.razor` |
-| El CSS **escrito a mano** | `wwwroot/app.css` |
+| Bootstrap **servido desde el repositorio** | `wwwroot/lib/bootstrap/` |
+| El CSS del proyecto, **encima** de Bootstrap | `wwwroot/app.css` |
 
 **Tres cosas que se van a querer hacer y no se deben:**
 
@@ -103,7 +104,7 @@ contenedor y en el puerto **8041**.
 |---|---|
 | **Compartir la clase `Producto`** con una referencia de proyecto | Están las dos en C#, así que *funcionaría*. Ata los dos procesos: un cambio interno de la API rompería el front sin que nadie tocara el contrato |
 | **Servir las páginas desde la misma API** | Son dos procesos, y eso hay que poder demostrarlo apagando uno |
-| **Meter Bootstrap por CDN** | El CSS va escrito a mano. Un front que necesita internet para verse bien no arranca en un salón sin red |
+| **Meter Bootstrap por CDN** | Bootstrap si, el CDN no: se copia a `wwwroot/lib/`. Un front que necesita internet para verse bien no arranca en un salón sin red |
 
 **Verificación:** `http://localhost:8041/productos` lista los 8 productos, se
 crea uno desde la interfaz gráfica, y **los dos botones de guardar** hacen cosas

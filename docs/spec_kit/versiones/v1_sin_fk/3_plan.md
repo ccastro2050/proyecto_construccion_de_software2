@@ -66,7 +66,8 @@ front_blazor/
 │   ├── Layout/   MainLayout · NavMenu
 │   └── Pages/    Home · Productos
 └── wwwroot/
-    └── app.css                   escrito A MANO, sin CDN
+    ├── lib/bootstrap/            SERVIDO DESDE AQUI, nunca por CDN
+    └── app.css                   la capa del proyecto, ENCIMA de Bootstrap
 ```
 
 **Que el front y la API estén los dos en C# no cambia nada**, y hay que
@@ -78,7 +79,7 @@ dos lenguajes distintos.
 | **El front tiene SU propia clase `Producto`** | Se parece a la de la API porque el **contrato** es el mismo, no porque sea la misma. Una referencia de proyecto ataría los dos procesos |
 | **`FrontFacturas.csproj` no tiene Npgsql** | No es un olvido: es la comprobación de que este proceso **no puede** llegar a PostgreSQL ni queriendo |
 | **Un servicio POR RECURSO** | Hoy `ServicioProducto`. Con doce recursos, doce servicios — no un `ApiService` con la tabla como parámetro |
-| **Nada de Bootstrap por CDN** | El CSS va escrito a mano, en `wwwroot/app.css` |
+| **Bootstrap SI, por CDN NO** | Se sirve desde `wwwroot/lib/bootstrap/`, y `wwwroot/app.css` va **encima** con las clases del dominio (`.tarjeta`, `.campos`, `.acciones`). A igual especificidad gana el ultimo que carga: por eso el orden no es decorativo |
 
 ## 3. Arquitectura en capas (flujo de una petición)
 

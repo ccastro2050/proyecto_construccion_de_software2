@@ -375,15 +375,15 @@ REGLAS DE TRABAJO (no negociables):
 8. En mi máquina TAMBIÉN corre el proyecto clonado del curso con sus
    puertos originales. Para que ambos convivan, MI proyecto:
    a. Publica los puertos del host con +100: en el docker-compose.yml la
-      API va "8142:8042" y PostgreSQL va "15542:1433" (adentro de los
+      API va "8142:8042" y PostgreSQL va "15542:5432" (adentro de los
       contenedores todo queda igual que en los documentos).
    b. El docker-compose.yml empieza con la línea `name: mi_v1_sin_fk`
       (antes de services:) — así Docker lo trata como un proyecto
       distinto al del curso, con sus propios contenedores y volúmenes,
       aunque las carpetas se llamen parecido.
    La cadena de conexión por defecto de appsettings.json (para correr sin
-   Docker) apunta a localhost,15542. Cuando me des URLs o comandos de
-   prueba, usa localhost:8142 (API) y localhost,15542 (BD).
+   Docker) apunta a localhost:15542. Cuando me des URLs o comandos de
+   prueba, usa localhost:8142 (API) y localhost:15542 (BD).
 
 Al final, la versión 1 está TERMINADA solo cuando pasan los 6 criterios de
 aceptación de 2_spec.md, verificados con el smoke test de 7_quickstart.md.
@@ -516,7 +516,7 @@ REGLAS (no negociables):
    didácticos que exige la constitución.
 5. En esta máquina TAMBIÉN corre el proyecto clonado del curso. MI proyecto
    publica los puertos del host con +100 (API "8142:8042", PostgreSQL
-   "15542:1433") y su docker-compose.yml empieza con `name: mi_v1_sin_fk`.
+   "15542:5432") y su docker-compose.yml empieza con `name: mi_v1_sin_fk`.
 6. Al final, corre el smoke test completo de 7_quickstart.md §2 (con mis
    puertos: localhost:8142) y muéstrame la evidencia de los 6 criterios de
    aceptación de 2_spec.md. La versión no está terminada hasta que los 6
