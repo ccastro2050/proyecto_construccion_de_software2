@@ -117,21 +117,52 @@ docker compose up -d --build
 
 **Eso es todo.** La primera vez tarda unos minutos (descarga imágenes,
 PostgreSQL se siembra solo con el script montado, y la primera
-compilación de la API toma ~1 minuto más). Al terminar quedan corriendo la base de datos (bdfacturas
-completa en PostgreSQL) y la API:
+compilación toma ~1 minuto más). Al terminar quedan corriendo **tres
+contenedores**: la base de datos, la API y la **interfaz gráfica**.
+
+### Lo primero que hay que abrir
 
 | Qué | Dónde |
 |---|---|
-| **API Facturas** — diagnóstico | http://localhost:8043/ |
-| **Swagger** (documentación interactiva: ver y probar los endpoints) | http://localhost:8043/swagger |
-| Listar productos | http://localhost:8043/api/producto |
+| **La interfaz gráfica** — por aquí se empieza | **http://localhost:8048** |
+| **Swagger** — la API, para verla y probarla | http://localhost:8043/swagger |
+| La API — diagnóstico | http://localhost:8043/ |
 | PostgreSQL (para SQLTools/pgAdmin, opcional) | `localhost:15443` · `postgres`/`Construccion123!` |
 
-Pruebe la joya didáctica de la v1: PUT con solo `{"stock": 99}` → 422; el
-mismo body en PATCH → 200. Esa diferencia es parte de lo que enseña la
-versión (contratos exactos en el spec kit).
+> **La interfaz gráfica y la API son dos puertos distintos**, y conviene no
+> confundirlos: el **8048** es lo que se abre en el navegador; el **8043**
+> es lo que esa interfaz consume. Abrir `8048/swagger` da 404 — Swagger vive
+> en la API.
 
-> ℹ️ Este proyecto usa los puertos 8043 y 15443: si alguno ya está ocupado
+### El menú de la interfaz gráfica
+
+**Doce entradas**, agrupadas por versión — y es la forma más rápida de ver que cada versión **incluye la anterior**:
+
+| Dirección | En el menú | De la |
+|---|---|---|
+| `/productos` | Productos | v1 |
+| `/empresas` | Empresas | v1 |
+| `/personas` | Personas | v1 |
+| `/roles` | Roles | v1 |
+| `/rutas` | Rutas | v1 |
+| `/usuarios` | Usuarios | v1 |
+| `/clientes` | Clientes | v2 |
+| `/vendedores` | Vendedores | v2 |
+| `/facturas` | Facturas | v2 |
+| `/usuario-con-roles` | Usuarios y roles | v2 |
+| `/rol-usuario` | Roles por usuario | v2 |
+| `/ruta-rol` | Permisos por rol | v2 |
+
+> **El menú nombra RECURSOS del dominio, no tablas ni rutas de la API.**
+> Dice «Facturas», no `/api/factura`.
+
+**Lo que hay que mirar en esta versión** está en `/facturas`: agregue **tres**
+renglones, quite **uno**, y emita. Tienen que llegar **dos**. Si llegaran tres,
+el detalle se estaría enviando a medida que se agrega — y eso no es un
+maestro-detalle.
+
+> ℹ️ Este proyecto usa los puertos **8048** (interfaz gráfica), **8043**
+> (API) y **15443** (PostgreSQL): si alguno ya está ocupado
 > en su máquina, cámbielo en `docker-compose.yml` (el lado izquierdo del
 > `"puerto:puerto"`).
 >
