@@ -500,3 +500,36 @@ hr {
         margin-bottom: .5rem;
     }
 }
+
+/* --------------------------------------------------------------------------
+   EL ANILLO DE FOCO DEL TÍTULO
+
+   `<FocusOnNavigate Selector="h1" />` enfoca el título al cambiar de página, y
+   eso está bien: es lo que le dice a un lector de pantalla que la navegación
+   ocurrió. Pero el navegador dibuja un recuadro alrededor del título, y en una
+   página normal parece que algo se rompió.
+
+   `:focus-visible` distingue el foco que el navegador considera que hay que
+   MOSTRAR —el de teclado— del que no. Un `.focus()` por código no lo activa,
+   así que esto quita el recuadro de la navegación y conserva el del tabulador.
+   -------------------------------------------------------------------------- */
+h1:focus:not(:focus-visible) {
+    outline: 0;
+}
+
+/* --------------------------------------------------------------------------
+   LAS TARJETAS QUE SON ENLACE (el Inicio)
+   -------------------------------------------------------------------------- */
+a.card {
+    color: inherit;
+    transition: border-color .15s, box-shadow .15s, transform .15s;
+}
+
+a.card:hover {
+    border-color: var(--bs-primary);
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .075);
+}
+
+a.card:hover .card-title {
+    color: var(--bs-primary);
+}
