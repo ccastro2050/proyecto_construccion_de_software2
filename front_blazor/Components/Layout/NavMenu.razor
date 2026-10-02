@@ -1,30 +1,64 @@
 @*
-   El menu nombra RECURSOS del dominio, no tablas ni rutas de la API.
-   Dice «Productos», no «/api/producto».
+   El menú nombra RECURSOS del dominio, no tablas ni rutas de la API.
+   Dice «Productos», no `/api/producto`.
 
-   Esta agrupado POR VERSION, y es la forma mas rapida de ver que la v2
-   INCLUYE la v1: lo de la v1 sigue ahi, y la v2 se le suma.
-
-     v1   las seis tablas SIN clave foranea
-     v2   las que SI tienen clave foranea, y con ellas estan las 12
+   Es un `navbar` de Bootstrap: en el teléfono se pliega tras el botón de las
+   tres rayas, y eso lo hace el JavaScript de Bootstrap que carga App.razor.
 *@
-<nav class="menu">
-    <span class="marca">Facturas</span>
-    <NavLink href="" Match="NavLinkMatch.All">Inicio</NavLink>
+<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-semibold" href="/">
+            <span class="text-primary">Facturas</span>
+        </a>
 
-    @* --- la v1 --- *@
-    <NavLink href="productos">Productos</NavLink>
-    <NavLink href="empresas">Empresas</NavLink>
-    <NavLink href="personas">Personas</NavLink>
-    <NavLink href="roles">Roles</NavLink>
-    <NavLink href="rutas">Rutas</NavLink>
-    <NavLink href="usuarios">Usuarios</NavLink>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#menuPrincipal" aria-controls="menuPrincipal"
+                aria-expanded="false" aria-label="Abrir el menú">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    @* --- la v2: las de clave foranea --- *@
-    <NavLink href="clientes">Clientes</NavLink>
-    <NavLink href="vendedores">Vendedores</NavLink>
-    <NavLink href="facturas">Facturas</NavLink>
-    <NavLink href="usuario-con-roles">Usuarios y roles</NavLink>
-    <NavLink href="rol-usuario">Roles por usuario</NavLink>
-    <NavLink href="ruta-rol">Permisos por rol</NavLink>
+        <div class="collapse navbar-collapse" id="menuPrincipal">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">Inicio</NavLink>
+                </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="productos">Productos</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="empresas">Empresas</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="personas">Personas</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="roles">Roles</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="rutas">Rutas</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="usuarios">Usuarios</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="clientes">Clientes</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="vendedores">Vendedores</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="facturas">Facturas</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="usuario-con-roles">Usuarios y roles</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="rol-usuario">Roles por usuario</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="ruta-rol">Permisos por rol</NavLink>
+                    </li>
+            </ul>
+        </div>
+    </div>
 </nav>

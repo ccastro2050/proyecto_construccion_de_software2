@@ -1,11 +1,17 @@
 @inherits LayoutComponentBase
 
-<div class="pagina">
-    <NavMenu />
-    <main>
+<NavMenu />
+
+<main class="container py-4">
+    <div class="mx-auto" style="max-width: 1100px;">
         @Body
-    </main>
-    <footer>
-        Construcción de Software · versión 2
-    </footer>
-</div>
+    </div>
+</main>
+
+<footer class="border-top mt-5 py-4">
+    <div class="container">
+        <div class="mx-auto text-body-secondary small" style="max-width: 1100px;">
+            Construcción de Software · <strong>versión 2</strong>
+        </div>
+    </div>
+</footer>
