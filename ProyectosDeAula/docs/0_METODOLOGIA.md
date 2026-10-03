@@ -72,10 +72,6 @@ grupo la fija el profesor en clase (anótela en el espacio en blanco).
 | **Entrega versión 3** | **Última** semana de **octubre** | \_\_\_\_/\_\_\_\_/\_\_\_\_\_\_\_\_ | **20%** — 10% sustentación individual (incluidos los commits) + 10% entrega en equipo |
 | **Entrega versión 4** | **Segunda** semana de **noviembre** | \_\_\_\_/\_\_\_\_/\_\_\_\_\_\_\_\_ | **20%** — 10% sustentación individual (incluidos los commits) + 10% entrega en equipo |
 
-> **Estas son las fechas de la Universidad de San Buenaventura.** El calendario
-> general del proyecto de aula corre tres semanas más tarde; el de aquí va
-> antes, y es el que manda para este curso.
-
 > **"Incluidos los commits"** significa que en la sustentación individual
 > cada estudiante responde por SU rama: qué hizo, por qué, y sus commits
 > lo respaldan (frecuentes, descriptivos, propios). Una rama sin commits —
