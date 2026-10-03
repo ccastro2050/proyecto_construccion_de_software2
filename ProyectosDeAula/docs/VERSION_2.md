@@ -3,7 +3,7 @@
 > Para el **equipo**. Qué tiene que estar listo al entregar la v2, cómo se
 > comprueba y qué se entrega.
 >
-> **Entrega: última semana de octubre · 20%** — 10% de sustentación individual
+> **Entrega: segunda semana de octubre · 20%** — 10% de sustentación individual
 > (incluidos sus commits) + 10% de entrega en equipo. La fecha exacta la fija
 > el profesor en clase.
 >
