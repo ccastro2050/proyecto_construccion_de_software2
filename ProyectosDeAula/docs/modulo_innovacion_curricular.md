@@ -7,7 +7,7 @@
 > La metodología (SDD por versiones, spec kit, ramas de Git, secretos por
 > variables de entorno, rúbrica) está en **[0_METODOLOGIA.md](0_METODOLOGIA.md)**
 > y es OBLIGATORIA. Este documento define el QUÉ de este módulo. El script
-> de la BD está en `db_scripts/sqlserver/innovacion_curricular.ss.sql` y
+> de la BD está en `db_scripts/postgresql/innovacion_curricular.pg.sql` y
 > los datos de referencia en el Excel de `Mapa_conocimiento/`.
 
 ---

@@ -6,7 +6,7 @@
 > La metodología (SDD por versiones, spec kit, ramas de Git, secretos por
 > variables de entorno, rúbrica) está en **[0_METODOLOGIA.md](0_METODOLOGIA.md)**
 > y es OBLIGATORIA. El script de la BD completa está en
-> `db_scripts/sqlserver/knowledge_map_db_completa.ss.sql`, el modelo
+> `db_scripts/postgresql/knowledge_map_db_completa.pg.sql`, el modelo
 > relacional en `Mapa_conocimiento/04_Modelo_y_Base_de_datos/` y los datos
 > de referencia en el Excel.
 
